@@ -5,8 +5,8 @@ from vtypes import Fiducial
 
 #Module level singleton that encapsulates the apriltag detector
 
-_detector: apriltag.AprilTagDetector = Apriltag.AprilTagDetector()
-_detector.addFamily(apriltag.TagFamily.TAG_36h11)
+_detector: apriltag.AprilTagDetector = apriltag.AprilTagDetector()
+_detector.addFamily("tag36h11")
 
 def toFiducial(detection: apriltag._apriltag.AprilTagDetection) -> Fiducial:
     """
@@ -19,7 +19,7 @@ def toFiducial(detection: apriltag._apriltag.AprilTagDetection) -> Fiducial:
         np.array(detection.corners, dtype=np.float64).reshape((4, 2))
     )
 
-def detectRaw(image: Buffer) -> List[apriltag._apriltag.AprilTagDetection]:
+def detectRaw(image) -> List[apriltag._apriltag.AprilTagDetection]:
     """
     Detects AprilTags in the given image.
     :param image: The image to detect AprilTags in.
@@ -27,7 +27,7 @@ def detectRaw(image: Buffer) -> List[apriltag._apriltag.AprilTagDetection]:
     """
     return _detector.detect(image)
 
-def detect(image: Buffer) -> List[Fiducial]:
+def detect(image) -> List[Fiducial]:
     return [toFiducial(detection) for detection in _detector.detect(image)]
 
 def setConfig(config: apriltag._apriltag.AprilTagDetector.Config) -> None:
@@ -58,7 +58,7 @@ def removeFamily(fam: str) -> None:
     """
     _detector.removeFamily(fam)
 
-def getQuadThresholdParameters() -> apriltag._apriltag.AprilTagDetector.QuadThresholdParameter:
+def getQuadThresholdParameters() -> apriltag._apriltag.AprilTagDetector.QuadThresholdParameters:
     """
     Get the quad threshold parameter of the detector.
     :return: The quad threshold parameter of the detector.
@@ -66,7 +66,7 @@ def getQuadThresholdParameters() -> apriltag._apriltag.AprilTagDetector.QuadThre
     return _detector.getQuadThresholdParameters()
 
 
-def setQuadThresholdParameters(params: apriltag._apriltag.AprilTagDetector.QuadThresholdParameter) -> None:
+def setQuadThresholdParameters(params: apriltag._apriltag.AprilTagDetector.QuadThresholdParameters) -> None:
     """
     Set the quad threshold parameter of the detector.
     :param params: The quad threshold parameter to set.

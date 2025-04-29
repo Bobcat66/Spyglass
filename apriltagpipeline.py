@@ -3,11 +3,12 @@ import numpy as np
 import cv2
 import tagdetector
 import cscore
+import synctime
 from pnpsolvers import CameraPnPSolver
 from wpimath.geometry import *
 from typing import List, Union
-from vtypes import Fiducial, ApriltagResul
-from pipeline.coords import wpilibTranslationToOpenCv, openCvPoseToWpilib
+from vtypes import Fiducial, ApriltagResult, FiducialDistResult
+from coords import wpilibTranslationToOpenCv, openCvPoseToWpilib
 from ntpub import NTPipePub
 
 class AprilTagPipeline():
@@ -46,10 +47,15 @@ class AprilTagPipeline():
         detections = tagdetector.detect(self.__tmpMat)
         result = self.__solver.solve(detections)
         fiducialDists: List[FiducialDistResult] = []
-        for (detection in detections):
+        for detection in detections:
             fiducialDist = self.__generateTagDistance(detection)
             if fiducialDist != None:
                 fiducialDists.append(fiducialDist)
+        self.__pub.publishApriltagResult(
+            synctime.getFPGA(),
+            result,
+            fiducialDists
+        )
         
     
     def __generateTagDistance(self,fiducial: Fiducial) -> Union[FiducialDistResult,None]:
