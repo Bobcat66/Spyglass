@@ -22,6 +22,5 @@ def openCvPoseToWpilib(tvec: numpy.typing.NDArray[numpy.float64], rvec: numpy.ty
         ),
     )
 
-
 def wpilibTranslationToOpenCv(translation: Translation3d) -> List[float]:
     return [-translation.Y(), -translation.Z(), translation.X()]
