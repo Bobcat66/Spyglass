@@ -5,7 +5,7 @@ class AtomicInt():
         self.__value: int = value
         self.__lock: threading.Lock = threading.Lock()
     
-    def get() -> int:
+    def get(self) -> int:
         with self.__lock:
             return self.__value
     

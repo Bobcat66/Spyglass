@@ -3,11 +3,11 @@ import numpy as np
 import cv2
 import tagdetector
 import cscore
-import synctime
-from pnpsolvers import CameraPnPSolver
+import timesync
+from pnpsolvers import CameraPnPSolver, IPPESquarePnPSolver
 from wpimath.geometry import *
 from typing import List, Union
-from vtypes import Fiducial, ApriltagResult, FiducialDistResult
+from vtypes import Fiducial, ApriltagResult, FiducialDistResult, FiducialPoseResult
 from coords import wpilibTranslationToOpenCv, openCvPoseToWpilib
 from ntpub import NTPipePub
 
@@ -52,7 +52,7 @@ class AprilTagPipeline():
             if fiducialDist != None:
                 fiducialDists.append(fiducialDist)
         self.__pub.publishApriltagResult(
-            synctime.getFPGA(),
+            timesync.getFPGA(),
             result,
             fiducialDists
         )
