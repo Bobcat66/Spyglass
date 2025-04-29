@@ -7,7 +7,8 @@ from vtypes import Fiducial, ApriltagResult
 from coords import wpilibTranslationToOpenCv, openCvPoseToWpilib
 
 class ApriltagPnPSolver():
-    def __init__(self, 
+    def __init__(
+        self, 
         field: apriltag.AprilTagFieldLayout, 
         tag_size: float,
         camera_matrix: np.typing.NDArray[numpy.float64], 
