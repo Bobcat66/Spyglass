@@ -3,7 +3,7 @@
 
 from dataclasses import dataclass
 from typing import List, Union
-from wpimath import Pose3d
+from wpimath.geometry import Pose3d
 import numpy
 
 @dataclass(frozen=True)

@@ -11,13 +11,13 @@ class ApriltagPnPSolver():
         self, 
         field: apriltag.AprilTagFieldLayout, 
         tag_size: float,
-        camera_matrix: np.typing.NDArray[numpy.float64], 
-        dist_coeffs:  np.typing.NDArray[numpy.float64]
+        camera_matrix: np.typing.NDArray[np.float64], 
+        dist_coeffs:  np.typing.NDArray[np.float64]
     ):
         self.__field: apriltag.AprilTagFieldLayout = field
         self.__tag_size: float = tag_size
-        self.__camera_matrix: np.typing.NDArray[numpy.float64] = camera_matrix
-        self.__dist_coeffs: np.typing.NDArray[numpy.float64] = dist_coeffs
+        self.__camera_matrix: np.typing.NDArray[np.float64] = camera_matrix
+        self.__dist_coeffs: np.typing.NDArray[np.float64] = dist_coeffs
     
     def solve(self,fiducials: List[Fiducial]) -> Union[ApriltagResult, None]:
         """
