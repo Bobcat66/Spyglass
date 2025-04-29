@@ -22,7 +22,7 @@ class NTPipePub():
             self,
             timestamp: int, #microseconds since FPGA epoch
             result: Union[ApriltagResult,None],
-            fiducials: List[Fiducial]
+            fiducialResults: List[FiducialDistResult]
         ) -> None:
         result_data: List[float] = [0] #1st element indicates the number of results
         if result != None:

@@ -10,7 +10,21 @@ import numpy
 class Fiducial:
     id: int
     corners: numpy.typing.NDArray[numpy.float64]
+
+@dataclass(frozen=True)
+class FiducialDistResult:
+    id: int
+    corners: numpy.typing.NDArray[numpy.float64]
     distance: float
+
+@dataclass(frozen=True)
+class FiducialPoseResult:
+    id: int
+    corners: numpy.typing.NDArray[numpy.float64]
+    pose_0: Pose3d
+    error_0: float
+    pose_1: Pose3d
+    error_1: float
 
 @dataclass(frozen=True)
 class ApriltagResult:

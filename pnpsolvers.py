@@ -3,10 +3,13 @@ import numpy as np
 import cv2
 from wpimath.geometry import *
 from typing import List, Union
-from vtypes import Fiducial, ApriltagResult
+from vtypes import Fiducial, ApriltagResult, FiducialPoseResult
 from coords import wpilibTranslationToOpenCv, openCvPoseToWpilib
 
-class ApriltagPnPSolver():
+class CameraPnPSolver():
+    '''
+    A PnP solver for cases with an arbitrary number of tags.
+    '''
     def __init__(
         self, 
         field: apriltag.AprilTagFieldLayout, 
@@ -61,7 +64,7 @@ class ApriltagPnPSolver():
                 ]
             )
             try:
-                _, rvecs, tvecs, errors = cv2.solvePnP(
+                _, rvecs, tvecs, errors = cv2.solvePnPGeneric(
                     object_points,
                     np.array(image_points),
                     self.__camera_matrix,
@@ -87,7 +90,7 @@ class ApriltagPnPSolver():
         else:
             # Solve for multiple tags
             try:
-                _, rvecs, tvecs, errors = cv2.solvePnP(
+                _, rvecs, tvecs, errors = cv2.solvePnPGeneric(
                     np.array(object_points),
                     np.array(image_points),
                     self.__camera_matrix,
@@ -104,6 +107,52 @@ class ApriltagPnPSolver():
             field_to_camera_pose = Pose3d(field_to_camera.translation(), field_to_camera.rotation())
             
             return ApriltagResult(tag_ids, field_to_camera_pose, errors[0][0], None, None)
+
+class IPPESquarePnPSolver():
+    '''
+    Solves the PnP problem for a single tag using the IPPE_Square algorithm. This is only recommended for distance calculations
+    '''
+    def __init__(
+        self,
+        tag_size: float,
+        camera_matrix: np.typing.NDArray[np.float64], 
+        dist_coeffs:  np.typing.NDArray[np.float64]
+    ):
+        self.__tag_size: float = tag_size
+        self.__camera_matrix: np.typing.NDArray[np.float64] = camera_matrix
+        self.__dist_coeffs: np.typing.NDArray[np.float64] = dist_coeffs
+    
+    def solve(self,fiducial: Fiducial) -> Union[FiducialPoseResult,None]:
+        object_points = np.array(
+            [
+                [-self.__tag_size / 2.0, self.__tag_size / 2.0, 0],
+                [self.__tag_size / 2.0, self.__tag_size / 2.0, 0],
+                [self.__tag_size / 2.0, -self.__tag_size / 2.0, 0],
+                [-self.__tag_size / 2.0, -self.__tag_size / 2.0, 0],
+            ]
+        )
+        try:
+            _, rvecs, tvecs, errors = cv2.solvePnP(
+                object_points,
+                np.array(image_points),
+                self.__camera_matrix,
+                self.__dist_coeffs,
+                flags=cv2.SOLVEPNP_IPPE_SQUARE
+            )
+        except:
+            return None
+        
+        camera_to_tag_pose_0 = openCvPoseToWpilib(tvecs[0], rvecs[0])
+        camera_to_tag_pose_1 = openCvPoseToWpilib(tvecs[1], rvecs[1])
+        return FiducialPoseResult(
+            fiducial.id,
+            fiducial.corners,
+            camera_to_tag_pose_0,
+            errors[0][0],
+            camera_to_tag_pose_1,
+            errors[1][0]
+        )
+
 
 
 
