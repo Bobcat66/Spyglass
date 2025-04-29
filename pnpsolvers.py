@@ -134,7 +134,7 @@ class IPPESquarePnPSolver():
         try:
             _, rvecs, tvecs, errors = cv2.solvePnP(
                 object_points,
-                np.array(image_points),
+                np.array(fiducial.corners),
                 self.__camera_matrix,
                 self.__dist_coeffs,
                 flags=cv2.SOLVEPNP_IPPE_SQUARE
