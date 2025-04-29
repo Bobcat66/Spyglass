@@ -10,6 +10,7 @@ from vtypes import Fiducial, ApriltagResult, FiducialDistResult, FiducialPoseRes
 from coords import wpilibTranslationToOpenCv, openCvPoseToWpilib
 from src.py.ntpubsub import NTPipePub
 
+#Will likely be rewritten entirely in the near future
 class AprilTagPipeline():
 
     def __init__(
