@@ -34,5 +34,6 @@ class AprilTagPipeline():
         self.__sink: cscore.CvSink = cscore.CvSink(name + "_input",pixelMode,width,height,fps)
         self.__sink.setSource(source)
         self.__source: cscore.CvSource = cscore.CvSource(name + "_output",pixelMode,width,height,fps)
+        self.__tmpMat: cscore.Mat
 
         
