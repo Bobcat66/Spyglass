@@ -1,5 +1,6 @@
 import robotpy_apriltag as apriltag
 import numpy as np
+from collections.abc import Buffer
 from typing import List
 from vtypes import Fiducial
 
@@ -19,16 +20,11 @@ def toFiducial(detection: apriltag._apriltag.AprilTagDetection) -> Fiducial:
         np.array(detection.corners, dtype=np.float64).reshape((4, 2))
     )
 
-def detectRaw(image) -> List[apriltag._apriltag.AprilTagDetection]:
-    """
-    Detects AprilTags in the given image.
-    :param image: The image to detect AprilTags in.
-    :return: A list of detected AprilTags.
-    """
-    return _detector.detect(image)
-
-def detect(image) -> List[Fiducial]:
+def detect(image: Buffer) -> List[Fiducial]:
     return [toFiducial(detection) for detection in _detector.detect(image)]
+
+def detectCV(image: np.typing.NDArray[np.uint8]) -> List[Fiducial]:
+    return detect(image.tobytes())
 
 def setConfig(config: apriltag._apriltag.AprilTagDetector.Config) -> None:
     """

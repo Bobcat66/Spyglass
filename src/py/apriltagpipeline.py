@@ -1,6 +1,5 @@
 import robotpy_apriltag as apriltag
 import numpy as np
-import cv2
 import tagdetector
 import cscore
 import timesync
@@ -9,7 +8,7 @@ from wpimath.geometry import *
 from typing import List, Union
 from vtypes import Fiducial, ApriltagResult, FiducialDistResult, FiducialPoseResult
 from coords import wpilibTranslationToOpenCv, openCvPoseToWpilib
-from ntpub import NTPipePub
+from src.py.ntpubsub import NTPipePub
 
 class AprilTagPipeline():
 
@@ -27,16 +26,12 @@ class AprilTagPipeline():
         fps: int
     ):
         self.__name: str = name
-        self.__field: apriltag.AprilTagFieldLayout = field
-        self.__tag_size: float = tag_size
-        self.__camera_matrix: np.typing.NDArray[np.float64] = camera_matrix
-        self.__dist_coeffs: np.typing.NDArray[np.float64] = dist_coeffs
         self.__solver: CameraPnPSolver = CameraPnPSolver(field, tag_size, camera_matrix, dist_coeffs)
         self.__fidsolver: IPPESquarePnPSolver = IPPESquarePnPSolver(tag_size,camera_matrix,dist_coeffs)
         self.__sink: cscore.CvSink = cscore.CvSink(name + "_input",pixelMode,width,height,fps)
         self.__sink.setSource(source)
         self.__source: cscore.CvSource = cscore.CvSource(name + "_output",pixelMode,width,height,fps)
-        self.__tmpMat: cscore.Mat
+        self.__tmpMat: np.typing.NDArray[np.uint8]
         self.__pub: NTPipePub = NTPipePub(name)
     
     def process(self) -> None:
@@ -44,7 +39,7 @@ class AprilTagPipeline():
         Process the input image and detect AprilTags.
         """
         self.__tmpMat = self.__sink.grabFrame()
-        detections = tagdetector.detect(self.__tmpMat)
+        detections = tagdetector.detectCV(self.__tmpMat)
         result = self.__solver.solve(detections)
         fiducialDists: List[FiducialDistResult] = []
         for detection in detections:
@@ -56,6 +51,7 @@ class AprilTagPipeline():
             result,
             fiducialDists
         )
+        self.__source.putFrame(self.__tmpMat)
         
     
     def __generateTagDistance(self,fiducial: Fiducial) -> Union[FiducialDistResult,None]:
@@ -72,6 +68,13 @@ class AprilTagPipeline():
             fidpose.corners,
             fidpose.pose_0.translation().norm()
         )
+    
+    def getSource(self) -> cscore.CvSource:
+        """
+        Get the source of the pipeline.
+        :return: The source of the pipeline.
+        """
+        return self.__source
 
 
         

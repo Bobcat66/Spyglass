@@ -76,6 +76,7 @@ inst.startClient4("visionclient")
 inst.setServerTeam(1076)
 _publishers: list[NTPipePub] = []
 _gtname: str = "samuraisight"
+_gyrosub: ntcore.DoubleArraySubscriber = inst.getTable(_gtname).getDoubleArrayTopic("gyro").subscribe([0,0,0,0,0,0,0,0,0])
 
 def getGlobalTable() -> ntcore.NetworkTable:
     """
@@ -85,4 +86,11 @@ def getGlobalTable() -> ntcore.NetworkTable:
 
 def __getPipeTable(pipename : str) -> ntcore.NetworkTable:
     return inst.getTable(_gtname + '/' + pipename)
+
+def getGyroData() -> List[float]:
+    """
+    Returns the gyro data from the global NT table.
+    """
+    #TODO: write a robot-side publisher for this, and make it fast
+    return _gyrosub.get()
     

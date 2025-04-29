@@ -29,6 +29,7 @@ class CameraPnPSolver():
         """
         object_points: List[float] = []
         tag_ids: List[int] = []
+        tag_poses: List[Pose3d] = []
         image_points: List[float] = []
         for fiducial in fiducials:
             fid_pose: Pose3d = None
@@ -52,6 +53,7 @@ class CameraPnPSolver():
                     [fiducial.corners[3][0], fiducial.corners[3][1]],
                 ]
                 tag_ids.append(fiducial.id)
+                tag_poses.append(fid_pose)
         if len(tag_ids) == 0:
             return None
         elif len(tag_ids) == 1:
