@@ -43,7 +43,7 @@ class NTPipePub():
                 result_data.append(result.pose_1.rotation().getQuaternion().X())
                 result_data.append(result.pose_1.rotation().getQuaternion().Y())
                 result_data.append(result.pose_1.rotation().getQuaternion().Z())
-        for fiducial in fiducials:
+        for fiducial in fiducialResults:
             result_data.append(fiducial.id)
             for corner in fiducial.corners.ravel(): # corners are stored as a 2d array, numpy's ravel method flattens them into a 1d array for networktables
                 result_data.append(corner)

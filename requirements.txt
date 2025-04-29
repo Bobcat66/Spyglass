@@ -1,5 +1,0 @@
-pyntcore==2025.3.2.1
-robotpy-apriltag==2025.3.2.1
-robotpy-cscore==2025.3.2.1
-opencv-python==4.11.0.86
-robotpy-wpimath==2025.3.2.1
