@@ -3,8 +3,8 @@
 
 import cscore
 import numpy as np
-import tagdetector
-from pnpsolvers import CameraPnPSolver
+import pipeline.tagdetector as tagdetector
+from pipeline.pnpsolvers import CameraPnPSolver
 
 if __name__ == "__main__":
     camera_name: str = "TEST_CAMERA"

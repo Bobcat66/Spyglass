@@ -7,9 +7,9 @@ import numpy as np
 import cv2
 from wpimath.geometry import *
 from typing import List, Union
-from vtypes import Fiducial, ApriltagResult, FiducialPoseResult
-from coords import wpilibTranslationToOpenCv, openCvPoseToWpilib
-from configuration import *
+from utils.vtypes import Fiducial, ApriltagResult, FiducialPoseResult
+from pipeline.coords import wpilibTranslationToOpenCv, openCvPoseToWpilib
+from configuration.config_types import *
 
 class CameraPnPSolver():
     '''

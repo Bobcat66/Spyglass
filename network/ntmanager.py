@@ -4,9 +4,17 @@
 
 import ntcore
 from typing import List, Union
-from vtypes import *
-#The ntpub module provides an abstracted interface to the NetworkTables server.
-#It functions as a module-level singleton object, so you can use it directly without instantiating it.
+from utils.vtypes import *
+
+inst: ntcore.NetworkTableInstance
+_gtname: str
+_gyrosub: ntcore.DoubleArraySubscriber
+
+def initialize(name: str, ntinstance: ntcore.NetworkTableInstance) -> None:
+    global _gtname, inst, _gyrosub
+    _gtname = name
+    inst = ntinstance
+    _gyrosub = inst.getDoubleArrayTopic("gyro").subscribe()
 
 class NTPipePub():
     def __init__(self,pipename: str):
@@ -20,12 +28,11 @@ class NTPipePub():
         )
         self.__apriltag_fps_pub: ntcore.IntegerPublisher = self.__table.IntegerTopic("apriltag_fps").publish()
         self.__objdetect_fps_pub: ntcore.IntegerPublisher = self.__table.IntegerTopic("objdetect_fps").publish()
-        _publishers.append(self)
     
-    def publishApriltagResult(
+    def publishNTagPoseResult(
             self,
             timestamp: int, #microseconds since FPGA epoch
-            result: Union[ApriltagResult,None],
+            result: Union[NTagPoseResult,None],
             fiducialResults: List[FiducialDistResult]
         ) -> None:
         result_data: List[float] = [0] #1st element indicates the number of results
@@ -74,13 +81,6 @@ class NTPipePub():
     def publishObjDetectFPS(self, fps: int, timestamp: int) -> None:    
         self.__objdetect_fps_pub.set(fps,timestamp)
 
-#Initialize NT4 client
-inst: ntcore.NetworkTableInstance = ntcore.NetworkTableInstance.getDefault()
-inst.startClient4("visionclient")
-inst.setServerTeam(1076)
-_publishers: list[NTPipePub] = []
-_gtname: str = "samuraisight"
-_gyrosub: ntcore.DoubleArraySubscriber = inst.getTable(_gtname).getDoubleArrayTopic("gyro").subscribe([0,0,0,0,0,0,0,0,0])
 
 def getGlobalTable() -> ntcore.NetworkTable:
     """

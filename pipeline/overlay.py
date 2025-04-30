@@ -4,9 +4,9 @@
 
 import cv2
 import numpy as np
-from vtypes import Fiducial, SingleTagPoseResult
+from utils.vtypes import Fiducial, SingleTagPoseResult
 from typing import List
-from configuration import *
+from configuration.config_types import *
 
 def drawFiducials(image: np.typing.NDArray[np.uint8], fiducials: List[Fiducial]) -> None:
     cv2.aruco.drawDetectedMarkers(image, np.array([f.corners for f in fiducials]), np.array([f.id for f in fiducials]))

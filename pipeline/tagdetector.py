@@ -6,7 +6,7 @@ import robotpy_apriltag as apriltag
 import numpy as np
 from collections.abc import Buffer
 from typing import List
-from vtypes import Fiducial
+from utils.vtypes import Fiducial
 
 #Module level singleton that encapsulates the apriltag detector
 

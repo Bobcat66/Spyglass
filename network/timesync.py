@@ -3,7 +3,7 @@
 # the license found in the root directory of this project
 
 from time import perf_counter
-from atomic import AtomicInt
+from utils.atomic import AtomicInt
 
 fpgaSyncTime: AtomicInt = AtomicInt()
 localSyncTime: AtomicInt = AtomicInt()
