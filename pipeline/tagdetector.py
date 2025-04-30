@@ -4,6 +4,7 @@
 
 import robotpy_apriltag as apriltag
 import numpy as np
+import cv2
 from collections.abc import Buffer
 from typing import List
 from utils.vtypes import Fiducial
@@ -19,16 +20,32 @@ def toFiducial(detection: apriltag._apriltag.AprilTagDetection) -> Fiducial:
     :param detection: The AprilTag detection to convert.
     :return: The converted Fiducial object.
     """
+    corners: List[float] = []
+    for i in range(4):
+        cornerPoint: apriltag._apriltag.AprilTagDetection.Point = detection.getCorner(i)
+        corners += [cornerPoint.x, cornerPoint.y]
+
     return Fiducial(
-        detection.id,
-        np.array(detection.corners, dtype=np.float64).reshape((4, 2))
+        detection.getId(),
+        np.array(corners, dtype=np.float64).reshape((4, 2))
     )
 
 def detect(image: Buffer) -> List[Fiducial]:
-    return [toFiducial(detection) for detection in _detector.detect(image)]
+    rawdetections: List[apriltag.AprilTagDetection] = _detector.detect(image)
+    return [toFiducial(detection) for detection in rawdetections]
 
 def detectCV(image: np.typing.NDArray[np.uint8]) -> List[Fiducial]:
-    return detect(image.tobytes())
+    gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    return detect(gray_image)
+
+def detectCV_RGB(image: np.typing.NDArray[np.uint8]) -> List[Fiducial]:
+    """
+    Detect AprilTags in a color image (RGB).
+    :param image: The color image to detect AprilTags in.
+    :return: A list of detected AprilTags.
+    """
+    gray_image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
+    return detect(gray_image)
 
 def setConfig(config: apriltag._apriltag.AprilTagDetector.Config) -> None:
     """

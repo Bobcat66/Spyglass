@@ -7,7 +7,7 @@ import numpy as np
 import cv2
 from wpimath.geometry import *
 from typing import List, Union
-from utils.vtypes import Fiducial, ApriltagResult, FiducialPoseResult
+from utils.vtypes import Fiducial, NTagPoseResult, SingleTagPoseResult
 from pipeline.coords import wpilibTranslationToOpenCv, openCvPoseToWpilib
 from configuration.config_types import *
 
@@ -25,7 +25,7 @@ class CameraPnPSolver():
         self.__camera_matrix: np.typing.NDArray[np.float64] = camConf.camera_matrix
         self.__dist_coeffs: np.typing.NDArray[np.float64] = camConf.dist_coeffs
     
-    def solve(self,fiducials: List[Fiducial]) -> Union[ApriltagResult, None]:
+    def solve(self,fiducials: List[Fiducial]) -> Union[NTagPoseResult, None]:
         """
         Solves the Perspective-n-Point problem using the fiducials detected by the camera.
         :param fiducials: List of Fiducial detections
@@ -91,7 +91,7 @@ class CameraPnPSolver():
             field_to_camera_pose_1 = Pose3d(field_to_camera_1.translation(), field_to_camera_1.rotation())
 
             # Return result
-            return ApriltagResult(tag_ids, field_to_camera_pose_0, errors[0][0], field_to_camera_pose_1, errors[1][0])
+            return NTagPoseResult(tag_ids, field_to_camera_pose_0, errors[0][0], field_to_camera_pose_1, errors[1][0])
         else:
             # Solve for multiple tags
             try:
@@ -111,7 +111,7 @@ class CameraPnPSolver():
             field_to_camera = camera_to_field.inverse()
             field_to_camera_pose = Pose3d(field_to_camera.translation(), field_to_camera.rotation())
             
-            return ApriltagResult(tag_ids, field_to_camera_pose, errors[0][0], None, None)
+            return NTagPoseResult(tag_ids, field_to_camera_pose, errors[0][0], None, None)
 
 class IPPESquarePnPSolver():
     '''
@@ -126,7 +126,7 @@ class IPPESquarePnPSolver():
         self.__camera_matrix: np.typing.NDArray[np.float64] = camConf.camera_matrix
         self.__dist_coeffs: np.typing.NDArray[np.float64] = camConf.dist_coeffs
     
-    def solve(self,fiducial: Fiducial) -> Union[FiducialPoseResult,None]:
+    def solve(self,fiducial: Fiducial) -> Union[SingleTagPoseResult,None]:
         object_points = np.array(
             [
                 [-self.__tag_size / 2.0, self.__tag_size / 2.0, 0],
@@ -148,7 +148,7 @@ class IPPESquarePnPSolver():
         
         camera_to_tag_pose_0 = openCvPoseToWpilib(tvecs[0], rvecs[0])
         camera_to_tag_pose_1 = openCvPoseToWpilib(tvecs[1], rvecs[1])
-        return FiducialPoseResult(
+        return SingleTagPoseResult(
             fiducial.id,
             fiducial.corners,
             camera_to_tag_pose_0,

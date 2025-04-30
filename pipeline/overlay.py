@@ -9,7 +9,16 @@ from typing import List
 from configuration.config_types import *
 
 def drawFiducials(image: np.typing.NDArray[np.uint8], fiducials: List[Fiducial]) -> None:
-    cv2.aruco.drawDetectedMarkers(image, np.array([f.corners for f in fiducials]), np.array([f.id for f in fiducials]))
+    for f in fiducials:
+        bottom_left = tuple(f.corners[0].astype(int))
+        bottom_right = tuple(f.corners[1].astype(int))
+        top_right = tuple(f.corners[2].astype(int))
+        top_left = tuple(f.corners[3].astype(int))
+        cv2.line(image, bottom_left, bottom_right, (0, 255, 0), 2)
+        cv2.line(image, bottom_right, top_right, (0, 255, 0), 2)
+        cv2.line(image, top_right, top_left, (0, 255, 0), 2)
+        cv2.line(image, top_left, bottom_left, (0, 255, 0), 2)
+        cv2.putText(image, str(f.id), (top_left[0],top_left[1]-15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
 
 def drawSingleTagPose(
     image: np.typing.NDArray[np.uint8], 
