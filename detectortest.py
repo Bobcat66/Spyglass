@@ -6,7 +6,7 @@ import cv2
 import numpy as np
 import pipeline.tagdetector as tagdetector
 from pipeline.pnpsolvers import CameraPnPSolver
-from pipeline.overlay import drawFiducials
+from pipeline.annotations import drawFiducials
 
 if __name__ == "__main__":
     testimage = cv2.imread("apriltag_test.png")
