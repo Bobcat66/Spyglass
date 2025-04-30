@@ -7,7 +7,7 @@ from utils.atomic import AtomicInt
 
 fpgaSyncTime: AtomicInt = AtomicInt()
 localSyncTime: AtomicInt = AtomicInt()
-offset: AtomicInt
+offset: AtomicInt = AtomicInt()
 
 def sync(fpgatime: int) -> None:
     fpgaSyncTime.set(fpgatime)

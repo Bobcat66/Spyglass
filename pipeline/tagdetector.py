@@ -11,6 +11,7 @@ from utils.vtypes import Fiducial
 
 #Module level singleton that encapsulates the apriltag detector
 
+#TODO: Add configurator
 _detector: apriltag.AprilTagDetector = apriltag.AprilTagDetector()
 _detector.addFamily("tag36h11")
 
