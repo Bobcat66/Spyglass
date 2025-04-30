@@ -14,7 +14,8 @@ if __name__ == "__main__":
     sink: cscore.CvSink = cscore.CvSink(camera_name + "_input")
     sink.setSource(cameraSource)
     tmpmat: np.typing.NDArray[np.uint8] = np.ndarray([])
-    while True:
+
+    while False:
         sink.grabFrame(tmpmat)
         results = tagdetector.detectCV(tmpmat)
         for result in results:

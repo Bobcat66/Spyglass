@@ -1,7 +1,7 @@
 import tomllib
 from configuration.config_types import *
 
-class Configurator:
+class FileConfigurator:
     def __init__(self, config_file: str):
         self.config_file = config_file
         self.config = self.load_config()
@@ -20,3 +20,6 @@ class Configurator:
             devDict.get("dev_ip"),
             devDict.get("server_ip")
         )
+    
+    def dump(self):
+        return self.config
