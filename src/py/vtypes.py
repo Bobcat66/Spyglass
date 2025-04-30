@@ -1,5 +1,6 @@
-
-#Contains useful types for vision
+# Copyright (c) FRC 1076 PiHi Samurai
+# You may use, distribute, and modify this software under the terms of
+# the license found in the root directory of this project
 
 from dataclasses import dataclass
 from typing import List, Union
@@ -18,7 +19,7 @@ class FiducialDistResult:
     distance: float
 
 @dataclass(frozen=True)
-class FiducialPoseResult:
+class SingleTagPoseResult:
     id: int
     corners: numpy.typing.NDArray[numpy.float64]
     pose_0: Pose3d
@@ -27,7 +28,7 @@ class FiducialPoseResult:
     error_1: float
 
 @dataclass(frozen=True)
-class ApriltagResult:
+class NTagPoseResult:
     fid_ids: List[int]
     pose_0: Pose3d
     error_0: float

@@ -4,6 +4,8 @@
 import cscore
 import numpy as np
 import tagdetector
+from pnpsolvers import CameraPnPSolver
+
 if __name__ == "__main__":
     camera_name: str = "TEST_CAMERA"
     device_number: int = 0

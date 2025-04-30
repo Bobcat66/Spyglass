@@ -1,3 +1,7 @@
+# Copyright (c) FRC 1076 PiHi Samurai
+# You may use, distribute, and modify this software under the terms of
+# the license found in the root directory of this project
+
 import robotpy_apriltag as apriltag
 import numpy as np
 import cv2
@@ -5,6 +9,7 @@ from wpimath.geometry import *
 from typing import List, Union
 from vtypes import Fiducial, ApriltagResult, FiducialPoseResult
 from coords import wpilibTranslationToOpenCv, openCvPoseToWpilib
+from configuration import *
 
 class CameraPnPSolver():
     '''
@@ -12,15 +17,13 @@ class CameraPnPSolver():
     '''
     def __init__(
         self, 
-        field: apriltag.AprilTagFieldLayout, 
-        tag_size: float,
-        camera_matrix: np.typing.NDArray[np.float64], 
-        dist_coeffs:  np.typing.NDArray[np.float64]
+        camConf: CameraConfig,
+        fieldConf: FieldConfig,
     ):
-        self.__field: apriltag.AprilTagFieldLayout = field
-        self.__tag_size: float = tag_size
-        self.__camera_matrix: np.typing.NDArray[np.float64] = camera_matrix
-        self.__dist_coeffs: np.typing.NDArray[np.float64] = dist_coeffs
+        self.__field: apriltag.AprilTagFieldLayout = fieldConf.layout
+        self.__tag_size: float = fieldConf.tag_size
+        self.__camera_matrix: np.typing.NDArray[np.float64] = camConf.camera_matrix
+        self.__dist_coeffs: np.typing.NDArray[np.float64] = camConf.dist_coeffs
     
     def solve(self,fiducials: List[Fiducial]) -> Union[ApriltagResult, None]:
         """
@@ -116,13 +119,12 @@ class IPPESquarePnPSolver():
     '''
     def __init__(
         self,
-        tag_size: float,
-        camera_matrix: np.typing.NDArray[np.float64], 
-        dist_coeffs:  np.typing.NDArray[np.float64]
+        fieldConf: FieldConfig,
+        camConf: CameraConfig,
     ):
-        self.__tag_size: float = tag_size
-        self.__camera_matrix: np.typing.NDArray[np.float64] = camera_matrix
-        self.__dist_coeffs: np.typing.NDArray[np.float64] = dist_coeffs
+        self.__tag_size: float = fieldConf.tag_size
+        self.__camera_matrix: np.typing.NDArray[np.float64] = camConf.camera_matrix
+        self.__dist_coeffs: np.typing.NDArray[np.float64] = camConf.dist_coeffs
     
     def solve(self,fiducial: Fiducial) -> Union[FiducialPoseResult,None]:
         object_points = np.array(
