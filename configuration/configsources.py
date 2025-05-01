@@ -1,6 +1,6 @@
 import tomllib
 from configuration.config_types import *
-from robotpy_apriltag import AprilTagFieldLayout
+import robotpy_apriltag as apriltag
 
 class ConfigParser:
     pixelFormatDict = {
