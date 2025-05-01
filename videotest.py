@@ -1,6 +1,6 @@
 import cv2
 from pipeline import tagdetector
-from pipeline.annotations import drawFiducials
+from pipeline.annotator import drawFiducials
 if __name__ == "__main__":
     cam = cv2.VideoCapture(0)
     result, image = cam.read()

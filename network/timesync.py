@@ -14,7 +14,7 @@ def sync(fpgatime: int) -> None:
     localSyncTime.set(int(perf_counter() * 1e6))
     offset.set(fpgaSyncTime.get() - localSyncTime.get())
 
-def getFPGA() -> int:
+def now() -> int:
     return int(perf_counter() * 1e6) + offset.get()
 
 #TODO: Fix this
