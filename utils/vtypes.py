@@ -22,9 +22,11 @@ class FiducialDistResult:
 class SingleTagPoseResult:
     id: int
     corners: numpy.typing.NDArray[numpy.float64]
-    pose_0: Pose3d
+    rvecs_0: numpy.typing.NDArray[numpy.float64]
+    tvecs_0: numpy.typing.NDArray[numpy.float64]
     error_0: float
-    pose_1: Pose3d
+    rvecs_1: numpy.typing.NDArray[numpy.float64]
+    tvecs_1: numpy.typing.NDArray[numpy.float64]
     error_1: float
 
 @dataclass(frozen=True)

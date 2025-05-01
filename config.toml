@@ -2,6 +2,10 @@
     name = "SamuraiSight"
     dev_ip = "10.10.76.18"
     server_ip = "10.10.76.2"
+    [device.accelerator]
+        type = "rocm" #Options: rknn, cuda, rocm, coral, cuda, none
+        integrated = false
+        dev_id = 3
 [field]
     tag_size = 0.1651 # meters
     layout = "2025-reefscape-welded"
@@ -56,24 +60,11 @@
             minWhiteBlackDiff = 5
     [pipelines.pipeline2]
         camera = "cam2"
-        type = "apriltag"
+        type = "objdetect"
         stream = true
         rawport = 8002
         processedport = 8003
-        [pipelines.pipeline2.detectorConfig]
-            debug = false
-            decodeSharpening = 0.25
-            numThreads = 1
-            quadDecimate = 2.0
-            quadSigma = 0.0
-            refineEdges = true
-        [pipelines.pipeline2.detectorQTPs]
-            criticalAngle = 45.0
-            deglitch = false
-            maxLineFitMSE = 10.0
-            maxNumMaxima = 10
-            minClusterPixels = 300
-            minWhiteBlackDiff = 5
-
+        confidence = 0.8
+        model = "algae.pt" # Pytorch placeholder for testing on my laptop, when deployed on a coprocessor this will likely be an RKNN or tensorflow lite model
 
 

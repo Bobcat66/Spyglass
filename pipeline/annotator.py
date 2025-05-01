@@ -30,7 +30,7 @@ def drawSingleTagPose(
     camConf: CameraConfig
 ) -> None:
     """
-    Draw the axes of a Single Tag Pose estimate
+    Draw a Single Tag Pose estimate
     :param image: The image to draw on.
     :param fiducialPose: The list of fiducial poses to draw.
     :param fieldConf: The field configuration.
@@ -40,18 +40,34 @@ def drawSingleTagPose(
         image,
         camConf.camera_matrix,
         camConf.dist_coeffs,
-        result.pose_0.rotation().toVector(),
-        result.pose_0.translation().toVector(),
+        result.rvecs_0,
+        result.tvecs_0,
         fieldConf.tag_size/2
     )
     cv2.drawFrameAxes(
         image,
         camConf.camera_matrix,
         camConf.dist_coeffs,
-        result.pose_1.rotation().toVector(),
-        result.pose_1.translation().toVector(),
+        result.rvecs_1,
+        result.tvecs_1,
         fieldConf.tag_size/2
     )
+
+def drawSingleTagPoseNew( 
+    image: cv2.Mat, 
+    result: SingleTagPoseResult, 
+    fieldConf: FieldConfig, 
+    camConf: CameraConfig
+) -> None:
+    axis = np.float32([[3,0,0], [0,3,0], [0,0,-3]]).reshape(-1,3)
+    pass
+
+def _drawAxes(image: cv2.Mat, corners: np.ndarray, imgpts: np.ndarray) -> None:
+    corner = tuple(corners[0].ravel().astype("int32"))
+    imgpts = imgpts.astype("int32")
+    cv2.line(image, corner, tuple(imgpts[0].ravel()), (255,0,0), 5)
+    cv2.line(image, corner, tuple(imgpts[1].ravel()), (0,255,0), 5)
+    cv2.line(image, corner, tuple(imgpts[2].ravel()), (0,0,255), 5)
 
 #TODO: Add object detection overlay
 

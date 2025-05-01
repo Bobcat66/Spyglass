@@ -9,7 +9,7 @@ from pipeline.annotator import drawFiducials
 from time import perf_counter_ns
 if __name__ == "__main__":
     #testimage = cv2.imread("apriltag_test.png", cv2.IMREAD_GRAYSCALE)
-    testimage = cv2.imread("apriltag_test.png")
+    testimage = cv2.imread("resources/test/apriltag_test.png")
     begin = perf_counter_ns()
     detections = tagdetector.detectCV_BGR(testimage)
     end = perf_counter_ns()

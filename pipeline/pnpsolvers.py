@@ -120,8 +120,8 @@ class FiducialPnPSolver():
     '''
     def __init__(
         self,
-        fieldConf: FieldConfig,
         camConf: CameraConfig,
+        fieldConf: FieldConfig
     ):
         self.__tag_size: float = fieldConf.tag_size
         self.__camera_matrix: np.typing.NDArray[np.float64] = camConf.camera_matrix
@@ -152,9 +152,11 @@ class FiducialPnPSolver():
         return SingleTagPoseResult(
             fiducial.id,
             fiducial.corners,
-            camera_to_tag_pose_0,
+            rvecs[0],
+            tvecs[0],
             errors[0][0],
-            camera_to_tag_pose_1,
+            rvecs[1],
+            tvecs[1],
             errors[1][0]
         )
 

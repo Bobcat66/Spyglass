@@ -33,7 +33,14 @@ class DeviceConfig:
     server_ip: str #The IP address of the networktables server
 
 @dataclass
-class ApriltagDetectorConfig:
-    """AprilTag detector configuration class."""
-    configs: apriltag.AprilTagDetector.Config
-    qtps: apriltag.AprilTagDetector.QuadThresholdParameters
+class PipelineConfig:
+    """Pipeline configuration class."""
+    type: str
+    camera: str
+    stream: bool
+    rawport: int
+    processedport: int
+    confidence: Union[float, None]
+    model: Union[str, None]
+    detConfigs: Union[apriltag.AprilTagDetector.Config,None]
+    detQtps: Union[apriltag.AprilTagDetector.QuadThresholdParameters,None]
