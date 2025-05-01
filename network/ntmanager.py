@@ -16,7 +16,7 @@ def initialize(name: str, ntinstance: ntcore.NetworkTableInstance) -> None:
     inst = ntinstance
     _gyrosub = inst.getDoubleArrayTopic("gyro").subscribe()
 
-class NTPipePub():
+class NTManager():
     def __init__(self,pipename: str):
         #self.__pipename: str = pipename
         self.__table: ntcore.NetworkTable = __getPipeTable(pipename)

@@ -1,43 +1,79 @@
 [device]
-name = "SamuraiSight"
-dev_ip = "10.10.76.18"
-server_ip = "10.10.76.2"
+    name = "SamuraiSight"
+    dev_ip = "10.10.76.18"
+    server_ip = "10.10.76.2"
+[field]
+    tag_size = 0.1651 # meters
+    layout = "2025-reefscape-welded"
+    family = "36h11"
 [cameras]
     [cameras.cam1]
-    name = "cam1"
-    dev_id = 0
-    calibration = true
-    matrix = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
-    dist_coeffs = [0, 0, 0, 0, 0]
-    lenx = 640
-    leny = 480
-    fps = 60
-    format = "Mjpeg"
+        dev_id = 0
+        calibration = true
+        matrix = [
+            [1, 0, 0], 
+            [0, 1, 0], 
+            [0, 0, 1]
+        ]
+        dist_coeffs = [0, 0, 0, 0, 0]
+        xres = 640
+        yres = 480
+        fps = 60
+        format = "kMJPEG"
     [cameras.cam2]
-    name = "cam2"
-    dev_id = 1
-    calibration = true
-    matrix = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
-    dist_coeffs = [0, 0, 0, 0, 0]
-    lenx = 640
-    leny = 480
-    fps = 60
-    format = "Mjpeg"
+        dev_id = 1
+        calibration = true
+        matrix = [
+            [1, 0, 0], 
+            [0, 1, 0], 
+            [0, 0, 1]
+        ]
+        dist_coeffs = [0, 0, 0, 0, 0]
+        xres = 640
+        yres = 480
+        fps = 60
+        format = "kMJPEG"
 [pipelines]
     [pipelines.pipeline1]
-    name = "pipeline1"
-    camera = "cam1"
-    type = "apriltag"
-    stream = false
-    rawport = 8000
-    processedport = 8001
+        camera = "cam1"
+        type = "apriltag"
+        stream = false
+        rawport = 8000
+        processedport = 8001
+        [pipelines.pipeline1.detectorConfig]
+            debug = false
+            decodeSharpening = 0.25
+            numThreads = 1
+            quadDecimate = 2.0
+            quadSigma = 0.0
+            refineEdges = true
+        [pipelines.pipeline1.detectorQTPs]
+            criticalAngle = 45.0
+            deglitch = false
+            maxLineFitMSE = 10.0
+            maxNumMaxima = 10
+            minClusterPixels = 300
+            minWhiteBlackDiff = 5
     [pipelines.pipeline2]
-    name = "pipeline2"
-    camera = "cam2"
-    type = "apriltag"
-    stream = true
-    rawport = 8002
-    processedport = 8003
+        camera = "cam2"
+        type = "apriltag"
+        stream = true
+        rawport = 8002
+        processedport = 8003
+        [pipelines.pipeline2.detectorConfig]
+            debug = false
+            decodeSharpening = 0.25
+            numThreads = 1
+            quadDecimate = 2.0
+            quadSigma = 0.0
+            refineEdges = true
+        [pipelines.pipeline2.detectorQTPs]
+            criticalAngle = 45.0
+            deglitch = false
+            maxLineFitMSE = 10.0
+            maxNumMaxima = 10
+            minClusterPixels = 300
+            minWhiteBlackDiff = 5
 
 
 

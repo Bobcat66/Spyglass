@@ -137,7 +137,7 @@ class FiducialPnPSolver():
             ]
         )
         try:
-            _, rvecs, tvecs, errors = cv2.solvePnP(
+            _, rvecs, tvecs, errors = cv2.solvePnPGeneric(
                 object_points,
                 np.array(fiducial.corners),
                 self.__camera_matrix,

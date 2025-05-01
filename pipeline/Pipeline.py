@@ -7,28 +7,56 @@ from configuration.config_types import CameraConfig, FieldConfig
 from pipeline.ApriltagDetector import ApriltagDetector
 from pipeline import annotator, pnpsolvers
 from typing import Callable
-from network import timesync
+from utils.misc import networktime
 
-class ApriltagPipeline:
+class Pipeline:
     """
-    A pipeline for detecting and solving AprilTags.
+    A base class for pipelines.
+    """
+    def __init__(
+        self,
+        name: str,
+        camConf: CameraConfig,
+        frameSupplier: cscore.VideoSource,
+        pixelFormat: cscore.VideoMode.PixelFormat,
+    ):
+        self.name = name
+        self._input = cscore.CvSink(name + "_input",pixelFormat)
+        self._input.setSource(frameSupplier)
+        self._output = cscore.CvSource(name + "_output", cscore.VideoMode.PixelFormat.kBGR, camConf.xres, camConf.yres)
+
+    def run(self) -> None:
+        """
+        Run the pipeline.
+        """
+        raise NotImplementedError("Pipeline.run() must be implemented by subclasses.")
+    
+    def addSink(self, sink: cscore.VideoSink) -> None:
+        """
+        Add a sink to the pipeline's video output.
+        :param sink: The sink to add.
+        """
+        sink.setSource(self._output)
+    
+class ApriltagPipeline(Pipeline):
+    """
+    A pipeline for detecting and solving AprilTags. Expects a grayscale source
     """
     def __init__(
         self,
         name: str,
         camConf: CameraConfig,
         fieldConf: FieldConfig,
+        detector: ApriltagDetector,
         frameSupplier: cscore.VideoSource,
-        resultConsumer: Callable[[int, NTagPoseResult, List[SingleTagPoseResult]], None]
+        resultConsumer: Callable[[int, NTagPoseResult, List[FiducialDistResult]], None]
     ):
         self.name = name
         self._camConf = camConf
         self._fieldConf = fieldConf
-        self._input = cscore.CvSink(name + "_input",cscore.VideoMode.PixelFormat.kGray)
-        self._input.setSource(frameSupplier)
-        self._output = cscore.CvSource(name + "_output", cscore.VideoMode.PixelFormat.kBGR, camConf.xres, camConf.yres)
+        super.__init__(name, camConf, frameSupplier, cscore.VideoMode.PixelFormat.kGray)
         self._resultConsumer = resultConsumer
-        self._detector = ApriltagDetector()
+        self._detector = detector
         self._solver = pnpsolvers.GeneralPnPSolver(camConf, fieldConf)
         self._fidSolver = pnpsolvers.FiducialPnPSolver(camConf, fieldConf)
     
@@ -50,20 +78,15 @@ class ApriltagPipeline:
                 stres = self._fidSolver.solve(fiducial)
                 if stres != None:
                     singleTagResults.append(stres)
-            self._resultConsumer(time,timesync.now(),nTagResult,singleTagResults)
+            self._resultConsumer(time,networktime(),nTagResult,singleTagResults)
             # Annotate the frame
             annotatedFrame = cv2.cvtColor(frame, cv2.COLOR_GRAY2BGR)
             annotator.drawFiducials(annotatedFrame, fiducials)
             for result in singleTagResults:
                 annotator.drawSingleTagPose(annotatedFrame, result, self._fieldConf, self._camConf)
             self._output.putFrame(annotatedFrame)
-    
-    def addSink(self, sink: cscore.VideoSink) -> None:
-        """
-        Add a sink to the pipeline's video output.
-        :param sink: The sink to add.
-        """
-        sink.setSource(self._output)
+
+#TODO: Add object detection pipeline
             
 
             

@@ -23,6 +23,7 @@ class FieldConfig:
     """Field configuration class."""
     tag_size: float #The size of the tags in meters
     layout: apriltag.AprilTagFieldLayout #The field layout of the field
+    family: str
 
 @dataclass
 class DeviceConfig:
@@ -31,3 +32,8 @@ class DeviceConfig:
     dev_ip: str #The IP address of the camera
     server_ip: str #The IP address of the networktables server
 
+@dataclass
+class ApriltagDetectorConfig:
+    """AprilTag detector configuration class."""
+    configs: apriltag.AprilTagDetector.Config
+    qtps: apriltag.AprilTagDetector.QuadThresholdParameters
