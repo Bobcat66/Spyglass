@@ -1,6 +1,6 @@
 [device]
 name = "SamuraiSight"
-dev_ip = "10.10.76.11"
+dev_ip = "10.10.76.18"
 server_ip = "10.10.76.2"
 [cameras]
     [cameras.cam1]

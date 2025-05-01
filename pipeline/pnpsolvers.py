@@ -11,9 +11,10 @@ from utils.vtypes import Fiducial, NTagPoseResult, SingleTagPoseResult
 from pipeline.coords import wpilibTranslationToOpenCv, openCvPoseToWpilib
 from configuration.config_types import *
 
-class CameraPnPSolver():
+class GeneralPnPSolver():
     '''
-    A PnP solver for cases with an arbitrary number of tags.
+    A PnP solver for cases with an arbitrary number of tags. When solving for multiple tags, the SQPnP algorith is used.
+    In cases where only one tag is detected, the IPPE Square algorithm is used.
     '''
     def __init__(
         self, 
@@ -113,9 +114,9 @@ class CameraPnPSolver():
             
             return NTagPoseResult(tag_ids, field_to_camera_pose, errors[0][0], None, None)
 
-class IPPESquarePnPSolver():
+class FiducialPnPSolver():
     '''
-    Solves the PnP problem for a single tag using the IPPE_Square algorithm. This is only recommended for distance calculations
+    Solves the PnP problem for a single tag using the IPPE Square algorithm. This is heavily optimized for cases in which we are estimating pose based off a single fiducial
     '''
     def __init__(
         self,

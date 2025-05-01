@@ -31,35 +31,38 @@ def toFiducial(detection: apriltag._apriltag.AprilTagDetection) -> Fiducial:
         np.array(corners, dtype=np.float64).reshape((4, 2))
     )
 
-def detect(image: Buffer) -> List[Fiducial]:
+def _detect(image: Buffer) -> List[Fiducial]:
     rawdetections: List[apriltag.AprilTagDetection] = _detector.detect(image)
     return [toFiducial(detection) for detection in rawdetections]
 
-def detectCV(image: np.typing.NDArray[np.uint8]) -> List[Fiducial]:
+def detectCV_GS(image: np.typing.NDArray[np.uint8]) -> List[Fiducial]:
+    """
+    Detect AprilTags in a grayscale image.
+    :param image: The grayscale image to detect AprilTags in.
+    :return: A list of detected AprilTags.
+    DEPRECATED
+    """
+    return _detect(image)
+
+def detectCV_BGR(image: np.typing.NDArray[np.uint8]) -> List[Fiducial]:
+    """
+    Detect AprilTags in a color image (BGR).
+    :param image: The color image to detect AprilTags in.
+    :return: A list of detected AprilTags.
+    DEPRECATED
+    """
     gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    return detect(gray_image)
+    return _detect(gray_image)
 
 def detectCV_RGB(image: np.typing.NDArray[np.uint8]) -> List[Fiducial]:
     """
     Detect AprilTags in a color image (RGB).
     :param image: The color image to detect AprilTags in.
     :return: A list of detected AprilTags.
+    DEPRECATED
     """
     gray_image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
-    return detect(gray_image)
-
-def setConfig(config: apriltag._apriltag.AprilTagDetector.Config) -> None:
-    """
-    Set the configuration of the detector.
-    """
-    _detector.setConfig(config)
-
-def getConfig() -> apriltag._apriltag.AprilTagDetector.Config:
-    """
-    Get the configuration of the detector.
-    :return: The configuration of the detector.
-    """
-    return _detector.getConfig()
+    return _detect(gray_image)
 
 def addFamily(fam: str) -> bool:
     """
@@ -75,21 +78,6 @@ def removeFamily(fam: str) -> None:
     :param fam: The family to remove.
     """
     _detector.removeFamily(fam)
-
-def getQuadThresholdParameters() -> apriltag._apriltag.AprilTagDetector.QuadThresholdParameters:
-    """
-    Get the quad threshold parameter of the detector.
-    :return: The quad threshold parameter of the detector.
-    """
-    return _detector.getQuadThresholdParameters()
-
-
-def setQuadThresholdParameters(params: apriltag._apriltag.AprilTagDetector.QuadThresholdParameters) -> None:
-    """
-    Set the quad threshold parameter of the detector.
-    :param params: The quad threshold parameter to set.
-    """
-    _detector.setQuadThresholdParameters(params)
 
 def clearFamilies() -> None:
     """

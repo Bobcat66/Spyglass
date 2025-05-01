@@ -3,12 +3,15 @@
 # the license found in the root directory of this project
 
 import cv2
-import numpy as np
 from utils.vtypes import Fiducial, SingleTagPoseResult
 from typing import List
 from configuration.config_types import *
 
-def drawFiducials(image: np.typing.NDArray[np.uint8], fiducials: List[Fiducial]) -> None:
+
+def drawFiducials(image: cv2.Mat, fiducials: List[Fiducial]) -> None:
+    '''
+    Annotates fiducial detections on a BGR image
+    '''
     for f in fiducials:
         bottom_left = tuple(f.corners[0].astype(int))
         bottom_right = tuple(f.corners[1].astype(int))
@@ -21,7 +24,7 @@ def drawFiducials(image: np.typing.NDArray[np.uint8], fiducials: List[Fiducial])
         cv2.putText(image, str(f.id), (top_left[0],top_left[1]-15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
 
 def drawSingleTagPose(
-    image: np.typing.NDArray[np.uint8], 
+    image: cv2.Mat, 
     result: SingleTagPoseResult, 
     fieldConf: FieldConfig, 
     camConf: CameraConfig

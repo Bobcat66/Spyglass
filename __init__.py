@@ -11,7 +11,7 @@ if __name__ == "__main__":
     parser.add_argument("--config", type=str, help="Path to the configuration file",default="config.toml")
     args = parser.parse_args()
 
-    config = configsources.Configurator(args.config)
+    config = configsources.FileConfigurator(args.config)
     devconfig = config.get_dev_config()
 
     # Initialize NetworkTables
