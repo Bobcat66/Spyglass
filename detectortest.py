@@ -4,7 +4,7 @@
 import cv2
 import numpy as np
 import pipeline.tagdetector as tagdetector
-from pipeline.pnpsolvers import CameraPnPSolver
+from pipeline.pnpsolvers import GeneralPnPSolver
 from pipeline.annotator import drawFiducials
 from time import perf_counter_ns
 if __name__ == "__main__":
