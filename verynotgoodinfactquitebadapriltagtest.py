@@ -14,13 +14,35 @@ if __name__ == "__main__":
         "Fake camera that doesn't exist",
         69,
         True,
-        np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]], dtype=np.float64),
-        np.array([0, 0, 0, 0, 0], dtype=np.float64),
+        np.array([
+            [
+                979.1087360312252,
+                0,
+                608.5591334099096
+            ],
+            [
+                0,
+                979.8457780935689,
+                352.9815581130428
+            ],
+            [
+                0,
+                0,
+                1
+            ]
+        ], dtype=np.float64),
+        np.array([
+            0.09581952042360092,
+            -0.2603932345361037,
+            0.0035795949814343524,
+            -0.005134231272255606,
+            0.19101200082384226
+        ], dtype=np.float64),
         None,
-        640,
-        480,
+        1280,
+        720,
         60
-    )
+    ) # These coefficients are based on my laptop's webcam
     fakeFieldConf = FieldConfig(
         tag_size=0.1651,
         layout=None,

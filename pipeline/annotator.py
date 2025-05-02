@@ -36,22 +36,24 @@ def drawSingleTagPose(
     :param fieldConf: The field configuration.
     :param camConf: The camera configuration.
     """
-    cv2.drawFrameAxes(
-        image,
-        camConf.camera_matrix,
-        camConf.dist_coeffs,
-        result.rvecs_0,
-        result.tvecs_0,
-        fieldConf.tag_size/2
-    )
-    cv2.drawFrameAxes(
-        image,
-        camConf.camera_matrix,
-        camConf.dist_coeffs,
-        result.rvecs_1,
-        result.tvecs_1,
-        fieldConf.tag_size/2
-    )
+    if result.error_0 > result.error_1:
+        cv2.drawFrameAxes(
+            image,
+            camConf.camera_matrix,
+            camConf.dist_coeffs,
+            result.rvecs_0,
+            result.tvecs_0,
+            fieldConf.tag_size/2
+        )
+    else:
+        cv2.drawFrameAxes(
+            image,
+            camConf.camera_matrix,
+            camConf.dist_coeffs,
+            result.rvecs_1,
+            result.tvecs_1,
+            fieldConf.tag_size/2
+        )
 
 def drawSingleTagPoseNew( 
     image: cv2.Mat, 
