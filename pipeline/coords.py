@@ -6,7 +6,7 @@
 # the root directory of this project.
 
 import math
-from typing import List
+from typing import List, Tuple
 
 import numpy
 import numpy.typing
@@ -24,3 +24,7 @@ def openCvPoseToWpilib(tvec: numpy.typing.NDArray[numpy.float64], rvec: numpy.ty
 
 def wpilibTranslationToOpenCv(translation: Translation3d) -> List[float]:
     return [-translation.Y(), -translation.Z(), translation.X()]
+
+def transformAxis(vec: numpy.typing.NDArray[numpy.float64]) -> numpy.typing.NDArray[numpy.float64]:
+    vec_out = numpy.array([[vec[0][0]],[-vec[1][0]],[vec[2][0]]])
+    return vec_out

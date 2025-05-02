@@ -36,7 +36,7 @@ def drawSingleTagPose(
     :param fieldConf: The field configuration.
     :param camConf: The camera configuration.
     """
-    if result.error_0 > result.error_1:
+    if result.error_0 < result.error_1:
         cv2.drawFrameAxes(
             image,
             camConf.camera_matrix,

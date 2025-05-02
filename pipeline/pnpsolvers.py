@@ -8,9 +8,10 @@ import cv2
 from wpimath.geometry import *
 from typing import List, Union
 from utils.vtypes import Fiducial, NTagPoseResult, SingleTagPoseResult
-from pipeline.coords import wpilibTranslationToOpenCv, openCvPoseToWpilib
+from pipeline.coords import wpilibTranslationToOpenCv, openCvPoseToWpilib, transformAxis
 from configuration.config_types import *
 
+#NOTE: Apriltag corners need to be reversed for IPPE square to function properly
 class GeneralPnPSolver():
     '''
     A PnP solver for cases with an arbitrary number of tags. When solving for multiple tags, the SQPnP algorith is used.
@@ -63,10 +64,10 @@ class GeneralPnPSolver():
         elif len(tag_ids) == 1:
             object_points = np.array(
                 [
-                    [-self.__tag_size / 2.0, self.__tag_size / 2.0, 0],
-                    [self.__tag_size / 2.0, self.__tag_size / 2.0, 0],
                     [self.__tag_size / 2.0, -self.__tag_size / 2.0, 0],
                     [-self.__tag_size / 2.0, -self.__tag_size / 2.0, 0],
+                    [-self.__tag_size / 2.0, self.__tag_size / 2.0, 0],
+                    [self.__tag_size / 2.0, self.__tag_size / 2.0, 0],
                 ]
             )
             try:
@@ -130,10 +131,10 @@ class FiducialPnPSolver():
     def solve(self,fiducial: Fiducial) -> Union[SingleTagPoseResult,None]:
         object_points = np.array(
             [
-                [-self.__tag_size / 2.0, self.__tag_size / 2.0, 0],
-                [self.__tag_size / 2.0, self.__tag_size / 2.0, 0],
                 [self.__tag_size / 2.0, -self.__tag_size / 2.0, 0],
                 [-self.__tag_size / 2.0, -self.__tag_size / 2.0, 0],
+                [-self.__tag_size / 2.0, self.__tag_size / 2.0, 0],
+                [self.__tag_size / 2.0, self.__tag_size / 2.0, 0],
             ]
         )
         try:
@@ -146,9 +147,10 @@ class FiducialPnPSolver():
             )
         except:
             return None
-        
-        camera_to_tag_pose_0 = openCvPoseToWpilib(tvecs[0], rvecs[0])
-        camera_to_tag_pose_1 = openCvPoseToWpilib(tvecs[1], rvecs[1])
+        rvec0 = transformAxis(rvecs[0])
+        tvec0 = transformAxis(tvecs[0])
+        rvec1 = transformAxis(rvecs[1])
+        tvec1 = transformAxis(tvecs[1])
         return SingleTagPoseResult(
             fiducial.id,
             fiducial.corners,

@@ -6,16 +6,21 @@ from dataclasses import dataclass
 from typing import List, Union
 from wpimath.geometry import Pose3d
 import numpy
+import cv2
 
 @dataclass(frozen=True)
 class Fiducial:
     id: int
     corners: numpy.typing.NDArray[numpy.float64]
+    decisionMargin: float
+    hammingDist: float
 
 @dataclass(frozen=True)
-class FiducialDistResult:
+class TagDistResult:
     id: int
     corners: numpy.typing.NDArray[numpy.float64]
+    decisionMargin: float
+    hammingDist: float
     distance: float
 
 @dataclass(frozen=True)
@@ -42,4 +47,12 @@ class ObjDetectResult:
     obj_class: int
     confidence: float
     corners: numpy.typing.NDArray[numpy.float64] #corners of the bounding rectangle
+
+@dataclass(frozen=True)
+class PipelineResult:
+    objDetectResult: Union[ObjDetectResult,None]
+    nTagPoseResult: Union[NTagPoseResult,None]
+    tagDistResult: List[TagDistResult]
+    frame: cv2.Mat
+
 

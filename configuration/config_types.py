@@ -37,9 +37,10 @@ class PipelineConfig:
     """Pipeline configuration class."""
     type: str
     camera: str
+    grayscale: bool
     stream: bool
-    rawport: int
-    processedport: int
+    rawport: Union[int,None]
+    processedport: Union[int,None]
     confidence: Union[float, None]
     model: Union[str, None]
     detConfigs: Union[apriltag.AprilTagDetector.Config,None]

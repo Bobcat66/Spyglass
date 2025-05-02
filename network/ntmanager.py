@@ -33,7 +33,7 @@ class NTManager():
             self,
             timestamp: int, #microseconds since FPGA epoch
             result: Union[NTagPoseResult,None],
-            fiducialResults: List[FiducialDistResult]
+            distResults: List[TagDistResult]
         ) -> None:
         result_data: List[float] = [0] #1st element indicates the number of results
         if result != None:
@@ -54,7 +54,7 @@ class NTManager():
                 result_data.append(result.pose_1.rotation().getQuaternion().X())
                 result_data.append(result.pose_1.rotation().getQuaternion().Y())
                 result_data.append(result.pose_1.rotation().getQuaternion().Z())
-        for fiducial in fiducialResults:
+        for fiducial in distResults:
             result_data.append(fiducial.id)
             for corner in fiducial.corners.ravel(): # corners are stored as a 2d array, numpy's ravel method flattens them into a 1d array for networktables
                 result_data.append(corner)

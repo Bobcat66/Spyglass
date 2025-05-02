@@ -11,6 +11,7 @@ def _toFiducial(detection: apriltag._apriltag.AprilTagDetection) -> Fiducial:
     :param detection: The AprilTag detection to convert.
     :return: The converted Fiducial object.
     """
+    #TODO: Maybe shift corner position in array for OpenCV? IDK
     corners: List[float] = []
     for i in range(4):
         cornerPoint: apriltag._apriltag.AprilTagDetection.Point = detection.getCorner(i)
@@ -18,7 +19,9 @@ def _toFiducial(detection: apriltag._apriltag.AprilTagDetection) -> Fiducial:
 
     return Fiducial(
         detection.getId(),
-        np.array(corners, dtype=np.float64).reshape((4, 2))
+        np.array(corners, dtype=np.float64).reshape((4, 2)),
+        detection.getDecisionMargin(),
+        detection.getHamming()
     )
 
 class ApriltagDetector:
