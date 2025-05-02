@@ -43,12 +43,11 @@ class VisionWorker:
             res = self._pipeline.process(frame)
             self._ntman.publishApriltagPoseResult(time,res)
             if res.frame is not None: self._output.putFrame(res.frame)
-    #TODO: Add thread management
 
-    def start(self):
+    def start(self) -> None:
         self._running = True
         self._thread.start()
 
-    def stop(self):
+    def stop(self) -> None:
         self._running = False
         self._thread.join()
