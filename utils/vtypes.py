@@ -52,7 +52,7 @@ class ObjDetectResult:
 class PipelineResult:
     objDetectResult: Union[ObjDetectResult,None]
     nTagPoseResult: Union[NTagPoseResult,None]
-    tagDistResult: List[TagDistResult]
+    tagDistResults: List[TagDistResult]
     frame: Union[cv2.Mat,None]
 
 

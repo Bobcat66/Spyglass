@@ -8,13 +8,11 @@ from utils.vtypes import *
 
 inst: ntcore.NetworkTableInstance
 _gtname: str
-_gyrosub: ntcore.DoubleArraySubscriber
 
 def initialize(name: str, ntinstance: ntcore.NetworkTableInstance) -> None:
-    global _gtname, inst, _gyrosub
+    global _gtname, inst
     _gtname = name
     inst = ntinstance
-    _gyrosub = inst.getDoubleArrayTopic("gyro").subscribe()
 
 class NTManager():
     def __init__(self,pipename: str):
@@ -93,10 +91,4 @@ def getGlobalTable() -> ntcore.NetworkTable:
 def _getPipeTable(pipename : str) -> ntcore.NetworkTable:
     return inst.getTable(_gtname + '/' + pipename)
 
-def getGyroData() -> List[float]:
-    """
-    Returns the gyro data from the global NT table.
-    """
-    #TODO: write a robot-side publisher for this, and make it fast
-    return _gyrosub.get()
     

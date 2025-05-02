@@ -9,7 +9,7 @@
 [field]
     tag_size = 0.1651 # meters
     layout = "2025-reefscape-welded"
-    family = "36h11"
+    family = "tag36h11"
 [cameras]
     [cameras.cam1]
         dev_id = 0
@@ -44,14 +44,14 @@
         stream = false
         rawport = 8000
         processedport = 8001
-        [pipelines.pipeline1.detectorConfig]
+        [pipelines.pipeline1.detConfigs]
             debug = false
             decodeSharpening = 0.25
             numThreads = 1
             quadDecimate = 2.0
             quadSigma = 0.0
             refineEdges = true
-        [pipelines.pipeline1.detectorQTPs]
+        [pipelines.pipeline1.detQtps]
             criticalAngle = 45.0
             deglitch = false
             maxLineFitMSE = 10.0
@@ -64,7 +64,8 @@
         stream = true
         rawport = 8002
         processedport = 8003
-        confidence = 0.8
-        model = "algae.pt" # Pytorch placeholder for testing on my laptop, when deployed on a coprocessor this will likely be an RKNN or tensorflow lite model
+        [pipelines.pipeline2.modelConfig]
+            confidence = 0.8
+            model = "coral.pt"
 
 

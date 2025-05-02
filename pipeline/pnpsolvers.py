@@ -10,6 +10,7 @@ from typing import List, Union
 from utils.vtypes import Fiducial, NTagPoseResult, SingleTagPoseResult
 from pipeline.coords import wpilibTranslationToOpenCv, openCvPoseToWpilib, transformAxis
 from configuration.config_types import *
+from time import perf_counter_ns
 
 #NOTE: Apriltag corners need to be reversed for IPPE square to function properly
 class GeneralPnPSolver():
@@ -36,6 +37,8 @@ class GeneralPnPSolver():
         tag_ids: List[int] = []
         tag_poses: List[Pose3d] = []
         image_points: List[float] = []
+        
+        time_0 = perf_counter_ns() / 1000000.0
         for fiducial in fiducials:
             fid_pose: Pose3d = None
             if fiducial.id in [tag.ID for tag in self.__field.getTags()]:
@@ -59,6 +62,8 @@ class GeneralPnPSolver():
                 ]
                 tag_ids.append(fiducial.id)
                 tag_poses.append(fid_pose)
+                
+        time_1 = perf_counter_ns() / 1000000.0
         if len(tag_ids) == 0:
             return None
         elif len(tag_ids) == 1:
@@ -71,6 +76,8 @@ class GeneralPnPSolver():
                 ]
             )
             try:
+                
+                time_1 = perf_counter_ns() / 1000000.0
                 _, rvecs, tvecs, errors = cv2.solvePnPGeneric(
                     object_points,
                     np.array(image_points),
@@ -78,9 +85,11 @@ class GeneralPnPSolver():
                     self.__dist_coeffs,
                     flags=cv2.SOLVEPNP_IPPE_SQUARE
                 )
+                
+                time_2 = perf_counter_ns() / 1000000.0
             except:
                 return None
-        
+            time_2 = perf_counter_ns() / 1000000.0
             # Calculate WPILib camera poses
             field_to_tag_pose = tag_poses[0]
             camera_to_tag_pose_0 = openCvPoseToWpilib(tvecs[0], rvecs[0])
@@ -92,6 +101,12 @@ class GeneralPnPSolver():
             field_to_camera_pose_0 = Pose3d(field_to_camera_0.translation(), field_to_camera_0.rotation())
             field_to_camera_pose_1 = Pose3d(field_to_camera_1.translation(), field_to_camera_1.rotation())
 
+            
+            time_3 = perf_counter_ns() / 1000000.0
+            print(f"t1 - t0: {str(time_1-time_0)} ms")
+            print(f"t2 - t1: {str(time_2-time_1)} ms")
+            print(f"t3 - t2: {str(time_3-time_2)} ms")
+            print(f"total (t3 - t0): {str(time_3-time_0)} ms")
             # Return result
             return NTagPoseResult(tag_ids, field_to_camera_pose_0, errors[0][0], field_to_camera_pose_1, errors[1][0])
         else:
@@ -147,10 +162,6 @@ class FiducialPnPSolver():
             )
         except:
             return None
-        rvec0 = transformAxis(rvecs[0])
-        tvec0 = transformAxis(tvecs[0])
-        rvec1 = transformAxis(rvecs[1])
-        tvec1 = transformAxis(tvecs[1])
         return SingleTagPoseResult(
             fiducial.id,
             fiducial.corners,

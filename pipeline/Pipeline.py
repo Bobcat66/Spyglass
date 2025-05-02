@@ -37,7 +37,7 @@ class ApriltagPipeline(Pipeline):
         fieldConf: FieldConfig,
         camConf: CameraConfig
     ):
-        super.__init__(name)
+        super().__init__(name)
         self._detector = detector
         self._solver = solver
         self._fidSolver = fidSolver
@@ -56,7 +56,7 @@ class ApriltagPipeline(Pipeline):
         for fiducial in fiducials:
             stres = self._fidSolver.solve(fiducial)
             if stres != None:
-                singleTagResults.append(stres)
+                singleTagResults.append((stres,fiducial))
         
         distResults: List[TagDistResult] = []
         annotatedFrame: Union[cv2.Mat,None] = None
@@ -65,7 +65,7 @@ class ApriltagPipeline(Pipeline):
             annotatedFrame = cv2.cvtColor(frame, cv2.COLOR_GRAY2BGR)
             annotator.drawFiducials(annotatedFrame, fiducials)
             for result in singleTagResults:
-                annotator.drawSingleTagPose(annotatedFrame, result, self._fieldConf, self._camConf)
+                annotator.drawSingleTagPose(annotatedFrame, result[0], self._fieldConf, self._camConf)
                 distResults.append(TagDistResult(
                     result[1].id,
                     result[1].corners,
@@ -88,9 +88,7 @@ class ApriltagPipeline(Pipeline):
 #TODO: Add object detection pipeline
             
 
-            
-
-
+    
 def buildPipeline(pipConf: PipelineConfig, camConf: CameraConfig, fieldConf: FieldConfig) -> Pipeline:
     match pipConf.type:
         case "apriltag":
