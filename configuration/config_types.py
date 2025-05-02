@@ -35,6 +35,7 @@ class DeviceConfig:
 @dataclass
 class PipelineConfig:
     """Pipeline configuration class."""
+    name: str
     type: str
     camera: str
     grayscale: bool

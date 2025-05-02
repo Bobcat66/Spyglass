@@ -19,21 +19,21 @@ def initialize(name: str, ntinstance: ntcore.NetworkTableInstance) -> None:
 class NTManager():
     def __init__(self,pipename: str):
         #self.__pipename: str = pipename
-        self.__table: ntcore.NetworkTable = __getPipeTable(pipename)
-        self.__apriltag_results_pub: ntcore.DoubleArrayPublisher = self.__table.getDoubleArrayTopic("apriltag_results").publish(
+        self._table: ntcore.NetworkTable = _getPipeTable(pipename)
+        self._apriltag_results_pub: ntcore.DoubleArrayPublisher = self._table.getDoubleArrayTopic("apriltag_results").publish(
             ntcore.PubSubOptions(periodic=0.01, sendAll=True, keepDuplicates=True)
         )
-        self.__objdetect_results_pub: ntcore.DoubleArrayPublisher = self.__table.getDoubleArrayTopic("objdetect_results").publish(
+        self._objdetect_results_pub: ntcore.DoubleArrayPublisher = self._table.getDoubleArrayTopic("objdetect_results").publish(
             ntcore.PubSubOptions(periodic=0.01, sendAll=True, keepDuplicates=True)
         )
-        self.__apriltag_fps_pub: ntcore.IntegerPublisher = self.__table.IntegerTopic("apriltag_fps").publish()
-        self.__objdetect_fps_pub: ntcore.IntegerPublisher = self.__table.IntegerTopic("objdetect_fps").publish()
+        self._apriltag_fps_pub: ntcore.IntegerPublisher = self._table.getIntegerTopic("apriltag_fps").publish()
+        self._objdetect_fps_pub: ntcore.IntegerPublisher = self._table.getIntegerTopic("objdetect_fps").publish()
     
-    def publishNTagPoseResult(
+    def publishApriltagPoseResult(
             self,
             timestamp: int, #microseconds since FPGA epoch
             result: Union[NTagPoseResult,None],
-            distResults: List[TagDistResult]
+            tagResults: List[TagDistResult]
         ) -> None:
         result_data: List[float] = [0] #1st element indicates the number of results
         if result != None:
@@ -54,12 +54,14 @@ class NTManager():
                 result_data.append(result.pose_1.rotation().getQuaternion().X())
                 result_data.append(result.pose_1.rotation().getQuaternion().Y())
                 result_data.append(result.pose_1.rotation().getQuaternion().Z())
-        for fiducial in distResults:
-            result_data.append(fiducial.id)
-            for corner in fiducial.corners.ravel(): # corners are stored as a 2d array, numpy's ravel method flattens them into a 1d array for networktables
+        for tagResult in tagResults:
+            result_data.append(tagResult.id)
+            for corner in tagResult.corners.ravel(): # corners are stored as a 2d array, numpy's ravel method flattens them into a 1d array for networktables
                 result_data.append(corner)
-            result_data.append(fiducial.distance)
-        self.__apriltag_results_pub.set(result_data,timestamp)
+            result_data.append(tagResult.decisionMargin)
+            result_data.append(tagResult.hammingDist)
+            result_data.append(tagResult.distance)
+        self._apriltag_results_pub.set(result_data,timestamp)
     
     def publishObjDetectResult(
             self,
@@ -73,13 +75,13 @@ class NTManager():
             result_data.append(res.confidence)
             for corner in res.corners.ravel():
                 result_data.append(corner)
-        self.__objdetect_results_pub.set(result_data,timestamp)
+        self._objdetect_results_pub.set(result_data,timestamp)
 
     def publishApriltagFPS(self, fps: int, timestamp: int) -> None:
-        self.__apriltag_fps_pub.set(fps,timestamp)
+        self._apriltag_fps_pub.set(fps,timestamp)
 
     def publishObjDetectFPS(self, fps: int, timestamp: int) -> None:    
-        self.__objdetect_fps_pub.set(fps,timestamp)
+        self._objdetect_fps_pub.set(fps,timestamp)
 
 
 def getGlobalTable() -> ntcore.NetworkTable:
@@ -88,7 +90,7 @@ def getGlobalTable() -> ntcore.NetworkTable:
     """
     return inst.getTable(_gtname)
 
-def __getPipeTable(pipename : str) -> ntcore.NetworkTable:
+def _getPipeTable(pipename : str) -> ntcore.NetworkTable:
     return inst.getTable(_gtname + '/' + pipename)
 
 def getGyroData() -> List[float]:

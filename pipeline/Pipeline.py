@@ -1,9 +1,8 @@
 
 import cv2
 import numpy as np
-import cscore
 from utils.vtypes import *
-from configuration.config_types import CameraConfig, FieldConfig
+from configuration.config_types import CameraConfig, FieldConfig, PipelineConfig
 from pipeline.ApriltagDetector import ApriltagDetector
 from pipeline import annotator, pnpsolvers
 from typing import Tuple
@@ -31,17 +30,20 @@ class ApriltagPipeline(Pipeline):
     def __init__(
         self,
         name: str,
-        camConf: CameraConfig,
-        fieldConf: FieldConfig,
         detector: ApriltagDetector,
+        solver: pnpsolvers.GeneralPnPSolver,
+        fidSolver: pnpsolvers.FiducialPnPSolver,
+        stream: bool,
+        fieldConf: FieldConfig,
+        camConf: CameraConfig
     ):
-        self.name = name
-        self._camConf = camConf
-        self._fieldConf = fieldConf
         super.__init__(name)
         self._detector = detector
-        self._solver = pnpsolvers.GeneralPnPSolver(camConf, fieldConf)
-        self._fidSolver = pnpsolvers.FiducialPnPSolver(camConf, fieldConf)
+        self._solver = solver
+        self._fidSolver = fidSolver
+        self._stream = stream
+        self._fieldConf = fieldConf
+        self._camConf = camConf
     
     def process(self,frame: cv2.Mat) -> PipelineResult:
         """
@@ -55,23 +57,51 @@ class ApriltagPipeline(Pipeline):
             stres = self._fidSolver.solve(fiducial)
             if stres != None:
                 singleTagResults.append(stres)
-        # Annotate the frame
-        annotatedFrame = cv2.cvtColor(frame, cv2.COLOR_GRAY2BGR)
-        annotator.drawFiducials(annotatedFrame, fiducials)
-        distResults = List[TagDistResult]
-        for result in singleTagResults:
-            annotator.drawSingleTagPose(annotatedFrame, result, self._fieldConf, self._camConf)
-            distResults.append(TagDistResult(
-                result[1].id,
-                result[1].corners,
-                result[1].decisionMargin,
-                result[1].hammingDist,
-                np.linalg.norm(result[0].tvecs_0 if result[0].error_0 <= result[0].error_1 else result[0].tvecs_1)
-            ))
-        return PipelineResult(annotatedFrame,nTagResult,distResults,annotatedFrame)
+        
+        distResults: List[TagDistResult] = []
+        annotatedFrame: Union[cv2.Mat,None] = None
+        if self._stream:
+            # Annotate the frame
+            annotatedFrame = cv2.cvtColor(frame, cv2.COLOR_GRAY2BGR)
+            annotator.drawFiducials(annotatedFrame, fiducials)
+            for result in singleTagResults:
+                annotator.drawSingleTagPose(annotatedFrame, result, self._fieldConf, self._camConf)
+                distResults.append(TagDistResult(
+                    result[1].id,
+                    result[1].corners,
+                    result[1].decisionMargin,
+                    result[1].hammingDist,
+                    np.linalg.norm(result[0].tvecs_0 if result[0].error_0 <= result[0].error_1 else result[0].tvecs_1)
+                ))
+        else:
+            for result in singleTagResults:
+                distResults.append(TagDistResult(
+                    result[1].id,
+                    result[1].corners,
+                    result[1].decisionMargin,
+                    result[1].hammingDist,
+                    np.linalg.norm(result[0].tvecs_0 if result[0].error_0 <= result[0].error_1 else result[0].tvecs_1)
+                ))
+        
+        return PipelineResult(None,nTagResult,distResults,annotatedFrame)
 
 #TODO: Add object detection pipeline
             
 
             
 
+
+def buildPipeline(pipConf: PipelineConfig, camConf: CameraConfig, fieldConf: FieldConfig) -> Pipeline:
+    match pipConf.type:
+        case "apriltag":
+            solver = pnpsolvers.GeneralPnPSolver(camConf,fieldConf)
+            fidSolver = pnpsolvers.FiducialPnPSolver(camConf,fieldConf)
+            detector = ApriltagDetector()
+            detector.addFamily(fieldConf.family)
+            if pipConf.detConfigs is not None:
+                detector.setConfig(pipConf.detConfigs)
+            if pipConf.detQtps is not None:
+                detector.setQuadThresholdParameters(pipConf.detQtps)
+            return ApriltagPipeline(pipConf.name,detector,solver,fidSolver,pipConf.stream,fieldConf,camConf)
+        case "objdetect":
+            raise NotImplementedError("WIP")
