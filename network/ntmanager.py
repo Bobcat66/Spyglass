@@ -88,6 +88,9 @@ def getGlobalTable() -> ntcore.NetworkTable:
     """
     return inst.getTable(_gtname)
 
+def now() -> int:
+    return ntcore._now()
+
 def _getPipeTable(pipename : str) -> ntcore.NetworkTable:
     return inst.getTable(_gtname + '/' + pipename)
 

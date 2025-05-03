@@ -38,7 +38,6 @@ class GeneralPnPSolver():
         tag_poses: List[Pose3d] = []
         image_points: List[float] = []
         
-        time_0 = perf_counter_ns() / 1000000.0
         for fiducial in fiducials:
             fid_pose: Pose3d = None
             if fiducial.id in [tag.ID for tag in self.__field.getTags()]:
@@ -62,8 +61,6 @@ class GeneralPnPSolver():
                 ]
                 tag_ids.append(fiducial.id)
                 tag_poses.append(fid_pose)
-                
-        time_1 = perf_counter_ns() / 1000000.0
         if len(tag_ids) == 0:
             return None
         elif len(tag_ids) == 1:
@@ -85,11 +82,9 @@ class GeneralPnPSolver():
                     self.__dist_coeffs,
                     flags=cv2.SOLVEPNP_IPPE_SQUARE
                 )
-                
-                time_2 = perf_counter_ns() / 1000000.0
             except:
                 return None
-            time_2 = perf_counter_ns() / 1000000.0
+           
             # Calculate WPILib camera poses
             field_to_tag_pose = tag_poses[0]
             camera_to_tag_pose_0 = openCvPoseToWpilib(tvecs[0], rvecs[0])
@@ -100,13 +95,6 @@ class GeneralPnPSolver():
             field_to_camera_1 = field_to_tag_pose.transformBy(camera_to_tag_1.inverse())
             field_to_camera_pose_0 = Pose3d(field_to_camera_0.translation(), field_to_camera_0.rotation())
             field_to_camera_pose_1 = Pose3d(field_to_camera_1.translation(), field_to_camera_1.rotation())
-
-            
-            time_3 = perf_counter_ns() / 1000000.0
-            print(f"t1 - t0: {str(time_1-time_0)} ms")
-            print(f"t2 - t1: {str(time_2-time_1)} ms")
-            print(f"t3 - t2: {str(time_3-time_2)} ms")
-            print(f"total (t3 - t0): {str(time_3-time_0)} ms")
             # Return result
             return NTagPoseResult(tag_ids, field_to_camera_pose_0, errors[0][0], field_to_camera_pose_1, errors[1][0])
         else:
