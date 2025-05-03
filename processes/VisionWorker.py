@@ -57,7 +57,7 @@ class VisionWorker:
             #print("grab frame time: " + str((t1-t0)*1000) + " ms")
             
             if time == 0: 
-                print(self._input.getError())
+                logger.warning(self._input.getError())
             else:
                 if self._grayscale: frame = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
             #t0 = perf_counter()
