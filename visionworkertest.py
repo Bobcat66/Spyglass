@@ -5,8 +5,14 @@ import robotpy_apriltag as apriltag
 import ntcore
 import time
 from network import ntmanager
+import logging
 if __name__ == "__main__":
-     # Initialize NetworkTables
+    # Configure logging
+    logging.basicConfig(
+        level=logging.INFO,  # Use DEBUG for more verbose logs
+        format='%(asctime)s [%(levelname)s] %(name)s: %(message)s'
+    )
+    # Initialize NetworkTables
     inst: ntcore.NetworkTableInstance = ntcore.NetworkTableInstance.getDefault()
     inst.startServer("10.10.76.2")
     inst.startClient4("SamsightClient")
@@ -39,10 +45,10 @@ if __name__ == "__main__":
             -0.005134231272255606,
             0.19101200082384226
         ], dtype=np.float64),
-        cscore.VideoMode.PixelFormat.kMJPEG,
+        cscore.VideoMode.PixelFormat.kYUYV,
         1280,
         720,
-        60
+        30
     )
     fieldConfig = FieldConfig(
         tag_size=0.1651,

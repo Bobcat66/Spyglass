@@ -5,11 +5,13 @@
 import ntcore
 from typing import List, Union
 from utils.vtypes import *
-
+import logging
+logger = logging.getLogger(__name__)
 inst: ntcore.NetworkTableInstance
 _gtname: str
 
 def initialize(name: str, ntinstance: ntcore.NetworkTableInstance) -> None:
+    logger.info("ntmanager initialized")
     global _gtname, inst
     _gtname = name
     inst = ntinstance
