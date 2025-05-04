@@ -41,8 +41,6 @@ class VisionWorker:
         self._running: bool = False # Simple variable assignments are atomic by default in python
         self._thread = threading.Thread(target=self.run,name=f"{pipConf.name}_worker",daemon=True)
     
-    #TODO: Figure out how to speed up frame grabbing. This is a serious source of latency right now
-    #Maybe the raw stream is screwing things up? Test
     def run(self) -> None:
         """
         Run the pipeline.
@@ -56,6 +54,7 @@ class VisionWorker:
             
             if time == 0: 
                 logger.warning(self._input.getError())
+
             else:
                 if self._grayscale: frame = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
             
@@ -71,14 +70,14 @@ class VisionWorker:
                 lastFPSTimestamp = perf_counter()
     
     def start(self) -> None:
-        logger.info(f"Started {self._pipConf.name} worker")
         self._running = True
         self._thread.start()
+        logger.info(f"Started {self._pipConf.name} worker")
 
     def stop(self) -> None:
-        logger.info(f"Stopped {self._pipConf.name} worker")
         self._running = False
         self._thread.join()
+        logger.info(f"Stopped {self._pipConf.name} worker")
     
     def startOnMainThread(self) -> None:
         #Starts the worker on the main thread, for testing. DO NOT USE, WILL BLOCK MAIN THREAD INDEFINITELY
