@@ -34,7 +34,6 @@ class Pipeline:
         t0 = perf_counter_ns()
         res = self.process(frame)
         t1 = perf_counter_ns()
-        if verbose: logger.info(f"{self.name} benchmarked at {t1-t0/1e6:.3f} ms per cycle")
         return t1-t0,res
     
     def deepBenchmark(self,frame: cv2.Mat) -> Tuple[List[int],PipelineResult]:
