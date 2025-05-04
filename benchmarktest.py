@@ -71,8 +71,5 @@ if __name__ == "__main__":
     worker = VisionWorker(fieldConfig,camConfig,pipConfig)
     #print(cscore.UsbCamera.enumerateUsbCameras())
     
-    worker.start()
-    while True:
-        #Yield to the worker thread
-        time.sleep(60)
+    worker.benchmark(30)
     

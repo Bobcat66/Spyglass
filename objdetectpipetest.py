@@ -57,14 +57,14 @@ if __name__ == "__main__":
     )
     pipConfig = PipelineConfig(
         "test_pipe",
-        "apriltag",
+        "objdetect",
         "webcam",
-        True,
+        False,
         True,
         8000,
         8001,
         None,
-        None,
+        "models/yolo11n.pt",
         None,
         None
     )
@@ -75,4 +75,5 @@ if __name__ == "__main__":
     while True:
         #Yield to the worker thread
         time.sleep(60)
+    print("END")
     

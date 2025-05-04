@@ -50,7 +50,8 @@ if __name__ == "__main__":
         ret, frame = cam.read()
         if not ret:
             print("Can't receive frame (stream end?). Exiting ...")
-            break
+            
+        print(frame.shape)
         detections = detector.detect(frame)
         annotator.drawObjDetectResults(frame,detections,detector.getClassNames())
         cv2.imshow('Webcam Feed', frame)
