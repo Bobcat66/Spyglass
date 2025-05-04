@@ -118,7 +118,7 @@ class VisionWorker:
             prc_t0 = perf_counter_ns()
             try:
                 dbench,res = self._pipeline.deepBenchmark(frame)
-            except Exception as e:
+            except:
                 logger.warning(f"{self._pipConf.name} unable to process frame due to an unhandled exception.")
                 traceback.print_exc()
                 continue

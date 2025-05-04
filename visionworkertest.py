@@ -46,8 +46,8 @@ if __name__ == "__main__":
             0.19101200082384226
         ], dtype=np.float64),
         cscore.VideoMode.PixelFormat.kYUYV,
-        1280,
-        720,
+        640,
+        480,
         30
     )
     fieldConfig = FieldConfig(
