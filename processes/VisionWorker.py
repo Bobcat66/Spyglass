@@ -9,7 +9,7 @@ from network.ntmanager import NTManager
 from configuration.config_types import *
 from cscore import CameraServer
 import cv2
-from time import perf_counter
+from time import perf_counter_ns
 import logging
 
 logger = logging.getLogger(__name__)
@@ -46,28 +46,27 @@ class VisionWorker:
         Run the pipeline.
         """
         frame: cv2.Mat = np.zeros(shape=(self._camConf.xres,self._camConf.yres,1),dtype=np.uint8)
-        lastFPSTimestamp = perf_counter()
+        nanosSinceLastFPS = perf_counter_ns()
         frameCounter = 0
         while self._running:
 
             time, frame = self._input.grabFrame(frame)
-            
+
             if time == 0: 
                 logger.warning(self._input.getError())
-
             else:
                 if self._grayscale: frame = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
             
             res = self._pipeline.process(frame)
-            self._ntman.publishApriltagPoseResult(time,res.nTagPoseResult,res.tagDistResults)
+            self._ntman.publishResult(time,res)
             if res.frame is not None: self._output.putFrame(res.frame)
             frameCounter += 1
             #Measure FPS
-            if perf_counter() - lastFPSTimestamp >= 1.0:
+            if perf_counter_ns() - nanosSinceLastFPS >= 1e9:
                 logger.info(f"{self._pipConf.name} running at {frameCounter} fps")
-                self._ntman.publishApriltagFPS(frameCounter,time)
+                self._ntman.publishFPS(frameCounter,time)
                 frameCounter = 0
-                lastFPSTimestamp = perf_counter()
+                nanosSinceLastFPS = perf_counter_ns()
     
     def start(self) -> None:
         self._running = True

@@ -6,9 +6,9 @@ import robotpy_apriltag as apriltag
 import numpy as np
 import cv2
 from wpimath.geometry import *
-from typing import List, Union
+from typing import List, Union, Tuple
 from utils.vtypes import Fiducial, NTagPoseResult, SingleTagPoseResult
-from pipeline.coords import wpilibTranslationToOpenCv, openCvPoseToWpilib, transformAxis
+from pipeline.coords import wpilibTranslationToOpenCv, openCvPoseToWpilib
 from configuration.config_types import *
 from time import perf_counter_ns
 
@@ -28,7 +28,7 @@ class GeneralPnPSolver():
         self.__camera_matrix: np.typing.NDArray[np.float64] = camConf.camera_matrix
         self.__dist_coeffs: np.typing.NDArray[np.float64] = camConf.dist_coeffs
     
-    def solve(self,fiducials: List[Fiducial]) -> Union[NTagPoseResult, None]:
+    def solve(self,fiducials: List[Fiducial]) -> Union[NTagPoseResult,None]:
         """
         Solves the Perspective-n-Point problem using the fiducials detected by the camera.
         :param fiducials: List of Fiducial detections
@@ -73,8 +73,6 @@ class GeneralPnPSolver():
                 ]
             )
             try:
-                
-                time_1 = perf_counter_ns() / 1000000.0
                 _, rvecs, tvecs, errors = cv2.solvePnPGeneric(
                     object_points,
                     np.array(image_points),
@@ -96,7 +94,7 @@ class GeneralPnPSolver():
             field_to_camera_pose_0 = Pose3d(field_to_camera_0.translation(), field_to_camera_0.rotation())
             field_to_camera_pose_1 = Pose3d(field_to_camera_1.translation(), field_to_camera_1.rotation())
             # Return result
-            return NTagPoseResult(tag_ids, field_to_camera_pose_0, errors[0][0], field_to_camera_pose_1, errors[1][0])
+            return NTagPoseResult(field_to_camera_pose_0, errors[0][0], field_to_camera_pose_1, errors[1][0])
         else:
             # Solve for multiple tags
             try:
@@ -116,7 +114,7 @@ class GeneralPnPSolver():
             field_to_camera = camera_to_field.inverse()
             field_to_camera_pose = Pose3d(field_to_camera.translation(), field_to_camera.rotation())
             
-            return NTagPoseResult(tag_ids, field_to_camera_pose, errors[0][0], None, None)
+            return NTagPoseResult(field_to_camera_pose, errors[0][0], None, None)
 
 class FiducialPnPSolver():
     '''

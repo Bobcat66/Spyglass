@@ -42,7 +42,7 @@ class PipelineConfig:
     stream: bool
     rawport: Union[int,None]
     processedport: Union[int,None]
-    confidence: Union[float, None]
+    confidence: Union[float, None] #TODO: Remove?
     model: Union[str, None]
     detConfigs: Union[apriltag.AprilTagDetector.Config,None]
     detQtps: Union[apriltag.AprilTagDetector.QuadThresholdParameters,None]

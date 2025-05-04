@@ -85,8 +85,9 @@ class ApriltagPipeline(Pipeline):
                     result[1].hammingDist,
                     np.linalg.norm(result[0].tvecs_0 if result[0].error_0 <= result[0].error_1 else result[0].tvecs_1)
                 ))
+        apriltagResult = ApriltagResult(distResults,nTagResult)
         
-        return PipelineResult(None,nTagResult,distResults,annotatedFrame)
+        return PipelineResult(apriltagResult,None,annotatedFrame)
 
 #TODO: Add object detection pipeline
             

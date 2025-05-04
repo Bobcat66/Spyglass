@@ -36,7 +36,6 @@ class SingleTagPoseResult:
 
 @dataclass(frozen=True)
 class NTagPoseResult:
-    fid_ids: List[int]
     pose_0: Pose3d
     error_0: float
     pose_1: Union[Pose3d, None] #The SolvePnP algorithm sometimes can return two poses, but only one is valid. This Union is meant to approximate an optional
@@ -46,14 +45,19 @@ class NTagPoseResult:
 class ObjDetectResult:
     obj_class: int
     confidence: float
+    percent_area: float
     corner_angles: numpy.typing.NDArray[numpy.float64] #The euler angles of the bounding box corners relative to the principal axis of the camera, in radians
     corner_pixels: numpy.typing.NDArray[numpy.float64] #the actual pixel locations of the bounding box corners
 
 @dataclass(frozen=True)
+class ApriltagResult:
+    fiducials: List[TagDistResult]
+    poseResult: Union[NTagPoseResult,None]
+
+@dataclass(frozen=True)
 class PipelineResult:
-    objDetectResult: Union[ObjDetectResult,None]
-    nTagPoseResult: Union[NTagPoseResult,None]
-    tagDistResults: List[TagDistResult]
+    apriltagResult: Union[ApriltagResult,None]
+    objDetectResults: Union[List[ObjDetectResult],None]
     frame: Union[cv2.Mat,None]
 
 
