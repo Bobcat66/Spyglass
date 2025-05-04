@@ -214,7 +214,7 @@ Avg publish time: {publish_avg:.3f} ms
 Max publish time: {publish_max:.3f} ms
 Min publish time: {publish_min:.3f} ms
 -----------------DPBENCH-----------------
-PRD |    AVG    |    MAN    |    MIX    |"""
+PRD |    AVG    |    MAX    |    MIN    |"""
         for i in range(dbench_len-1):
             benchreport += f"\n{i: 3} | {dbench_period_averages[i]: 9.3f} | {dbench_period_maxima[i]: 9.3f} | {dbench_period_minima[i]: 9.3f} |"
         logger.info(benchreport)

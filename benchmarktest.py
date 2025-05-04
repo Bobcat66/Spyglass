@@ -60,7 +60,7 @@ if __name__ == "__main__":
         "apriltag",
         "webcam",
         True,
-        True,
+        False,
         8000,
         8001,
         None,
