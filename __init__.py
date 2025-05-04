@@ -7,12 +7,17 @@ import argparse
 import ntcore
 import logging
 
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,  # Use DEBUG for more verbose logs
+    format='%(asctime)s [%(levelname)s] %(name)s: %(message)s'
+)
+
+logger = logging.getLogger(__name__)
+
 if __name__ == "__main__":
-    # Configure logging
-    logging.basicConfig(
-        level=logging.INFO,  # Use DEBUG for more verbose logs
-        format='%(asctime)s [%(levelname)s] %(name)s: %(message)s'
-    )
+
+    logger.info("Launching SamuraiSight")
 
     parser = argparse.ArgumentParser(description="SamuraiSight")
     parser.add_argument("--config", type=str, help="Path to the configuration file",default="config.toml")

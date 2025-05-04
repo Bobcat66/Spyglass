@@ -69,7 +69,7 @@ if __name__ == "__main__":
         None
     )
     worker = VisionWorker(fieldConfig,camConfig,pipConfig)
-    print(cscore.UsbCamera.enumerateUsbCameras())
+    #print(cscore.UsbCamera.enumerateUsbCameras())
     
     worker.start()
     while True:

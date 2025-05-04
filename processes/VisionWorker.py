@@ -21,7 +21,6 @@ class VisionWorker:
         self._pipConf = pipConf
         self._grayscale = pipConf.grayscale
         self._stream = pipConf.stream
-        #pixelFormat = cscore.VideoMode.PixelFormat.kGray if self._grayscale else cscore.VideoMode.PixelFormat.kBGR
         videoMode = cscore.VideoMode(pixelFormat_=camConf.pixel_format,width_=camConf.xres,height_=camConf.yres,fps_=camConf.fps)
         setVideoMode = self._camera.setVideoMode(videoMode)
         if not setVideoMode:
@@ -45,39 +44,28 @@ class VisionWorker:
         """
         Run the pipeline.
         """
-        frame: cv2.Mat = np.zeros(shape=(240,320,1),dtype=np.uint8)
+        frame: cv2.Mat = np.zeros(shape=(self._camConf.xres,self._camConf.yres,1),dtype=np.uint8)
         lastFPSTimestamp = perf_counter()
         frameCounter = 0
         while self._running:
-            #There is performance characterization code, remove it when finished
-            #starttime = perf_counter()
-            #t0 = perf_counter()
+
             time, frame = self._input.grabFrame(frame)
-            #t1 = perf_counter()
-            #print("grab frame time: " + str((t1-t0)*1000) + " ms")
             
             if time == 0: 
                 logger.warning(self._input.getError())
             else:
                 if self._grayscale: frame = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
-            #t0 = perf_counter()
+            
             res = self._pipeline.process(frame)
-            #t1 = perf_counter()
-            #print("pipeline time: " + str((t1-t0)*1000) + " ms")
             self._ntman.publishApriltagPoseResult(time,res.nTagPoseResult,res.tagDistResults)
             if res.frame is not None: self._output.putFrame(res.frame)
             frameCounter += 1
-            #endtime = perf_counter()
-            #print("total time: " + str((endtime - starttime)*1000) + " ms")
             #Measure FPS
             if perf_counter() - lastFPSTimestamp >= 1.0:
                 logger.info(f"{self._pipConf.name} running at {frameCounter} fps")
                 self._ntman.publishApriltagFPS(frameCounter,time)
                 frameCounter = 0
                 lastFPSTimestamp = perf_counter()
-                
-
-
     
     def start(self) -> None:
         logger.info(f"Started {self._pipConf.name} worker")

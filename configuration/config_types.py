@@ -28,9 +28,17 @@ class FieldConfig:
 @dataclass
 class DeviceConfig:
     """Device configuration class."""
-    name: str #The device ID of the camera
-    dev_ip: str #The IP address of the camera
+    name: str #The device ID
+    dev_ip: str #The IP address of the device #TODO: Remove?
     server_ip: str #The IP address of the networktables server
+
+
+@dataclass
+class ModelConfig:
+    """Object detection model configuration class"""
+    path: str
+    xres: int
+    yres: int
 
 @dataclass
 class PipelineConfig:

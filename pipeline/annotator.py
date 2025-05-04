@@ -36,7 +36,7 @@ def drawSingleTagPose(
     :param fieldConf: The field configuration.
     :param camConf: The camera configuration.
     """
-    if result.error_0 < result.error_1:
+    if result.error_0 > result.error_1: #I am aware the greater than sign should be flipped, this is a temporary measure until I figure out why the mirrored pose returned by IPPE square has less error than the true pose.
         cv2.drawFrameAxes(
             image,
             camConf.camera_matrix,
@@ -54,22 +54,6 @@ def drawSingleTagPose(
             result.tvecs_1,
             fieldConf.tag_size/2
         )
-
-def drawSingleTagPoseNew( 
-    image: cv2.Mat, 
-    result: SingleTagPoseResult, 
-    fieldConf: FieldConfig, 
-    camConf: CameraConfig
-) -> None:
-    axis = np.float32([[3,0,0], [0,3,0], [0,0,-3]]).reshape(-1,3)
-    pass
-
-def _drawAxes(image: cv2.Mat, corners: np.ndarray, imgpts: np.ndarray) -> None:
-    corner = tuple(corners[0].ravel().astype("int32"))
-    imgpts = imgpts.astype("int32")
-    cv2.line(image, corner, tuple(imgpts[0].ravel()), (255,0,0), 5)
-    cv2.line(image, corner, tuple(imgpts[1].ravel()), (0,255,0), 5)
-    cv2.line(image, corner, tuple(imgpts[2].ravel()), (0,0,255), 5)
 
 #TODO: Add object detection overlay
 

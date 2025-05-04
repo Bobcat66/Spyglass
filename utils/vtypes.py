@@ -46,7 +46,8 @@ class NTagPoseResult:
 class ObjDetectResult:
     obj_class: int
     confidence: float
-    corners: numpy.typing.NDArray[numpy.float64] #corners of the bounding rectangle
+    corner_angles: numpy.typing.NDArray[numpy.float64] #The euler angles of the bounding box corners relative to the principal axis of the camera, in radians
+    corner_pixels: numpy.typing.NDArray[numpy.float64] #the actual pixel locations of the bounding box corners
 
 @dataclass(frozen=True)
 class PipelineResult:
@@ -54,5 +55,6 @@ class PipelineResult:
     nTagPoseResult: Union[NTagPoseResult,None]
     tagDistResults: List[TagDistResult]
     frame: Union[cv2.Mat,None]
+
 
 

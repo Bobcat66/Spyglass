@@ -2,10 +2,6 @@
     name = "SamuraiSight"
     dev_ip = "10.10.76.18"
     server_ip = "10.10.76.2"
-    [device.accelerator]
-        type = "rocm" #Options: rknn, cuda, rocm, coral, cuda, none
-        integrated = false
-        dev_id = 3
 [field]
     tag_size = 0.1651 # meters
     layout = "2025-reefscape-welded"
@@ -65,6 +61,9 @@
         rawport = 8002
         processedport = 8003
         [pipelines.pipeline2.modelConfig]
+            xres = 640
+            yres = 640
+            grayscale = false
             confidence = 0.8
             model = "coral.pt"
 
