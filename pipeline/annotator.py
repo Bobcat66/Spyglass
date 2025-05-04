@@ -55,8 +55,6 @@ def drawSingleTagPose(
             fieldConf.tag_size/2
         )
 
-#TODO: Add object detection overlay
-
 def drawObjDetectResults(
     image: cv2.Mat,
     results: List[ObjDetectResult],
