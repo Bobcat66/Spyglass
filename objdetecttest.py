@@ -43,7 +43,7 @@ if __name__ == "__main__":
         None,
         1280,
         720,
-        60
+        30
     ) # These coefficients are based on my laptop's webcam
     detector = ObjectDetector(fakeCameraConf,"models/yolo11n.pt")
     while True:
