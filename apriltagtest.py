@@ -49,8 +49,6 @@ if __name__ == "__main__":
         family="tag36h11"
     )
     solver = pnpsolvers.FiducialPnPSolver(fakeCameraConf,fakeFieldConf)
-    det = np.linalg.det(fakeCameraConf.camera_matrix)
-    print(det)
     while True:
         ret, frame = cam.read()
         if not ret:

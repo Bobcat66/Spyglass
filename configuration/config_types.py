@@ -3,7 +3,7 @@ from dataclasses import dataclass
 import numpy as np
 import cscore
 import robotpy_apriltag as apriltag
-from typing import Union
+from typing import Union, Dict
 
 @dataclass
 class CameraConfig:
@@ -31,14 +31,6 @@ class DeviceConfig:
     name: str #The device ID
     dev_ip: str #The IP address of the device #TODO: Remove?
     server_ip: str #The IP address of the networktables server
-
-
-@dataclass
-class ModelConfig:
-    """Object detection model configuration class"""
-    path: str
-    xres: int
-    yres: int
 
 @dataclass
 class PipelineConfig:
