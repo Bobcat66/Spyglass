@@ -67,4 +67,6 @@
             confidence = 0.8
             model = "coral.pt"
 
+#This is an example configuration file
+
 

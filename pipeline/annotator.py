@@ -60,7 +60,7 @@ def drawSingleTagPose(
 def drawObjDetectResults(
     image: cv2.Mat,
     results: List[ObjDetectResult],
-    class_names: Union[Dict[int,str],None]
+    class_names: Union[Dict[int,str],None] = None
 ) -> None:
     for result in results:
         bottom_left = tuple(result.corner_pixels[0].astype(int))
@@ -71,10 +71,11 @@ def drawObjDetectResults(
         cv2.line(image, bottom_right, top_right, (0, 0, 255), 2)
         cv2.line(image, top_right, top_left, (0, 0, 255), 2)
         cv2.line(image, top_left, bottom_left, (0, 0, 255), 2)
+        labelText = f"{class_names.get(result.obj_class,f"Object Class {result.obj_class}") if class_names is not None else "Object Class " + str(result.obj_class)} ({result.confidence:.3f})"
         cv2.putText(
             image, 
-            class_names.get(result.obj_class) if class_names is not None else "Object Class " + str(result.obj_class), 
-            (top_left[0],top_left[1]-15), 
+            labelText, 
+            (top_left[0],top_left[1]-7), 
             cv2.FONT_HERSHEY_SIMPLEX, 
             0.5, 
             (255, 0, 0), 
