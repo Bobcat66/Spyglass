@@ -1,3 +1,6 @@
+# Copyright (c) FRC 1076 PiHi Samurai
+# You may use, distribute, and modify this software under the terms of
+# the license found in the root directory of this project
 
 import ultralytics
 from typing import List
@@ -17,9 +20,9 @@ class ObjectDetector:
 
         :param model_path: Path to the YOLO model file.
         """
-        # This class is designed to help compute a 3DoF pose estimate of an arbitrary object
-        # Using camera intrinsics, we normalize the corners of the points, which we can then use to calculate a ray from the camera to the corners of the bounding box
-        # Using these rays (as well as the camera's extrinsic properties), we can work out a rough estimate 3DoF pose of the object with 
+        # This class is designed to help compute a 3 DoF pose estimate of an arbitrary object
+        # Using camera intrinsics, we normalize the corners of the points, which we can then use to calculate rays from the camera to the corners of the bounding box
+        # Using these rays (as well as the camera's extrinsic properties), we can work out a rough estimate 3 DoF pose of the object with 
         # the pythagorean theorem (Assuming the object is on the ground)
         self._model = ultralytics.YOLO(model_path,'detect')
         self._camConf = camConf

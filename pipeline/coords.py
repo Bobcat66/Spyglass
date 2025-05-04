@@ -1,12 +1,27 @@
-# Copyright (c) 2025 FRC 6328
-# http://github.com/Mechanical-Advantage
+# MIT License
 #
-# Use of this source code is governed by an MIT-style
-# license that can be found in the LICENSE_6328 file at
-# the root directory of this project.
+# Copyright (c) 2025 FRC 6328
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
 
 import math
-from typing import List, Tuple
+from typing import List
 
 import numpy
 import numpy.typing
@@ -24,7 +39,3 @@ def openCvPoseToWpilib(tvec: numpy.typing.NDArray[numpy.float64], rvec: numpy.ty
 
 def wpilibTranslationToOpenCv(translation: Translation3d) -> List[float]:
     return [-translation.Y(), -translation.Z(), translation.X()]
-
-def transformAxis(vec: numpy.typing.NDArray[numpy.float64]) -> numpy.typing.NDArray[numpy.float64]:
-    vec_out = numpy.array([[vec[0][0]],[-vec[1][0]],[vec[2][0]]])
-    return vec_out

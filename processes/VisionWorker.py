@@ -1,3 +1,7 @@
+# Copyright (c) FRC 1076 PiHi Samurai
+# You may use, distribute, and modify this software under the terms of
+# the license found in the root directory of this project
+
 import cscore
 import threading
 from pipeline import Pipeline
@@ -10,7 +14,6 @@ import logging
 
 logger = logging.getLogger(__name__)
 #This class handles everything related to the camera, from capturing video to processing to output
-#TODO: Refactor this to use configurators, add option to disable streaming
 #TODO Later: Add option to turn on and off stream while the program is running
 class VisionWorker:
     def __init__(self, fieldConf: FieldConfig, camConf: CameraConfig, pipConf: PipelineConfig):
