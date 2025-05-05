@@ -66,10 +66,10 @@ class GeneralPnPSolver():
         elif len(tag_ids) == 1:
             object_points = np.array(
                 [
-                    [self.__tag_size / 2.0, -self.__tag_size / 2.0, 0],
-                    [-self.__tag_size / 2.0, -self.__tag_size / 2.0, 0],
                     [-self.__tag_size / 2.0, self.__tag_size / 2.0, 0],
                     [self.__tag_size / 2.0, self.__tag_size / 2.0, 0],
+                    [self.__tag_size / 2.0, -self.__tag_size / 2.0, 0],
+                    [-self.__tag_size / 2.0, -self.__tag_size / 2.0, 0],
                 ]
             )
             try:
@@ -132,10 +132,10 @@ class FiducialPnPSolver():
     def solve(self,fiducial: Fiducial) -> Union[SingleTagPoseResult,None]:
         object_points = np.array(
             [
-                [self.__tag_size / 2.0, -self.__tag_size / 2.0, 0],
-                [-self.__tag_size / 2.0, -self.__tag_size / 2.0, 0],
                 [-self.__tag_size / 2.0, self.__tag_size / 2.0, 0],
                 [self.__tag_size / 2.0, self.__tag_size / 2.0, 0],
+                [self.__tag_size / 2.0, -self.__tag_size / 2.0, 0],
+                [-self.__tag_size / 2.0, -self.__tag_size / 2.0, 0],
             ]
         )
         try:
