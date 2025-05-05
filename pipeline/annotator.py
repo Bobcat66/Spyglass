@@ -80,5 +80,9 @@ def drawObjDetectResults(
             2
         )
 
+def drawCameraInfo(image: cv2.Mat,camConf: CameraConfig):
+    cv2.putText(image,f"video{camConf.device_number} ({camConf.name})",(0,25),cv2.FONT_HERSHEY_COMPLEX,1.0,(255,255,255),2)
+    centerX = camConf.xres/2
+    centerY = camConf.yres/2
 
 

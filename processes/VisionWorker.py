@@ -12,6 +12,7 @@ import cv2
 from time import perf_counter_ns
 import logging
 from typing import List,Tuple
+from pipeline import annotator
 import traceback
 import sys
 
@@ -71,6 +72,7 @@ class VisionWorker:
                 continue
 
             self._ntman.publishResult(time,res)
+            annotator.drawCameraInfo(res.frame,self._camConf)
             if res.frame is not None: self._output.putFrame(res.frame)
 
             #Measure FPS
