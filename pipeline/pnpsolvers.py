@@ -12,7 +12,7 @@ from pipeline.coords import wpilibTranslationToOpenCv, openCvPoseToWpilib
 from configuration.config_types import *
 from time import perf_counter_ns
 
-#NOTE: Apriltag corners need to be reversed for IPPE square to function properly
+#TODO: Figure out the apriltag axes
 class GeneralPnPSolver():
     '''
     A PnP solver for cases with an arbitrary number of tags. When solving for multiple tags, the SQPnP algorith is used.
@@ -66,10 +66,10 @@ class GeneralPnPSolver():
         elif len(tag_ids) == 1:
             object_points = np.array(
                 [
-                    [-self.__tag_size / 2.0, self.__tag_size / 2.0, 0],
-                    [self.__tag_size / 2.0, self.__tag_size / 2.0, 0],
                     [self.__tag_size / 2.0, -self.__tag_size / 2.0, 0],
                     [-self.__tag_size / 2.0, -self.__tag_size / 2.0, 0],
+                    [-self.__tag_size / 2.0, self.__tag_size / 2.0, 0],
+                    [self.__tag_size / 2.0, self.__tag_size / 2.0, 0],
                 ]
             )
             try:
@@ -132,16 +132,16 @@ class FiducialPnPSolver():
     def solve(self,fiducial: Fiducial) -> Union[SingleTagPoseResult,None]:
         object_points = np.array(
             [
-                [-self.__tag_size / 2.0, self.__tag_size / 2.0, 0],
-                [self.__tag_size / 2.0, self.__tag_size / 2.0, 0],
                 [self.__tag_size / 2.0, -self.__tag_size / 2.0, 0],
                 [-self.__tag_size / 2.0, -self.__tag_size / 2.0, 0],
+                [-self.__tag_size / 2.0, self.__tag_size / 2.0, 0],
+                [self.__tag_size / 2.0, self.__tag_size / 2.0, 0],
             ]
         )
         try:
             _, rvecs, tvecs, errors = cv2.solvePnPGeneric(
                 object_points,
-                np.array(fiducial.corners),
+                fiducial.corners,
                 self.__camera_matrix,
                 self.__dist_coeffs,
                 flags=cv2.SOLVEPNP_IPPE_SQUARE

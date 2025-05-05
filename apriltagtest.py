@@ -8,6 +8,8 @@ from pipeline.ApriltagDetector import ApriltagDetector
 from utils.vtypes import *
 from configuration.config_types import CameraConfig, FieldConfig
 import numpy as np
+from time import perf_counter_ns
+import robotpy_apriltag as apriltag
 
 if __name__ == "__main__":
     cam = cv2.VideoCapture(0)
@@ -20,13 +22,13 @@ if __name__ == "__main__":
         True,
         np.array([
             [
-                979.1087360312252,
+                979.1087360312252 / 1.5, # Camera was poorly calibrated. Temporary fix for testing
                 0,
                 608.5591334099096
             ],
             [
                 0,
-                979.8457780935689,
+                979.8457780935689 / 1.5,
                 352.9815581130428
             ],
             [
@@ -49,10 +51,13 @@ if __name__ == "__main__":
     ) # These coefficients are based on my laptop's webcam
     fakeFieldConf = FieldConfig(
         tag_size=0.1651,
-        layout=None,
+        layout=apriltag.AprilTagFieldLayout.loadField(apriltag.AprilTagField.k2025ReefscapeWelded),
         family="tag36h11"
     )
-    solver = pnpsolvers.FiducialPnPSolver(fakeCameraConf,fakeFieldConf)
+    fsolver = pnpsolvers.FiducialPnPSolver(fakeCameraConf,fakeFieldConf)
+    solver = pnpsolvers.GeneralPnPSolver(fakeCameraConf,fakeFieldConf)
+    lastFPS = perf_counter_ns()
+    frameCounter = 0
     while True:
         ret, frame = cam.read()
         if not ret:
@@ -62,12 +67,20 @@ if __name__ == "__main__":
         detections = detector.detect(gsframe)
         annotator.drawFiducials(frame, detections)
         for detection in detections:
-            result = solver.solve(detection)
+            result = fsolver.solve(detection)
             if result != None:
                 #print(result)
                 annotator.drawSingleTagPose(frame, result, fakeFieldConf, fakeCameraConf)
+                print(cv2.norm(result.tvecs_0))
+        ntagres = solver.solve(detections)
+        #if ntagres is not None: print(ntagres.pose_0.translation())
         cv2.imshow('Webcam Feed', frame)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
+        frameCounter += 1
+        if perf_counter_ns() - lastFPS >= 1e9:
+            print(f"{frameCounter} fps")
+            frameCounter = 0
+            lastFPS = perf_counter_ns()
     cam.release()
     cv2.destroyAllWindows()
