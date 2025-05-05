@@ -17,12 +17,12 @@ if __name__ == "__main__":
     detector = ApriltagDetector()
     detector.addFamily("tag36h11")
     fakeCameraConf = CameraConfig(
-        "Fake camera that doesn't exist",
-        69,
-        True,
-        np.array([
+        name="Camera is directly captured by openCV for testing, only the intrinsics matter",
+        device_number=69,
+        calibration=True,
+        camera_matrix=np.array([
             [
-                979.1087360312252 / 1.5, # Camera was poorly calibrated. Temporary fix for testing
+                979.1087360312252 / 1.5,
                 0,
                 608.5591334099096
             ],
@@ -37,17 +37,17 @@ if __name__ == "__main__":
                 1
             ]
         ], dtype=np.float64),
-        np.array([
+        dist_coeffs=np.array([
             0.09581952042360092,
             -0.2603932345361037,
             0.0035795949814343524,
             -0.005134231272255606,
             0.19101200082384226
         ], dtype=np.float64),
-        None,
-        1280,
-        720,
-        60
+        pixel_format=None,
+        xres=1280,
+        yres=720,
+        fps=60
     ) # These coefficients are based on my laptop's webcam
     fakeFieldConf = FieldConfig(
         tag_size=0.1651,
