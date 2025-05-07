@@ -11,8 +11,6 @@ if [ -f $SERVICE_FILE ]; then
     exit 1 # 1 denotes that samuraisight is already installed
 fi
 
-chmod -rwxr-xr-x $ROOT_DIR
-
 USER=samuraisight
 useradd --system --no-create-home --shell /usr/sbin/nologin $USER
 usermod -aG video samuraisight
@@ -48,8 +46,6 @@ echo "ROBORIO_IP=$ROBORIO_IP" >> $ENV_FILE
 
 # Make samuraisight (the launch script) an executable and add it to the PATH variable
 chmod +x $LAUNCH_PATH
-
-# Configure service user
 
 echo "LAUNCH_ON_STARTUP=true" >> $ENV_FILE
 cat <<EOF > /tmp/temp_service
