@@ -23,8 +23,6 @@ if __name__ == "__main__":
     inst.startServer("10.10.76.2")
     inst.startClient4("SamuraiSight")
     ntmanager.initialize("SamuraiSight",inst)
-    while True:
-        pass
 
 
 
