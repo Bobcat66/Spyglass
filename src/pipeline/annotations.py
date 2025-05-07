@@ -36,7 +36,7 @@ def drawSingleTagPose(
     :param fieldConf: The field configuration.
     :param camConf: The camera configuration.
     """
-    if result.error_0 > result.error_1: #I am aware the greater than sign should be flipped, this is a temporary measure until I figure out why the mirrored pose returned by IPPE square has less error than the true pose.
+    if result.error_0 > result.error_1:
         cv2.drawFrameAxes(
             image,
             camConf.camera_matrix,
@@ -82,7 +82,5 @@ def drawObjDetectResults(
 
 def drawCameraInfo(image: cv2.Mat,camConf: CameraConfig):
     cv2.putText(image,f"video{camConf.device_number} ({camConf.name})",(0,25),cv2.FONT_HERSHEY_COMPLEX,1.0,(255,255,255),2)
-    centerX = camConf.xres/2
-    centerY = camConf.yres/2
 
 

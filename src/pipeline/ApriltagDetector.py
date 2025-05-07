@@ -33,6 +33,7 @@ class ApriltagDetector:
     """
     def __init__(self):
         self._detector: apriltag.AprilTagDetector = apriltag.AprilTagDetector()
+        self._ignorelist: List[int] = []
     
     def detect(self, image: cv2.Mat) -> List[Fiducial]:
         """
@@ -50,7 +51,7 @@ class ApriltagDetector:
         :return: True if the detection passes the filter, False otherwise.
         """
         #TODO: Implement filtering logic
-        return True
+        return not (detection.getId() in self._rejectlist)
     
     def addFamily(self, family: str) -> None:
         """
@@ -99,3 +100,9 @@ class ApriltagDetector:
         :return: The current quad threshold parameters.
         """
         return self._detector.getQuadThresholdParameters()
+    
+    def setRejectlist(self,tags: List[int]) -> None:
+        self._ignorelist = tags
+    
+    def getRejectlist(self) -> List[int]:
+        return self._ignorelist.copy()

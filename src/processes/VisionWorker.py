@@ -12,7 +12,7 @@ import cv2
 from time import perf_counter_ns
 import logging
 from typing import List,Tuple
-from pipeline import annotator
+from pipeline import annotations
 import traceback
 import sys
 
@@ -72,13 +72,13 @@ class VisionWorker:
                 continue
 
             self._ntman.publishResult(time,res)
-            annotator.drawCameraInfo(res.frame,self._camConf)
+            annotations.drawCameraInfo(res.frame,self._camConf)
             if res.frame is not None: self._output.putFrame(res.frame)
 
             #Measure FPS
             frameCounter += 1
             if perf_counter_ns() - nanosSinceLastFPS >= 1e9:
-                logger.info(f"{self._pipConf.name} running at {frameCounter} fps")
+                logger.debug(f"{self._pipConf.name} running at {frameCounter} fps")
                 self._ntman.publishFPS(frameCounter,time)
                 frameCounter = 0
                 nanosSinceLastFPS = perf_counter_ns()

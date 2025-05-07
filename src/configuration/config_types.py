@@ -3,7 +3,7 @@ from dataclasses import dataclass
 import numpy as np
 import cscore
 import robotpy_apriltag as apriltag
-from typing import Union, Dict
+from typing import Union, Dict, List
 
 @dataclass
 class CameraConfig:
@@ -29,20 +29,34 @@ class FieldConfig:
 class DeviceConfig:
     """Device configuration class."""
     name: str #The device ID
-    dev_ip: str #The IP address of the device #TODO: Remove?
     server_ip: str #The IP address of the networktables server
+    
+@dataclass
+class ApriltagConfig:
+    """Apriltag-specific pipeline configuration"""
+    excludeTags: List[int] = [] #Tags to reject completely
+    excludeTagsPNP: List[int] = [] #Tags to reject in multitag PNP solving, they will still be used for single-tag distance estimation
+    detConfigs: Union[apriltag.AprilTagDetector.Config,None]
+    detQtps: Union[apriltag.AprilTagDetector.QuadThresholdParameters,None]
+
+@dataclass
+class ObjDetectConfig:
+    """Object detection-specific pipeline configuration"""
+    model: str
+    confidenceThreshold: float
 
 @dataclass
 class PipelineConfig:
-    """Pipeline configuration class."""
+    """Vision pipeline configuration class."""
     name: str
     type: str
     camera: str
     grayscale: bool
-    stream: bool
+    stream: bool = None
+    stream_xres: int
+    stream_yres: int
     rawport: Union[int,None]
     processedport: Union[int,None]
-    confidence: Union[float, None] #TODO: Remove?
-    model: Union[str, None]
-    detConfigs: Union[apriltag.AprilTagDetector.Config,None]
-    detQtps: Union[apriltag.AprilTagDetector.QuadThresholdParameters,None]
+    objdetectConfig: Union[ObjDetectConfig,None]
+    apriltagConfig: Union[ApriltagConfig,None]
+ 

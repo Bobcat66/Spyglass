@@ -3,3 +3,4 @@ __pycache__/
 .vscode/
 models/
 10.10.76.2
+.env

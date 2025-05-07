@@ -8,7 +8,7 @@ from utils.vtypes import *
 from configuration.config_types import CameraConfig, FieldConfig, PipelineConfig
 from pipeline.ApriltagDetector import ApriltagDetector
 from pipeline.ObjectDetector import ObjectDetector
-from pipeline import annotator, pnpsolvers
+from pipeline import annotations, pnpsolvers
 from typing import Tuple
 from time import perf_counter_ns
 import logging
@@ -82,9 +82,9 @@ class ApriltagPipeline(Pipeline):
         if self._stream:
             # Annotate the frame
             annotatedFrame = cv2.cvtColor(frame, cv2.COLOR_GRAY2BGR)
-            annotator.drawFiducials(annotatedFrame, fiducials)
+            annotations.drawFiducials(annotatedFrame, fiducials)
             for result in singleTagResults:
-                annotator.drawSingleTagPose(annotatedFrame, result[0], self._fieldConf, self._camConf)
+                annotations.drawSingleTagPose(annotatedFrame, result[0], self._fieldConf, self._camConf)
                 distResults.append(TagDistResult(
                     result[1].id,
                     result[1].corners,
@@ -130,9 +130,9 @@ class ApriltagPipeline(Pipeline):
         if self._stream:
             # Annotate the frame
             annotatedFrame = cv2.cvtColor(frame, cv2.COLOR_GRAY2BGR)
-            annotator.drawFiducials(annotatedFrame, fiducials)
+            annotations.drawFiducials(annotatedFrame, fiducials)
             for result in singleTagResults:
-                annotator.drawSingleTagPose(annotatedFrame, result[0], self._fieldConf, self._camConf)
+                annotations.drawSingleTagPose(annotatedFrame, result[0], self._fieldConf, self._camConf)
                 distResults.append(TagDistResult(
                     result[1].id,
                     result[1].corners,
@@ -171,7 +171,7 @@ class ObjDetectPipeline(Pipeline):
         annotatedFrame: Union[cv2.Mat,None] = None
         if self._stream:
             annotatedFrame = cv2.cvtColor(frame,cv2.COLOR_GRAY2BGR) if self._grayscale else frame
-            annotator.drawObjDetectResults(frame,results,self._detector.getClassNames())
+            annotations.drawObjDetectResults(frame,results,self._detector.getClassNames())
         return PipelineResult(None,results,annotatedFrame)
     
     def deepBenchmark(self, frame: cv2.Mat) -> Tuple[List[int],PipelineResult]:
@@ -182,7 +182,7 @@ class ObjDetectPipeline(Pipeline):
         annotatedFrame: Union[cv2.Mat,None] = None
         if self._stream:
             annotatedFrame = cv2.cvtColor(frame,cv2.COLOR_GRAY2BGR) if self._grayscale else frame
-            annotator.drawObjDetectResults(frame,results,self._detector.getClassNames())
+            annotations.drawObjDetectResults(frame,results,self._detector.getClassNames())
         timestamps.append(perf_counter_ns())
         
         return timestamps, PipelineResult(None,results,annotatedFrame)
@@ -200,11 +200,11 @@ def buildPipeline(pipConf: PipelineConfig, camConf: CameraConfig, fieldConf: Fie
             fidSolver = pnpsolvers.FiducialPnPSolver(camConf,fieldConf)
             detector = ApriltagDetector()
             detector.addFamily(fieldConf.family)
-            if pipConf.detConfigs is not None:
-                detector.setConfig(pipConf.detConfigs)
-            if pipConf.detQtps is not None:
-                detector.setQuadThresholdParameters(pipConf.detQtps)
+            if pipConf.apriltagConfig.detConfigs is not None:
+                detector.setConfig(pipConf.apriltagConfig.detConfigs)
+            if pipConf.apriltagConfig.detQtps is not None:
+                detector.setQuadThresholdParameters(pipConf.apriltagConfig.detQtps)
             return ApriltagPipeline(pipConf.name,detector,solver,fidSolver,pipConf.stream,fieldConf,camConf)
         case "objdetect":
-            detector = ObjectDetector(camConf,pipConf.model)
+            detector = ObjectDetector(camConf,pipConf.objdetectConfig.model)
             return ObjDetectPipeline(pipConf.name,detector,pipConf.stream,pipConf.grayscale)

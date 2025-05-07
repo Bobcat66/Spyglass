@@ -1,3 +1,7 @@
+import os
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),'../src')))
+
 from processes.VisionWorker import VisionWorker
 from configuration.config_types import *
 import cscore
@@ -6,10 +10,13 @@ import ntcore
 import time
 from network import ntmanager
 import logging
+import numpy as np
+
+
 if __name__ == "__main__":
     # Configure logging
     logging.basicConfig(
-        level=logging.INFO,  # Use DEBUG for more verbose logs
+        level=logging.DEBUG,  # Use DEBUG for more verbose logs
         format='%(asctime)s [%(levelname)s] %(name)s: %(message)s'
     )
     # Initialize NetworkTables
@@ -57,19 +64,23 @@ if __name__ == "__main__":
     )
     pipConfig = PipelineConfig(
         "test_pipe",
-        "apriltag",
+        "objdetect",
         "webcam",
-        True,
         False,
+        True,
         8000,
         8001,
         None,
-        None,
+        "models/yolo11n.pt",
         None,
         None
     )
     worker = VisionWorker(fieldConfig,camConfig,pipConfig)
     #print(cscore.UsbCamera.enumerateUsbCameras())
     
-    worker.benchmark(30)
+    worker.start()
+    while True:
+        #Yield to the worker thread
+        time.sleep(60)
+    print("END")
     

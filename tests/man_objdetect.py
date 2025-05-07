@@ -1,9 +1,12 @@
 # Copyright (c) FRC 1076 PiHi Samurai
 # You may use, distribute, and modify this software under the terms of
 # the license found in the root directory of this project
+import os
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),'../src')))
 
 import cv2
-from pipeline import annotator
+from pipeline import annotations
 from pipeline.ObjectDetector import ObjectDetector
 from utils.vtypes import *
 from configuration.config_types import CameraConfig, FieldConfig
@@ -53,7 +56,7 @@ if __name__ == "__main__":
             
         print(frame.shape)
         detections = detector.detect(frame)
-        annotator.drawObjDetectResults(frame,detections,detector.getClassNames())
+        annotations.drawObjDetectResults(frame,detections,detector.getClassNames())
         cv2.imshow('Webcam Feed', frame)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break

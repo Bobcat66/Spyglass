@@ -40,32 +40,27 @@
         stream = false
         rawport = 8000
         processedport = 8001
-        [pipelines.pipeline1.detConfigs]
-            debug = false
-            decodeSharpening = 0.25
-            numThreads = 1
-            quadDecimate = 2.0
-            quadSigma = 0.0
-            refineEdges = true
-        [pipelines.pipeline1.detQtps]
-            criticalAngle = 45.0
-            deglitch = false
-            maxLineFitMSE = 10.0
-            maxNumMaxima = 10
-            minClusterPixels = 300
-            minWhiteBlackDiff = 5
+
+        debug = false
+        decodeSharpening = 0.25
+        numThreads = 1
+        quadDecimate = 2.0
+        quadSigma = 0.0
+        refineEdges = true
+        criticalAngle = 45.0
+        
+        deglitch = false
+        maxLineFitMSE = 10.0
+        maxNumMaxima = 10
+        minClusterPixels = 300
+        minWhiteBlackDiff = 5
     [pipelines.pipeline2]
         camera = "cam2"
         type = "objdetect"
         stream = true
         rawport = 8002
         processedport = 8003
-        [pipelines.pipeline2.modelConfig]
-            xres = 640
-            yres = 640
-            grayscale = false
-            confidence = 0.8
-            model = "coral.pt"
+        model = "coral.pt"
 
 #This is an example configuration file
 

@@ -27,11 +27,16 @@ class TagDistResult:
 class SingleTagPoseResult:
     id: int
     corners: numpy.typing.NDArray[numpy.float64]
+    decisionMargin: float
+    hammingDist: float
+    distance: float
     rvecs_0: numpy.typing.NDArray[numpy.float64]
     tvecs_0: numpy.typing.NDArray[numpy.float64]
+    pose_0: Pose3d
     error_0: float
     rvecs_1: numpy.typing.NDArray[numpy.float64]
     tvecs_1: numpy.typing.NDArray[numpy.float64]
+    pose_1: Pose3d
     error_1: float
 
 @dataclass(frozen=True)
@@ -51,7 +56,7 @@ class ObjDetectResult:
 
 @dataclass(frozen=True)
 class ApriltagResult:
-    fiducials: List[TagDistResult]
+    fiducials: List[SingleTagPoseResult]
     poseResult: Union[NTagPoseResult,None]
 
 @dataclass(frozen=True)

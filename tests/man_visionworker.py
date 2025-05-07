@@ -1,3 +1,7 @@
+import os
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),'../src')))
+
 from processes.VisionWorker import VisionWorker
 from configuration.config_types import *
 import cscore
@@ -6,6 +10,8 @@ import ntcore
 import time
 from network import ntmanager
 import logging
+import numpy as np
+
 if __name__ == "__main__":
     # Configure logging
     logging.basicConfig(

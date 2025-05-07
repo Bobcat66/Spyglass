@@ -47,7 +47,7 @@ class ConfigParser:
     def get_camera_config(self, camera_name: str) -> Union[CameraConfig,None]:
         configDict: dict = self._get_camera_configs().get(camera_name, None)
         if configDict is None:
-            logger.warning(f"camera {camera_name} not configured")
+            logger.warning("camera %s not configured",camera_name)
             return None
         return CameraConfig(
             camera_name,
@@ -65,14 +65,53 @@ class ConfigParser:
         fieldDict: dict = self.config.get("field")
         if fieldDict is None:
             logger.warning("Field is not configured")
+            return None
         tag_size = fieldDict.get("tag_size")
         family = fieldDict.get("family")
-        layout = apriltag.AprilTagFieldLayout("resources/fields/" + fieldDict.get("layout") + ".json")
+        layout = apriltag.AprilTagFieldLayout("../resources/fields/" + fieldDict.get("layout") + ".json")
         return FieldConfig(
             tag_size,
             layout,
             family
         )
+    
+    #TODO: Add separate stream resolution
+    def get_pipeline_config(self, pipeline_name: str) -> Union[PipelineConfig,None]:
+        pipedict: dict = self._get_pipeline_configs().get(pipeline_name)
+        if pipedict is None:
+            logger.warning("No pipeline named '%s' detected",pipeline_name)
+        type = pipedict.get("type",None)
+        camera: str = pipedict.get("camera",None)
+        if camera is None:
+            logger.error("No camera configuration detected for pipeline %s",pipeline_name)
+        stream: bool = pipedict.get("stream",False)
+        stream_xres: int = pipedict.get("stream_xres",320)
+        stream_yres: int = pipedict.get("stream_yres",240)
+        rawport: int = pipedict.get("rawport",None)
+        processedport: int
+        if stream and (rawport is None):
+            logger.warning("Streaming enabled on pipeline %s, but no raw video port detected. Raw stream will be disabled",pipeline_name)
+        if stream and (processedport is None):
+            logger.warning("Streaming enabled on pipeline %s, but no processed video port detected. Processed stream will be disabled",pipeline_name)
+        
+
+        match type:
+            case "apriltag":
+                #Apriltag
+                config = PipelineConfig(
+                )
+                pass
+            case "objdetect":
+                #Object detection
+                pass
+            case None:
+                logger.error("No pipeline type detected for pipeline %s",pipeline_name)
+                return None
+            case _:
+                logger.error("'%s' is not recognized as a valid pipeline type for %s",type,pipeline_name)
+                return None
+
+
     
     def dump(self):
         return self.config

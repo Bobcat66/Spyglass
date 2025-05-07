@@ -1,15 +1,22 @@
 # Copyright (c) FRC 1076 PiHi Samurai
 # You may use, distribute, and modify this software under the terms of
 # the license found in the root directory of this project
+import os
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),'../src')))
 
 import cv2
-from pipeline import pnpsolvers,annotator
+from pipeline import annotations, pnpsolvers
 from pipeline.ApriltagDetector import ApriltagDetector
 from utils.vtypes import *
 from configuration.config_types import CameraConfig, FieldConfig
 import numpy as np
 from time import perf_counter_ns
 import robotpy_apriltag as apriltag
+
+import sys
+import os
+sys.path.append(os.path.abspath('..'))
 
 if __name__ == "__main__":
     cam = cv2.VideoCapture(0)
@@ -65,12 +72,12 @@ if __name__ == "__main__":
             break
         gsframe = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         detections = detector.detect(gsframe)
-        annotator.drawFiducials(frame, detections)
+        annotations.drawFiducials(frame, detections)
         for detection in detections:
             result = fsolver.solve(detection)
             if result != None:
                 #print(result)
-                annotator.drawSingleTagPose(frame, result, fakeFieldConf, fakeCameraConf)
+                annotations.drawSingleTagPose(frame, result, fakeFieldConf, fakeCameraConf)
                 print(cv2.norm(result.tvecs_0))
         ntagres = solver.solve(detections)
         #if ntagres is not None: print(ntagres.pose_0.translation())
