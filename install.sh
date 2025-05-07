@@ -45,9 +45,7 @@ echo "GATEWAY=$GATEWAY" >> $ENV_FILE
 ROBORIO_IP="10.$TE_AM.2"
 echo "ROBORIO_IP=$ROBORIO_IP" >> $ENV_FILE
 
-
-
-# Make smsght (the launch script) an executable and add it to the PATH variable
+# Make samuraisight (the launch script) an executable and add it to the PATH variable
 chmod +x $LAUNCH_PATH
 echo "export PATH=\"\$PATH:$ROOT_DIR/bin\"" >> ~/.bashrc
 
