@@ -17,6 +17,7 @@ if [ "$USE_STATIC_IP" == "true" ]; then
 
 cd .. # Sets working directory to the project root
 source .venv/bin/activate # Activates python venv
-python3 src/main.py # Launches python program
+cd src
+python3 main.py # Launches python program
 
 

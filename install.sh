@@ -26,8 +26,6 @@ TEAM=$TEAM_NUMBER
 EOF
 echo ".env file created at $(realpath "$ENV_FILE")"
 
-echo "TEAM=$TEAM_NUMBER" >> $ENV_FILE
-
 # I wrote this at 3am in the morning, ill figure out a better way soon
 if (( ${#TEAM_NUMBER} <= 2 )); then
     TE_AM="0.$TEAM_NUMBER"
@@ -54,10 +52,10 @@ Description=Robot Vision System
 After=network.target
 
 [Service]
-ExecStart="$LAUNCH_PATH"
+ExecStart=$LAUNCH_PATH
 Restart=on-failure
-User="$USER"
-WorkingDirectory="$ROOT_DIR"
+User=$USER
+WorkingDirectory=$ROOT_DIR
 
 [Install]
 WantedBy=multi-user.target
