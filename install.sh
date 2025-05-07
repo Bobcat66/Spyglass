@@ -68,7 +68,7 @@ ROBORIO_IP="10.$TE_AM.2"
 echo "ROBORIO_IP=$ROBORIO_IP" >> $ENV_FILE
 
 # Make samuraisight (the launch script) an executable
-chmod +x ./bin/smsight
+chmod +x /opt/SamuraiSight/bin/smsight
 
 read -p "Do you want SamuraiSight to launch on startup? [Y/N]: " launchOnStartup
 if [ "$launchOnStartup" == "Y" ]; then
