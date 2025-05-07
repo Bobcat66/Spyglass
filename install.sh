@@ -1,7 +1,6 @@
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SERVICE_NAME=samuraisight
 LAUNCH_PATH="$ROOT_DIR/bin/$SERVICE_NAME"
-USER=$(whoami)
 SERVICE_FILE="/etc/systemd/system/$SERVICE_NAME.service"
 echo -e "------------- SamuraiSight Installer -------------\n"
 
@@ -12,6 +11,11 @@ if [ -f $SERVICE_FILE ]; then
     exit 1 # 1 denotes that samuraisight is already installed
 fi
 
+chmod -rwxr-xr-x $ROOT_DIR
+
+USER=samuraisight
+useradd --system --no-create-home --shell /usr/sbin/nologin $USER
+usermod -aG video samuraisight
 read -p "Enter team number: " TEAM_NUMBER
 
 # Create .env file
@@ -45,6 +49,8 @@ echo "ROBORIO_IP=$ROBORIO_IP" >> $ENV_FILE
 # Make samuraisight (the launch script) an executable and add it to the PATH variable
 chmod +x $LAUNCH_PATH
 
+# Configure service user
+
 echo "LAUNCH_ON_STARTUP=true" >> $ENV_FILE
 cat <<EOF > /tmp/temp_service
 [Unit]
@@ -55,12 +61,16 @@ After=network.target
 ExecStart=$LAUNCH_PATH
 Restart=on-failure
 WorkingDirectory=$ROOT_DIR
+User=$USER
+AmbientCapabilities=CAP_NET_ADMIN
+CapabilityBoundingSet=CAP_NET_ADMIN
+NoNewPrivileges=true
 
 [Install]
 WantedBy=multi-user.target
 EOF
-sudo mv /tmp/temp_service $SERVICE_FILE
-sudo systemctl daemon-reload
+mv /tmp/temp_service $SERVICE_FILE
+systemctl daemon-reload
 echo "SERVICE_FILE=$SERVICE_FILE" >> $ENV_FILE
 echo "Configured Systemd service"
 
@@ -68,7 +78,7 @@ echo "Configured Systemd service"
 read -p "Do you want SamuraiSight to launch on startup? [Y/N]: " launchOnStartup
 if [ "$launchOnStartup" == "Y" ]; then
     echo "LAUNCH_ON_STARTUP=true" >> $ENV_FILE
-    sudo systemctl enable "$SERVICE_NAME.service"
+    systemctl enable "$SERVICE_NAME.service"
     echo "Systemd service successfully enabled."
     echo "SamuraiSight will now start automatically on boot"
 elif [ "$launchOnStartup" == "N" ]; then
@@ -97,4 +107,9 @@ python3 -m venv $VENV
 source ".venv/bin/activate"
 pip install -r requirements.txt
 echo "Successfully created python virtual environment"
+# Creates logs/ directory, models/ directory, and recordings/ directory
+mkdir logs
+mkdir models
+mkdir recordings
+
 exit 0 #0 means successful installation

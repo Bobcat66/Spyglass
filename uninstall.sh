@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 echo "Uninstalling SamuraiSight"
 
 SERVICE_NAME="samuraisight.service"
@@ -11,10 +9,12 @@ if [ ! -f $SERVICE_FILE ]; then
 fi
 
 ROOT_DIR=$(grep -E '^WorkingDirectory=' $SERVICE_FILE | cut -d= -f2)
-sudo systemctl stop $SERVICE_NAME
-sudo systemctl disable $SERVICE_NAME
-sudo rm $SERVICE_FILE
-sudo rm -r $ROOT_DIR
+USER=$(grep -E '^User=' $SERVICE_FILE | cut -d= -f2)
+systemctl stop $SERVICE_NAME
+systemctl disable $SERVICE_NAME
+userdel $USER
+rm $SERVICE_FILE
+rm -r $ROOT_DIR
 
 
 

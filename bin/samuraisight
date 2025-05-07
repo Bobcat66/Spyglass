@@ -17,9 +17,8 @@ if [ "$USE_STATIC_IP" == "true" ]; then
     ip route add default via $GATEWAY dev $IFACE
 fi
 
-# Drops root privileges after configuring network settings
-sudo -u $USER source .venv/bin/activate # Activates python venv
-sudo -u $USER cd src
-sudo -u $USER python3 main.py # Launches python program
+source .venv/bin/activate # Activates python venv
+cd src
+python3 main.py # Launches python program
 
 
