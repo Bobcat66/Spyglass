@@ -15,13 +15,11 @@ fi
 
 # Setting up the deployment directory
 mkdir $ROOT_DIR
-mkdir $ROOT_DIR/src
-mkdir $ROOT_DIR/resources
-mkdir $ROOT_DIR/bin
+
 # Copying essential code from the repo to the deployment directory
-cp -r $REPO_DIR/src $ROOT_DIR/src
-cp -r $REPO_DIR/resources $ROOT_DIR/resources
-cp -r $REPO_DIR/bin $ROOT_DIR/bin
+cp -r $REPO_DIR/src $ROOT_DIR
+cp -r $REPO_DIR/resources $ROOT_DIR
+cp -r $REPO_DIR/bin $ROOT_DIR
 cp $REPO_DIR/uninstall.sh $ROOT_DIR/uninstall.sh
 cp $REPO_DIR/requirements.txt $ROOT_DIR/requirements.txt
 cp $REPO_DIR/config.toml $ROOT_DIR/config.toml
