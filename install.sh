@@ -54,20 +54,21 @@ read -p "Do you want SamuraiSight to launch on startup? [Y/N]: " launchOnStartup
 if [ "$launchOnStartup" == "Y" ]; then
     SERVICE_FILE= "/etc/systemd/system/$SERVICE_NAME.service"
     echo "LAUNCH_ON_STARTUP=true" >> $ENV_FILE
-    sudo bash -c "cat > $SERVICE_FILE"  <<EOF
+    cat <<EOF > /tmp/temp_service
 [Unit]
 Description=Robot Vision System
 After=network.target
 
 [Service]
-ExecStart=$LAUNCH_PATH
+ExecStart="$LAUNCH_PATH"
 Restart=on-failure
-User=$USER
-WorkingDirectory=$ROOT_DIR
+User="$USER"
+WorkingDirectory="$ROOT_DIR"
 
 [Install]
 WantedBy=multi-user.target
 EOF
+    sudo mv /tmp/temp_service "$SERVICE_FILE"
     sudo systemctl daemon-reload
     sudo systemctl enable "$SERVICE_NAME.service"
     echo "SERVICE_FILE=$SERVICE_FILE" >> $ENV_FILE
@@ -96,7 +97,7 @@ fi
 cd $ROOT_DIR
 VENV=".venv"
 python3 -m venv $VENV
-source ".venv/scripts/activate"
+source ".venv/bin/activate"
 pip install -r requirements.txt
 echo "Successfully created python virtual environment"
 exit 0 #0 means successful installation
