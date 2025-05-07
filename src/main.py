@@ -16,13 +16,13 @@ if __name__ == "__main__":
     logger.info("Launching SamuraiSight")
 
     config = configsources.ConfigParser("../config.toml")
-    devconfig = config.get_dev_config()
+    #devconfig = config.get_dev_config()
 
-    # Initialize NetworkTables
+    # Initialize NetworkTables (FOR TESTING)
     inst: ntcore.NetworkTableInstance = ntcore.NetworkTableInstance.getDefault()
-    inst.startServer(devconfig.server_ip)
-    inst.startClient4(devconfig.name)
-    ntmanager.initialize(devconfig.name,inst)
+    inst.startServer("10.10.76.2")
+    inst.startClient4("SamuraiSight")
+    ntmanager.initialize("SamuraiSight",inst)
 
 
 

@@ -34,8 +34,8 @@ class DeviceConfig:
 @dataclass
 class ApriltagConfig:
     """Apriltag-specific pipeline configuration"""
-    excludeTags: List[int] = [] #Tags to reject completely
-    excludeTagsPNP: List[int] = [] #Tags to reject in multitag PNP solving, they will still be used for single-tag distance estimation
+    excludeTags: List[int] #Tags to reject completely
+    excludeTagsPNP: List[int] #Tags to reject in multitag PNP solving, they will still be used for single-tag distance estimation
     detConfigs: Union[apriltag.AprilTagDetector.Config,None]
     detQtps: Union[apriltag.AprilTagDetector.QuadThresholdParameters,None]
 
@@ -52,7 +52,7 @@ class PipelineConfig:
     type: str
     camera: str
     grayscale: bool
-    stream: bool = None
+    stream: bool
     stream_xres: int
     stream_yres: int
     rawport: Union[int,None]
