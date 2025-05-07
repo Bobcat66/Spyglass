@@ -52,7 +52,7 @@ source ~/.bashrc
 
 read -p "Do you want SamuraiSight to launch on startup? [Y/N]: " launchOnStartup
 if [ "$launchOnStartup" == "Y" ]; then
-    SERVICE_FILE = "/etc/systemd/system/$SERVICE_NAME.service"
+    SERVICE_FILE= "/etc/systemd/system/$SERVICE_NAME.service"
     echo "LAUNCH_ON_STARTUP=true" >> $ENV_FILE
     sudo bash -c "cat > $SERVICE_FILE"  <<EOF
 [Unit]
