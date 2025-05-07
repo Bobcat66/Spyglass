@@ -17,7 +17,7 @@ read -p "Enter team number: " TEAM_NUMBER
 
 # Create .env file
 ENV_FILE=".env"
-cat > "$ENV_FILE" <<EOF
+cat > $ENV_FILE <<EOF
 # Environment Configuration (Only edit this file if you know what you are doing)
 APP_ENV=production
 DEBUG=false
