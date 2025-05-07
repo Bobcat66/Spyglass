@@ -34,7 +34,7 @@ systemctl daemon-reload
 cd $ROOT_DIR
 
 useradd --system --no-create-home --shell /usr/sbin/nologin smsight-srv
-usermod -aG video samuraisight
+usermod -aG video smsight-srv
 
 read -p "Enter team number: " TEAM_NUMBER
 read -p "Enter device name: " DEV_NAME
@@ -68,7 +68,7 @@ ROBORIO_IP="10.$TE_AM.2"
 echo "ROBORIO_IP=$ROBORIO_IP" >> $ENV_FILE
 
 # Make samuraisight (the launch script) an executable
-chmod +x bin/smsight
+chmod +x ./bin/smsight
 
 read -p "Do you want SamuraiSight to launch on startup? [Y/N]: " launchOnStartup
 if [ "$launchOnStartup" == "Y" ]; then
