@@ -51,7 +51,7 @@ echo "export PATH=\"\$PATH:$ROOT_DIR/bin\"" >> ~/.bashrc
 
 read -p "Do you want SamuraiSight to launch on startup? [Y/N]: " launchOnStartup
 if [ "$launchOnStartup" == "Y" ]; then
-    SERVICE_FILE= "/etc/systemd/system/$SERVICE_NAME.service"
+    SERVICE_FILE="/etc/systemd/system/$SERVICE_NAME.service"
     echo "LAUNCH_ON_STARTUP=true" >> $ENV_FILE
     cat <<EOF > /tmp/temp_service
 [Unit]
@@ -67,7 +67,7 @@ WorkingDirectory="$ROOT_DIR"
 [Install]
 WantedBy=multi-user.target
 EOF
-    sudo mv /tmp/temp_service "$SERVICE_FILE"
+    sudo mv /tmp/temp_service $SERVICE_FILE
     sudo systemctl daemon-reload
     sudo systemctl enable "$SERVICE_NAME.service"
     echo "SERVICE_FILE=$SERVICE_FILE" >> $ENV_FILE
