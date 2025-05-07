@@ -2,12 +2,11 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SERVICE_NAME=samuraisight
 LAUNCH_PATH="$ROOT_DIR/bin/$SERVICE_NAME"
 USER=$(whoami)
-
+SERVICE_FILE="/etc/systemd/system/$SERVICE_NAME.service"
 echo -e "------------- SamuraiSight Installer -------------\n"
 
 # Check if samuraisight is already installed
-if command -v "$SERVICE_NAME" &>/dev/null; then
-    echo -e "$SERVICE_NAME is already in PATH"
+if [ -f $SERVICE_FILE ]; then
     echo "SamuraiSight is already installed"
     echo "Aborting installation"
     exit 1 # 1 denotes that samuraisight is already installed
@@ -47,13 +46,9 @@ echo "ROBORIO_IP=$ROBORIO_IP" >> $ENV_FILE
 
 # Make samuraisight (the launch script) an executable and add it to the PATH variable
 chmod +x $LAUNCH_PATH
-echo "export PATH=\"\$PATH:$ROOT_DIR/bin\"" >> ~/.bashrc
 
-read -p "Do you want SamuraiSight to launch on startup? [Y/N]: " launchOnStartup
-if [ "$launchOnStartup" == "Y" ]; then
-    SERVICE_FILE="/etc/systemd/system/$SERVICE_NAME.service"
-    echo "LAUNCH_ON_STARTUP=true" >> $ENV_FILE
-    cat <<EOF > /tmp/temp_service
+echo "LAUNCH_ON_STARTUP=true" >> $ENV_FILE
+cat <<EOF > /tmp/temp_service
 [Unit]
 Description=Robot Vision System
 After=network.target
@@ -67,11 +62,17 @@ WorkingDirectory="$ROOT_DIR"
 [Install]
 WantedBy=multi-user.target
 EOF
-    sudo mv /tmp/temp_service $SERVICE_FILE
-    sudo systemctl daemon-reload
+sudo mv /tmp/temp_service $SERVICE_FILE
+sudo systemctl daemon-reload
+echo "SERVICE_FILE=$SERVICE_FILE" >> $ENV_FILE
+echo "Configured Systemd service"
+
+
+read -p "Do you want SamuraiSight to launch on startup? [Y/N]: " launchOnStartup
+if [ "$launchOnStartup" == "Y" ]; then
+    echo "LAUNCH_ON_STARTUP=true" >> $ENV_FILE
     sudo systemctl enable "$SERVICE_NAME.service"
-    echo "SERVICE_FILE=$SERVICE_FILE" >> $ENV_FILE
-    echo "Systemd service successfully configured and enabled."
+    echo "Systemd service successfully enabled."
     echo "SamuraiSight will now start automatically on boot"
 elif [ "$launchOnStartup" == "N" ]; then
     echo "LAUNCH_ON_STARTUP=false" >> $ENV_FILE
