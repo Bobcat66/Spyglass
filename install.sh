@@ -54,7 +54,6 @@ After=network.target
 [Service]
 ExecStart=$LAUNCH_PATH
 Restart=on-failure
-User=$USER
 WorkingDirectory=$ROOT_DIR
 
 [Install]

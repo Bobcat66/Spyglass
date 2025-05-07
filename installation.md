@@ -3,7 +3,7 @@ How to Install on linux:
 
 Step 1: Ensure the `ip` command is installed on your system
 
-Step 2: Ensure python 3.13 is installed and aliased as `python313`
+Step 2: Ensure python 3 is installed, as well as python3-venv
 
 Step 3: Clone this repository
 
