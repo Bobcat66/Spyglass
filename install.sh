@@ -1,4 +1,3 @@
-#!/usr/bin/env bash
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SERVICE_NAME=samuraisight
 LAUNCH_PATH="$ROOT_DIR/bin/$SERVICE_NAME"
@@ -17,7 +16,7 @@ fi
 read -p "Enter team number: " TEAM_NUMBER
 
 # Create .env file
-ENV_FILE= ".env"
+ENV_FILE=".env"
 cat > "$ENV_FILE" <<EOF
 # Environment Configuration (Only edit this file if you know what you are doing)
 APP_ENV=production
@@ -100,18 +99,3 @@ source ".venv/scripts/activate"
 pip install -r requirements.txt
 echo "Successfully created python virtual environment"
 exit 0 #0 means successful installation
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
