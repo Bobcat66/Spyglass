@@ -1,15 +1,14 @@
 # WIP, More detailed instructions will be written eventually, when this project is actually working
-How to Install on a coprocessor:
+How to Install on linux:
 
-Step 1: Install Python 3.13 on your coprocessor
+Step 1: Ensure the `ip` command is installed on your system
 
-Step 2: Clone this git repo onto your coprocessor
+Step 2: Ensure python 3.13 is installed and aliased as `python313`
 
-Step 3: Create python virtual environment (optional)
+Step 3: Clone this repository
 
-Step 4: Install requirements.txt
+Step 4: Set this project's root folder (SamuraiSight) as your working directory, and run the following command:
+`sudo bash install.sh` (NOTE: THE INSTALLER IS DESIGNED TO RUN IN A BASH SHELL! IT WILL NOT WORK WITH ZSH!!!)
 
->As of now there is not a way to automatically start SamuraiVision when the coprocessor boots, you need to manually ssh into the coprocessor and launch SamuraiVision. Eventually I'll write a shell script or something to automatically launch SamuraiVision on startup.
->As a reminder, SamuraiVision is under active development, these instructions are only for testing
->To get SamuraiVision working in WSL, you may need to recompile the WSL kernel. A guide can be found here: https://askubuntu.com/questions/1405903/capturing-webcam-video-with-opencv-in-wsl2
+Step 5: Follow the instructions in the installation script
 
