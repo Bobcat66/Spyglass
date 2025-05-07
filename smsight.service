@@ -1,0 +1,15 @@
+[Unit]
+Description=Robot Vision System
+After=network.target
+
+[Service]
+ExecStart=/opt/SamuraiSight/bin/smsight
+Restart=on-failure
+WorkingDirectory=/opt/SamuraiSight
+User=smsight-srv
+AmbientCapabilities=CAP_NET_ADMIN
+CapabilityBoundingSet=CAP_NET_ADMIN
+NoNewPrivileges=true
+
+[Install]
+WantedBy=multi-user.target
