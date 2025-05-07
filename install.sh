@@ -75,8 +75,9 @@ EOF
 elif [ "$launchOnBoot" == "N" ]; then
     echo "LAUNCH_ON_STARTUP=false" >> $ENV_FILE
 else
-    echo "ERROR: Unrecognized response \""$launchOnBoot"\""
+    echo "ERROR: Unrecognized response \"$launchOnBoot\""
     exit 2 #2 denotes that user input was malformed
+fi
 
 read -p "Do you want to set a static IP Address? [Y/N]: " SetStatic
 if [ "$SetStatic" == "Y" ]; then
@@ -86,8 +87,9 @@ if [ "$SetStatic" == "Y" ]; then
 elif [ "$SetStatic" == "N" ]; then
     echo "USE_STATIC_IP=false" >> $ENV_FILE
 else
-    echo "ERROR: Unrecognized response \""$SetStatic"\""
+    echo "ERROR: Unrecognized response \"$SetStatic\""
     exit 2 #2 denotes that user input was malformed
+fi
 
 # This ensures the working directory is the root directory
 cd $ROOT_DIR
