@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+#SamuraiSight launch script
+
+cd "$(dirname "${BASH_SOURCE[0]}")"
+
+IFACE=eth0 #Network interface
+
+
