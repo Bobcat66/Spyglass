@@ -3,7 +3,7 @@ SERVICE_NAME=samuraisight
 LAUNCH_PATH="$ROOT_DIR/bin/$SERVICE_NAME"
 USER=$(whoami)
 
-echo -e "SamuraiSight Installer\n"
+echo -e "------------- SamuraiSight Installer -------------\n"
 
 # Check if samuraisight is already installed
 if command -v "$SERVICE_NAME" &>/dev/null; then
