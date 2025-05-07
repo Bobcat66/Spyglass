@@ -41,6 +41,11 @@ elif (( ${#TEAM_NUMBER} == 5 )); then
     TE_AM="${TEAM_NUMBER:0:3}.${TEAM_NUMBER:3:2}"
 fi
 
+GATEWAY="10.$TE_AM.1"
+echo "GATEWAY=$GATEWAY" >> $ENV_FILE
+ROBORIO_IP="10.$TE_AM.2"
+echo "ROBORIO_IP=$ROBORIO_IP" >> $ENV_FILE
+
 
 
 # Make smsght (the launch script) an executable and add it to the PATH variable
@@ -74,6 +79,17 @@ elif [ "$launchOnBoot" == "N" ]; then
     echo "LAUNCH_ON_STARTUP=false" >> $ENV_FILE
 else
     echo "ERROR: Unrecognized response \""$launchOnBoot"\""
+    exit 2 #2 denotes that user input was malformed
+
+read -p "Do you want to set a static IP Address? [Y/N]: " SetStatic
+if [ "$SetStatic" == "Y" ]; then
+    echo "USE_STATIC_IP=true" >> $ENV_FILE
+    read -p "Enter IP address: " StaticIP
+    echo "STATIC_IP=$StaticIP" >> $ENV_FILE
+elif [ "$SetStatic" == "N" ]; then
+    echo "USE_STATIC_IP=false" >> $ENV_FILE
+else
+    echo "ERROR: Unrecognized response \""$SetStatic"\""
     exit 2 #2 denotes that user input was malformed
 
 # This ensures the working directory is the root directory
