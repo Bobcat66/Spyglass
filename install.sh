@@ -48,6 +48,7 @@ echo "ROBORIO_IP=$ROBORIO_IP" >> $ENV_FILE
 # Make samuraisight (the launch script) an executable and add it to the PATH variable
 chmod +x $LAUNCH_PATH
 echo "export PATH=\"\$PATH:$ROOT_DIR/bin\"" >> ~/.bashrc
+source ~/.bashrc
 
 read -p "Do you want SamuraiSight to launch on startup? [Y/N]: " launchOnStartup
 if [ "$launchOnBoot" == "Y" ]; then
