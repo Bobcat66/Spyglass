@@ -51,7 +51,7 @@ echo "export PATH=\"\$PATH:$ROOT_DIR/bin\"" >> ~/.bashrc
 source ~/.bashrc
 
 read -p "Do you want SamuraiSight to launch on startup? [Y/N]: " launchOnStartup
-if [ "$launchOnBoot" == "Y" ]; then
+if [ "$launchOnStartup" == "Y" ]; then
     SERVICE_FILE = "/etc/systemd/system/$SERVICE_NAME.service"
     echo "LAUNCH_ON_STARTUP=true" >> $ENV_FILE
     sudo bash -c "cat > $SERVICE_FILE"  <<EOF
@@ -73,10 +73,10 @@ EOF
     echo "SERVICE_FILE=$SERVICE_FILE" >> $ENV_FILE
     echo "Systemd service successfully configured and enabled."
     echo "SamuraiSight will now start automatically on boot"
-elif [ "$launchOnBoot" == "N" ]; then
+elif [ "$launchOnStartup" == "N" ]; then
     echo "LAUNCH_ON_STARTUP=false" >> $ENV_FILE
 else
-    echo "ERROR: Unrecognized response \"$launchOnBoot\""
+    echo "ERROR: Unrecognized response \"$launchOnStartup\""
     exit 2 #2 denotes that user input was malformed
 fi
 
