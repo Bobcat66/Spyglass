@@ -5,9 +5,7 @@ import os
 from dataclasses import dataclass, asdict
 from dotenv import load_dotenv
 
-print("test")
-
-load_dotenv(".env")
+load_dotenv()
 
 @dataclass
 class response:

@@ -7,11 +7,10 @@ import os
 from dotenv import load_dotenv
 
 load_dotenv()
-for key,value in os.environ.items():
-    print(f"{key}={value}")
+
 # Configure logging
 logging.basicConfig(
-    level=logging.DEBUG,  # Use DEBUG for more verbose logs #TODO: Configure this with system.toml
+    level=logging.DEBUG,  # Use DEBUG for more verbose logs #TODO: Configure this with environment variables
     format='%(asctime)s [%(levelname)s] %(name)s: %(message)s'
 )
 
@@ -19,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 if __name__ == "__main__":
 
-    logger.info(os.getcwd())
+    print(os.getcwd())
 
     rootsrv.initialize(os.getenv("ROOTSRV_SOCK"))
 

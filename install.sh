@@ -188,8 +188,9 @@ echo "ROBORIO=$ROBORIO_IP" >> $ENV_FILE
 
 echo "NETMNGR=$NETMNGR" >> $ENV_FILE
 
-# Make samuraisight (the launch script) an executable
+# Make binary scripts executable
 chmod +x /opt/SamuraiSight/bin/launch
+chmod +x /opt/SamuraiSight/bin/rootsrv/launch-rootsrv
 chmod +x /opt/SamuraiSight/bin/rootsrv/netconfig
 
 read -p "Do you want SamuraiSight to launch on startup? [y/N]: " launchOnStartup
