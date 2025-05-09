@@ -15,7 +15,7 @@ if __name__ == "__main__":
 
     logger.info("Launching SamuraiSight")
 
-    config = configsources.ConfigParser("../config.toml")
+    config = configsources.ConfigParser("../../config.toml")
     #devconfig = config.get_dev_config()
 
     # Initialize NetworkTables (FOR TESTING)

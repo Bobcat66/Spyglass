@@ -15,6 +15,11 @@ systemctl disable $SERVICE_NAME
 userdel $USER
 rm $SERVICE_FILE
 rm -r $ROOT_DIR
+NETWORK_FILE="/etc/systemd/network/10-smsight-eth0.network"
+if [ -f $NETWORK_FILE ]; then
+    rm $NETWORK_FILE
+fi
+
 
 
 

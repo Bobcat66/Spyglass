@@ -71,7 +71,17 @@ function promptNetMgmt {
 if systemctl --quiet is-active systemd-networkd; then
     # systemd-networkd is the preferred network manager for SamuraiSight
     NETMNGR=NETWORK_D
-    NETWORKFILE=/etc/
+    NETWORK_FILE="/etc/systemd/network/10-smsight-eth0.network"
+    cat > $NETWORK_FILE <<EOF
+;SamuraiSight Network Configuration File. DO NOT MODIFY THIS MANUALLY
+[Match]
+Name=eth0
+
+[Network]
+DHCP=yes
+;Address=
+Gateway=_dhcp4
+EOF
 elif systemctl --quiet is-active NetworkManager; then
     #NETMNGR=NETWORK_MANAGER # Uncomment this when NetworkManager is supported
     echo "WARNING: NetworkManager is currently unsupported by SamuraiSight. We strongly recommend switching to systemd-networkd"
@@ -176,6 +186,7 @@ echo "NETMNGR=$NETMNGR" >> $ENV_FILE
 
 # Make samuraisight (the launch script) an executable
 chmod +x /opt/SamuraiSight/bin/launch
+chmod +x /opt/SamuraiSight/bin/netconfig
 
 read -p "Do you want SamuraiSight to launch on startup? [y/N]: " launchOnStartup
 case "$launchOnStartup" in
@@ -196,14 +207,12 @@ esac
 read -p "Do you want to set a static IP Address? [y/N]: " SetStatic
 case "$SetStatic" in 
     y|Y )
-        echo "USE_STATIC_IP=true" >> $ENV_FILE
-        echo "Using static IP."
         read -p "Enter IP address: " StaticIP
-        echo "STATIC_IP=$StaticIP" >> $ENV_FILE
+        ./bin/netconfig -s $StaticIP
+        echo "Using static IP."
         ;;
     n|N )
-        echo "USE_STATIC_IP=false" >> $ENV_FILE
-        echo "STATIC_IP=" >> $ENV_FILE
+        ./bin/netconfig -d
         echo "Using DHCP. WARNING: It is HIGHLY recommended to set a static IP for competitions"
         echo "To enable Static IP, set USE_STATIC_IP to true in the .env file, and add an entry called STATIC_IP assigned to the ip address"
         ;;
