@@ -52,7 +52,8 @@ while True:
                 exit = 42
                 break
             subprocess.run(["/opt/SamuraiSight/bin/rootsrv/netconfig","-d"])
-            socket.send_json(asdict(response("dynamicip",0,"success")))
+            msg = "success"
+            exit = 0
         case "staticip":
             addr = message.get("args")[0]
             if addr is None:
@@ -70,7 +71,7 @@ while True:
             msg = f"unrecognized command '{command}'"
             exit = 71
     logger.info(msg)
-    socket.send_json(asdict(asdict(response(command,exit,msg))))
+    socket.send_json(asdict(response(command,exit,msg)))
 
 logger.info("Shut down rootsrv server")
 
