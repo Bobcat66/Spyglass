@@ -68,7 +68,7 @@ class ConfigParser:
             return None
         tag_size = fieldDict.get("tag_size")
         family = fieldDict.get("family")
-        layout = apriltag.AprilTagFieldLayout("../resources/fields/" + fieldDict.get("layout") + ".json")
+        layout = apriltag.AprilTagFieldLayout("../../resources/fields/" + fieldDict.get("layout") + ".json")
         return FieldConfig(
             tag_size,
             layout,

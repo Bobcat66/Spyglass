@@ -1,3 +1,6 @@
 #!/usr/bin/env bash
 
-# A daemon that exposes certain privileged operation to SamuraiSight, communicates over dbus
+# A daemon that exposes certain privileged operation to SamuraiSight, communicates over ZeroMQ
+set -a
+source .env
+set +a

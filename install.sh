@@ -188,7 +188,7 @@ echo "NETMNGR=$NETMNGR" >> $ENV_FILE
 
 # Make samuraisight (the launch script) an executable
 chmod +x /opt/SamuraiSight/bin/launch
-chmod +x /opt/SamuraiSight/bin/rootservice/netconfig
+chmod +x /opt/SamuraiSight/bin/rootsrv/netconfig
 
 read -p "Do you want SamuraiSight to launch on startup? [y/N]: " launchOnStartup
 case "$launchOnStartup" in
@@ -210,16 +210,16 @@ read -p "Do you want to set a static IP Address? [y/N]: " SetStatic
 case "$SetStatic" in 
     y|Y )
         read -p "Enter IP address: " StaticIP
-        ./bin/rootservice/netconfig -s $StaticIP
+        ./bin/rootsrv/netconfig -s $StaticIP
         echo "Using static IP."
         ;;
     n|N )
-        ./bin/rootservice/netconfig -d
+        ./bin/rootsrv/netconfig -d
         echo "Using DHCP. WARNING: It is HIGHLY recommended to set a static IP for competitions"
         echo "To enable Static IP, set USE_STATIC_IP to true in the .env file, and add an entry called STATIC_IP assigned to the ip address"
         ;;
     * )
-        ./bin/rootservice/netconfig -d
+        ./bin/rootsrv/netconfig -d
         echo "WARNING: Unrecognized response \"$SetStatic\""
         echo "Defaulting to DHCP. WARNING: It is HIGHLY recommended to set a static IP for competitions"
         echo "To enable Static IP, set USE_STATIC_IP to true in the .env file, and set the STATIC_IP entry to the address you want to use"
@@ -235,4 +235,5 @@ echo "Successfully created python virtual environment"
 # Creates logs/ directory, and models/ directory
 mkdir logs
 mkdir models
+echo "ROOTSRV_SOCK=ipc://run/smsight-rootsrv.sock" >> $ENV_FILE
 exit 0
