@@ -61,6 +61,8 @@ function promptNetMgmt {
         echo "WARNING: Unrecognized response \"$userAllowedNetMgmt\""
         echo "Aborting installation."
         exit 1
+        ;;
+    esac
 }
 # Detect primary network manager
 if systemctl --quiet is-active systemd-networkd; then
