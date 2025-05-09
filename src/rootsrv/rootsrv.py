@@ -27,8 +27,8 @@ socket_name = os.getenv("ROOTSRV_SOCK")
 socket.bind(socket_name)
 
 if (socket_name[:6] == "ipc://"):
-    subprocess.run(["chown","root:rootsrv-client",socket_name[6:]],shell=True)
-    subprocess.run(["chmod","g+rw",socket_name[6:]],shell=True)
+    subprocess.run(["chown","root:rootsrv-client",socket_name[6:]])
+    subprocess.run(["chmod","g+rw",socket_name[6:]])
 
 logger.info("smsight-rootsrv running on address %s",socket_name)
 
