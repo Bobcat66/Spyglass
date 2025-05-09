@@ -194,6 +194,7 @@ echo "NETMNGR=$NETMNGR" >> $ENV_FILE
 chmod +x /opt/SamuraiSight/bin/launch
 chmod +x /opt/SamuraiSight/bin/rootsrv/launch-rootsrv
 chmod +x /opt/SamuraiSight/bin/rootsrv/netconfig
+chmod +x /opt/SamuraiSight/bin/restart
 
 read -p "Do you want SamuraiSight to launch on startup? [y/N]: " launchOnStartup
 case "$launchOnStartup" in
