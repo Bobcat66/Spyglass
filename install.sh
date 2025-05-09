@@ -165,6 +165,7 @@ DEBUG=false
 TEAM=$TEAM_NUMBER
 SERVICE_FILE=$SERVICE_FILE
 DEV_NAME=$DEV_NAME
+USE_STATIC_IP=false
 EOF
 
 echo ".env file created at $(realpath "$ENV_FILE")"

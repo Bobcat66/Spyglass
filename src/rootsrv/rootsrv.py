@@ -61,4 +61,6 @@ while True:
     logger.info(msg)
     socket.send_json(response(command,exit,msg))
 
+print("Ending rootsrv")
+
 
