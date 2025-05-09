@@ -2,6 +2,8 @@ from configuration import configsources
 from network import ntmanager
 import ntcore
 import logging
+from utils import rootsrv_client as rootsrv
+import os
 
 # Configure logging
 logging.basicConfig(
@@ -13,6 +15,8 @@ logger = logging.getLogger(__name__)
 
 if __name__ == "__main__":
 
+    rootsrv.initialize(os.getenv("ROOTSRV_SOCK"))
+
     logger.info("Launching SamuraiSight")
 
     config = configsources.ConfigParser("../../config.toml")
@@ -23,6 +27,9 @@ if __name__ == "__main__":
     inst.startServer("10.10.76.2")
     inst.startClient4("SamuraiSight")
     ntmanager.initialize("SamuraiSight",inst)
+    rootsrv.dynamicIP()
+    
+
 
 
 

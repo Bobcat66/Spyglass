@@ -235,5 +235,5 @@ echo "Successfully created python virtual environment"
 # Creates logs/ directory, and models/ directory
 mkdir logs
 mkdir models
-echo "ROOTSRV_SOCK=ipc://run/smsight-rootsrv.sock" >> $ENV_FILE
+echo "ROOTSRV_SOCK=tmp://run/smsight-rootsrv.sock" >> $ENV_FILE
 exit 0

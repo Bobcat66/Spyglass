@@ -28,7 +28,7 @@ development = os.getenv("APP_ENV") == "development"
 
 #Reserved error codes: 42=development mode, 71=unrecognized commands
 while True:
-    #JSON Schema: {"command":"<command>",<arbitrary arguments>}
+    #JSON Schema: {"command":"<command>",args: list of positional arguments,kwargs: dict of keyword arguments}
     message = socket.recv_json()
     command = message.get("command")
     logger.info("Received %s command",command)
@@ -43,7 +43,7 @@ while True:
             subprocess.run(["/opt/SamuraiSight/bin/rootsrv/netconfig","-d"])
             socket.send_json(response("dynamicip",0,"success"))
         case "staticip":
-            addr = message.get("addr",None)
+            addr = message.get("args")[0]
             if addr is None:
                 msg = "no ip address specified"
                 exit = 1
