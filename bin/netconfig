@@ -37,7 +37,7 @@ EOF
                     else
                         sed -i "s/^DHCP=.*/DHCP=yes/" $NETWORK_FILE
                         sed -i "s/^Address=.*/;Address=/" $NETWORK_FILE
-                        sed -i "s/^Gateway=.*/Gateway=_dhcp4" $NETWORK_FILE
+                        sed -i "s/^Gateway=.*/Gateway=_dhcp4/" $NETWORK_FILE
                     fi
                     ;;
                 NETWORK_MANAGER )
@@ -50,8 +50,8 @@ EOF
             esac
             ;;
         s )
+            sed -i "s/^USE_STATIC_IP=.*/USE_STATIC_IP=true/" ".env"
             sed -i "s/^STATIC_IP=.*/STATIC_IP=$OPTARG/" ".env"
-            sed -i "s/^USE_STATIC_IP=.*/USE_STATIC_IP=true" ".env"
             case $NETMNGR in
                 NETWORK_D )
                     NETWORK_FILE="/etc/systemd/network/10-smsight-eth0.network"
@@ -69,8 +69,8 @@ EOF
                     else
                         sed -i "s/^DHCP=.*/DHCP=no/" $NETWORK_FILE
                         sed -i "s/^;Address=/Address=/" $NETWORK_FILE
-                        sed -i "s/^Address=.*/Address=$OPTARG\/24" $NETWORK_FILE
-                        sed -i "s/^Gateway=.*/Gateway=$GATEWAY" $NETWORK_FILE
+                        sed -i "s/^Address=.*/Address=$OPTARG\/24/" $NETWORK_FILE
+                        sed -i "s/^Gateway=.*/Gateway=$GATEWAY/" $NETWORK_FILE
                     fi
                     ;;
                 NETWORK_MANAGER )
