@@ -170,8 +170,6 @@ echo "ROBORIO=$ROBORIO_IP" >> $ENV_FILE
 
 echo "NETMNGR=$NETMNGR" >> $ENV_FILE
 
-
-
 # Make samuraisight (the launch script) an executable
 chmod +x /opt/SamuraiSight/bin/launch
 
@@ -223,4 +221,4 @@ echo "Successfully created python virtual environment"
 # Creates logs/ directory, and models/ directory
 mkdir logs
 mkdir models
-exit 0 #0 means successful installation
+exit 0
