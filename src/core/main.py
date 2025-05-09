@@ -6,12 +6,13 @@ from utils import rootsrv_client as rootsrv
 import os
 from dotenv import load_dotenv
 
+#
 load_dotenv()
 
 # Configure logging
 logging.basicConfig(
     level=logging.DEBUG,  # Use DEBUG for more verbose logs #TODO: Configure this with environment variables
-    format='%(asctime)s [%(levelname)s] %(name)s: %(message)s'
+    format='[%(levelname)s] %(name)s: %(message)s' # stdout is being logged by journald, which already keeps timestamps
 )
 
 logger = logging.getLogger(__name__)

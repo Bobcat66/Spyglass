@@ -6,6 +6,8 @@ After=network.target
 ExecStart=/opt/SamuraiSight/bin/rootsrv/launch-rootsrv
 Restart=on-failure
 WorkingDirectory=/opt/SamuraiSight
+StandardOutput=journal
+StandardError=journal
 
 [Install]
 WantedBy=multi-user.target

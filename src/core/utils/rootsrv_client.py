@@ -18,7 +18,7 @@ def initialize(socket_name: str) -> None:
     logger.info("Initialized rootsrv client")
     _context = zmq.Context()
     _socket = _context.socket(zmq.REQ)
-    _socket.bind(socket_name)
+    _socket.connect(socket_name)
 
 #TODO: Make this better and more verbose
 def dynamicIP() -> None:
