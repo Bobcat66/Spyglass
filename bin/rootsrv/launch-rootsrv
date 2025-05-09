@@ -1,6 +1,13 @@
 #!/usr/bin/env bash
 
 # A daemon that exposes certain privileged operation to SamuraiSight, communicates over ZeroMQ
+
+#Loads environment variables
 set -a
 source .env
 set +a
+
+source .venv/bin/activate # Activates python venv
+cd src/rootsrv
+python3.13 rootsrv.py # Launches python program
+
