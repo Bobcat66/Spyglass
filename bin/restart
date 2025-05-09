@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+# Must be run with root permissions
+
+systemctl stop smsight
+systemctl stop sms-rootsrv
+
+systemctl start sms-rootsrv
+systemctl start smsight
