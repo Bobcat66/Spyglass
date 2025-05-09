@@ -1,6 +1,6 @@
 [Unit]
 Description=Robot Vision System
-After=network.target
+After=smsight-rootsrv.service
 
 [Service]
 ExecStart=/opt/SamuraiSight/bin/launch

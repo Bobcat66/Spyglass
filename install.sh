@@ -2,6 +2,7 @@ REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="/opt/SamuraiSight"
 SERVICE_NAME=smsight
 SERVICE_FILE="/etc/systemd/system/smsight.service"
+ROOTSRV_FILE="/etc/systemd/system/smsight-rootsrv.service"
 echo -e "------------- SamuraiSight Installer -------------\n"
 
 echo "Installing SamuraiSight in $ROOT_DIR"
@@ -141,7 +142,8 @@ cp $REPO_DIR/requirements.txt $ROOT_DIR/requirements.txt
 cp $REPO_DIR/config.toml $ROOT_DIR/config.toml
 
 # Loading service file
-cp $REPO_DIR/smsight.service $SERVICE_FILE
+cp $REPO_DIR/services/smsight.service $SERVICE_FILE
+cp $REPO_DIR/services/smsight-rootsrv.service $ROOTSRV_FILE
 systemctl daemon-reload
 
 # Changing working directory to deployment directory in order to complete installation
