@@ -7,7 +7,23 @@
 
 cd /opt/SamuraiSight/
 
-# DETECTED_NETMNGR=UNKNOWN
+DETECTED_NETMNGR=UNKNOWN
+# Detect primary network manager
+if systemctl --quiet is-active systemd-networkd; then
+    # systemd-networkd is the preferred network manager for SamuraiSight
+    DETECTED_NETMNGR=NETWORK_D
+elif systemctl --quiet is-active NetworkManager; then
+    #NETMNGR=NETWORK_MANAGER # Uncomment this when NetworkManager is supported
+    DETECTED_NETMNGR=UNKNOWN
+elif systemctl --quiet is-active dhcpcd; then
+    #NETMNGR=DHCPCD # Uncomment this when dhcpcd is supported
+    DETECTED_NETMNGR=UNKNOWN
+elif systemctl --quiet is-active networking; then
+    #NETMNGR=IFUPDOWN # Uncomment this when Ifupdown support is added
+    DETECTED_NETMNGR=UNKNOWN
+else
+    DETECTED_NETMNGR=UNKNOWN
+fi
 
 set -a
 source .env

@@ -186,7 +186,7 @@ echo "NETMNGR=$NETMNGR" >> $ENV_FILE
 
 # Make samuraisight (the launch script) an executable
 chmod +x /opt/SamuraiSight/bin/launch
-chmod +x /opt/SamuraiSight/bin/netconfig
+chmod +x /opt/SamuraiSight/bin/rootservice/netconfig
 
 read -p "Do you want SamuraiSight to launch on startup? [y/N]: " launchOnStartup
 case "$launchOnStartup" in
@@ -208,17 +208,16 @@ read -p "Do you want to set a static IP Address? [y/N]: " SetStatic
 case "$SetStatic" in 
     y|Y )
         read -p "Enter IP address: " StaticIP
-        ./bin/netconfig -s $StaticIP
+        ./bin/rootservice/netconfig -s $StaticIP
         echo "Using static IP."
         ;;
     n|N )
-        ./bin/netconfig -d
+        ./bin/rootservice/netconfig -d
         echo "Using DHCP. WARNING: It is HIGHLY recommended to set a static IP for competitions"
         echo "To enable Static IP, set USE_STATIC_IP to true in the .env file, and add an entry called STATIC_IP assigned to the ip address"
         ;;
     * )
-        echo "USE_STATIC_IP=false" >> $ENV_FILE
-        echo "STATIC_IP=" >> $ENV_FILE
+        ./bin/rootservice/netconfig -d
         echo "WARNING: Unrecognized response \"$SetStatic\""
         echo "Defaulting to DHCP. WARNING: It is HIGHLY recommended to set a static IP for competitions"
         echo "To enable Static IP, set USE_STATIC_IP to true in the .env file, and set the STATIC_IP entry to the address you want to use"
