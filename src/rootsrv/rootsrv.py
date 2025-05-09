@@ -23,8 +23,9 @@ logger = logging.getLogger("smsight-rootsrv")
 
 context = zmq.Context()
 socket = context.socket(zmq.REP)
-socket.bind(os.getenv("ROOTSRV_SOCK"))
-logger.info("smsight-rootsrv running on localhost port 5555")
+socket_name = os.getenv("ROOTSRV_SOCK")
+socket.bind(socket_name)
+logger.info("smsight-rootsrv running %s",socket_name)
 
 development = os.getenv("APP_ENV") == "development"
 
