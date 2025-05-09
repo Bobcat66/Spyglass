@@ -2,7 +2,7 @@ REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="/opt/SamuraiSight"
 SERVICE_NAME=smsight
 SERVICE_FILE="/etc/systemd/system/smsight.service"
-ROOTSRV_FILE="/etc/systemd/system/smsight-rootsrv.service"
+ROOTSRV_FILE="/etc/systemd/system/sms-rootsrv.service"
 echo -e "------------- SamuraiSight Installer -------------\n"
 
 echo "Installing SamuraiSight in $ROOT_DIR"
@@ -143,15 +143,17 @@ cp $REPO_DIR/config.toml $ROOT_DIR/config.toml
 
 # Loading service file
 cp $REPO_DIR/services/smsight.service $SERVICE_FILE
-cp $REPO_DIR/services/smsight-rootsrv.service $ROOTSRV_FILE
+cp $REPO_DIR/services/sms-rootsrv.service $ROOTSRV_FILE
 systemctl daemon-reload
-systemctl enable smsight-rootsrv.service
+systemctl enable sms-rootsrv.service
 
 # Changing working directory to deployment directory in order to complete installation
 cd $ROOT_DIR
 
+groupadd rootsrv-client
 useradd --system --no-create-home --shell /usr/sbin/nologin smsight-srv
 usermod -aG video smsight-srv
+usermod -aG rootsrv-client smsight-srv
 
 read -p "Enter team number: " TEAM_NUMBER
 read -p "Enter device name: " DEV_NAME
@@ -238,5 +240,5 @@ echo "Successfully created python virtual environment"
 # Creates logs/ directory, and models/ directory
 mkdir logs
 mkdir models
-echo "ROOTSRV_SOCK=ipc:///tmp/smsight-rootsrv.sock" >> $ENV_FILE
+echo "ROOTSRV_SOCK=ipc:///tmp/sms-rootsrv.sock" >> $ENV_FILE
 exit 0

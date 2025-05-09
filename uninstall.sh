@@ -2,7 +2,7 @@ echo "Uninstalling SamuraiSight"
 
 SERVICE_NAME="smsight.service"
 SERVICE_FILE="/etc/systemd/system/smsight.service"
-ROOTSRV_FILE="/etc/systemd/system/smsight-rootsrv.service"
+ROOTSRV_FILE="/etc/systemd/system/sms-rootsrv.service"
 ROOT_DIR="/opt/SamuraiSight"
 
 if ! [ -d $ROOT_DIR ]; then
@@ -13,8 +13,8 @@ fi
 USER="smsight-srv"
 systemctl stop smsight
 systemctl disable smsight
-systemctl stop smsight-rootsrv
-systemctl disable smsight-rootsrv
+systemctl stop sms-rootsrv
+systemctl disable sms-rootsrv
 userdel $USER
 rm $SERVICE_FILE
 rm $ROOTSRV_FILE

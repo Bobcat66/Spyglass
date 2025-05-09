@@ -2,6 +2,8 @@
 
 # A daemon that exposes certain privileged operation to SamuraiSight, communicates over ZeroMQ
 
+#
+
 source .venv/bin/activate # Activates python venv
 exec python3.13 src/rootsrv/rootsrv.py # Launches python program
 

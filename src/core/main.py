@@ -19,8 +19,6 @@ logger = logging.getLogger(__name__)
 
 if __name__ == "__main__":
 
-    print(os.getcwd())
-
     rootsrv.initialize(os.getenv("ROOTSRV_SOCK"))
 
     logger.info("Launching SamuraiSight")

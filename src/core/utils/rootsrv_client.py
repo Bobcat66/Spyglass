@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 def initialize(socket_name: str) -> None:
     global _socket,_context
-    logger.info("Initialized rootsrv client")
+    logger.info("Initialized rootsrv client at socket %s",socket_name)
     _context = zmq.Context()
     _socket = _context.socket(zmq.REQ)
     _socket.connect(socket_name)
@@ -23,4 +23,6 @@ def initialize(socket_name: str) -> None:
 #TODO: Make this better and more verbose
 def dynamicIP() -> None:
     _socket.send_json(asdict(request("dynamicip",[],{})))
+    logger.info("sent dynamicip")
     response = _socket.recv_json()
+    logger.info("received %s",str(response))

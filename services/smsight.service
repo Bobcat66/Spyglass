@@ -1,7 +1,7 @@
 [Unit]
 Description=Robot Vision System
-Requires=smsight-rootsrv.service
-After=smsight-rootsrv.service
+Requires=sms-rootsrv.service
+After=sms-rootsrv.service
 
 [Service]
 ExecStart=/opt/SamuraiSight/bin/launch

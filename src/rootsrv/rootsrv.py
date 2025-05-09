@@ -25,6 +25,11 @@ context = zmq.Context()
 socket = context.socket(zmq.REP)
 socket_name = os.getenv("ROOTSRV_SOCK")
 socket.bind(socket_name)
+
+if (socket_name[:6] == "ipc://"):
+    subprocess.run(["chown","root:rootsrv-client",socket_name[6:]],shell=True)
+    subprocess.run(["chmod","g+rw",socket_name[6:]],shell=True)
+
 logger.info("smsight-rootsrv running on address %s",socket_name)
 
 development = os.getenv("APP_ENV") == "development"
