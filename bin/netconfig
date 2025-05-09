@@ -7,8 +7,8 @@
 
 cd /opt/SamuraiSight/
 
-DETECTED_NETMNGR=UNKNOWN
-if 
+# DETECTED_NETMNGR=UNKNOWN
+
 set -a
 source .env
 set +a
@@ -54,7 +54,6 @@ EOF
             sed -i "s/^USE_STATIC_IP=.*/USE_STATIC_IP=true" ".env"
             case $NETMNGR in
                 NETWORK_D )
-                    # Code goes here
                     NETWORK_FILE="/etc/systemd/network/10-smsight-eth0.network"
                     if ! [ -f $NETWORK_FILE ]; then
                         cat > $NETWORK_FILE <<EOF
