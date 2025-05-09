@@ -1,5 +1,6 @@
 [Unit]
 Description=Robot Vision System
+Requires=smsight-rootsrv.service
 After=smsight-rootsrv.service
 
 [Service]
