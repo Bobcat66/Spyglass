@@ -45,6 +45,8 @@ case $userAllowedNetwork in
         echo "WARNING: Unrecognized response \"$userAllowedNetwork\""
         echo "Aborting installation."
         exit 1
+        ;;
+esac
 
 function promptNetMgmt {
     local userAllowedNetMgmt
