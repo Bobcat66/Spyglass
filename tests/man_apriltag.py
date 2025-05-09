@@ -3,7 +3,7 @@
 # the license found in the root directory of this project
 import os
 import sys
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),'../src')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),'../src/core')))
 
 import cv2
 from pipeline import annotations, pnpsolvers

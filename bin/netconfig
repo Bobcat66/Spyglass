@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
-# SamuraiSight network setting configuration utility
+# SamuraiSight network setting configuration utility. NOTE: CHANGES WILL NOT TAKE EFFECT UNTIL SAMURAISIGHT IS RESTARTED
 
 # Usage: ./bin/netconfig <opts>
-# Opts: -d sets IP to DHCP, -s sets static IP (requires 1 argument), -q suppresses 
+# Opts: -d sets IP to DHCP, -s sets static IP (requires 1 argument),
 
 cd /opt/SamuraiSight/
 
@@ -13,7 +13,7 @@ source .env
 set +a
 
 # command line opts parsing
-while getopts "ds:q" opt; do
+while getopts "ds:" opt; do
     case $opt in
         d )
             sed -i "s/^USE_STATIC_IP=.*/USE_STATIC_IP=false/" ".env" 
@@ -21,6 +21,10 @@ while getopts "ds:q" opt; do
             case $NETMNGR in
                 NETWORK_D )
                     # Code goes here
+                    NETWORK_FILE="/etc/systemd/network/10-smsight-eth0.network"
+                    sed -i "s/^DHCP=.*/DHCP=yes/" $NETWORK_FILE
+                    sed -i "s/^Address=.*/;Address=/" $NETWORK_FILE
+                    sed -i "s/^Gateway=.*/Gateway=_dhcp4" $NETWORK_FILE
                     ;;
                 NETWORK_MANAGER )
                     # Network manager support is WIP, and when network manager is detected SamuraiSight defaults to its built-in network management system. Ditto for dhcpcd
@@ -28,8 +32,30 @@ while getopts "ds:q" opt; do
                     ;;
                 DHCPCD )
                     exit 0
-                    ;;
-                
-                
+                    ;;   
             esac
-            ;; 
+            ;;
+        s )
+            sed -i "s/^STATIC_IP=.*/STATIC_IP=$OPTARG/" ".env"
+            sed -i "s/^USE_STATIC_IP=.*/USE_STATIC_IP=true" ".env"
+            case $NETMNGR in
+                NETWORK_D )
+                    # Code goes here
+                    NETWORK_FILE="/etc/systemd/network/10-smsight-eth0.network"
+                    sed -i "s/^DHCP=.*/DHCP=no/" $NETWORK_FILE
+                    sed -i "s/^;Address=/Address=/" $NETWORK_FILE
+                    sed -i "s/^Address=.*/Address=$OPTARG\/24" $NETWORK_FILE
+                    sed -i "s/^Gateway=.*/Gateway=$GATEWAY" $NETWORK_FILE
+                    ;;
+                NETWORK_MANAGER )
+                    # Network manager support is WIP, and when network manager is detected SamuraiSight defaults to its built-in network management system. Ditto for dhcpcd
+                    exit 0
+                    ;;
+                DHCPCD )
+                    exit 0
+                    ;;   
+            esac
+            ;;
+    esac
+
+        
