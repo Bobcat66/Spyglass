@@ -67,10 +67,12 @@ DHCP=no
 Address=$OPTARG/24
 Gateway=$GATEWAY
 EOF
-                    sed -i "s/^DHCP=.*/DHCP=no/" $NETWORK_FILE
-                    sed -i "s/^;Address=/Address=/" $NETWORK_FILE
-                    sed -i "s/^Address=.*/Address=$OPTARG\/24" $NETWORK_FILE
-                    sed -i "s/^Gateway=.*/Gateway=$GATEWAY" $NETWORK_FILE
+                    else
+                        sed -i "s/^DHCP=.*/DHCP=no/" $NETWORK_FILE
+                        sed -i "s/^;Address=/Address=/" $NETWORK_FILE
+                        sed -i "s/^Address=.*/Address=$OPTARG\/24" $NETWORK_FILE
+                        sed -i "s/^Gateway=.*/Gateway=$GATEWAY" $NETWORK_FILE
+                    fi
                     ;;
                 NETWORK_MANAGER )
                     # Network manager support is WIP, and when network manager is detected SamuraiSight defaults to its built-in network management system. Ditto for dhcpcd

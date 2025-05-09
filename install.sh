@@ -34,7 +34,7 @@ fi
 
 # Prompt the user to allow the installer to make changes to the network configuration
 echo "SamuraiSight will make changes to the configuration of network interface eth0."
-read -p "Do you want to continue? [y/N]" userAllowedNetwork
+read -p "Do you want to continue? [y/N]: " userAllowedNetwork
 case $userAllowedNetwork in
     y|Y )
         ;;
@@ -109,13 +109,13 @@ fi
 
 echo "This script will install the following dependencies: python3.13, python3.13-venv, software-properties-common."
 echo "Additionally, this script will add the deadsnakes PPA"
-read -p "Do you want to continue? [y/N]" userAllowedDeps
+read -p "Do you want to continue? [y/N]: " userAllowedDeps
 case "$userAllowedDeps" in
     y|Y )
-        apt-get update
+        apt-get -y update
         apt-get -y install software-properties-common
-        add-apt-repository ppa:deadsnakes/ppa
-        apt-get update
+        add-apt-repository -y ppa:deadsnakes/ppa
+        apt-get -y update
         apt-get -y install python3.13 python3.13-venv
         ;;
     n|N )
