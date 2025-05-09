@@ -23,6 +23,7 @@ if ! dpkg -l | grep -q "systemd"; then
     echo "SamuraiSight runs as a systemd service. Systemd was not detected on this system"
     echo "Aborting installation."
     exit 3
+fi
 
 # Check if samuraisight is already installed
 if [ -d $ROOT_DIR ]; then
@@ -152,6 +153,7 @@ TEAM=$TEAM_NUMBER
 SERVICE_FILE=$SERVICE_FILE
 DEV_NAME=$DEV_NAME
 EOF
+
 echo ".env file created at $(realpath "$ENV_FILE")"
 
 # I wrote this at 3am in the morning, ill figure out a better way soon
