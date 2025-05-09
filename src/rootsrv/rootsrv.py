@@ -5,6 +5,8 @@ import os
 from dataclasses import dataclass, asdict
 from dotenv import load_dotenv
 
+print("test")
+
 load_dotenv(".env")
 
 @dataclass
@@ -65,6 +67,8 @@ while True:
             exit = 71
     logger.info(msg)
     socket.send_json(asdict(response(command,exit,msg)))
+
+logger.info("Shut down rootsrv server")
 
 
 
