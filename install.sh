@@ -6,12 +6,113 @@ echo -e "------------- SamuraiSight Installer -------------\n"
 
 echo "Installing SamuraiSight in $ROOT_DIR"
 
+# Checks to ensure the script is being run with root permissions
+if [[ $EUID -ne 0 ]]; then
+  echo "The SamuraiSight installer must be run with root privileges."
+  echo "Aborting installation."
+  exit 2 # exit code 2 denotes that the script was running with improper permissions
+fi
+
+if [ ! -f "/etc/debian_version" ]; then
+   echo "The SamuraiSight installer is only designed to run on debian-based distros. /etc/debian_version was not detected on this system."
+   echo "Aborting installation."
+   exit 3 # 3 denotes the installer was run on an improperly configured system
+fi
+
+if ! dpkg -l | grep -q "systemd"; then
+    echo "SamuraiSight runs as a systemd service. Systemd was not detected on this system"
+    echo "Aborting installation."
+    exit 3
+
 # Check if samuraisight is already installed
 if [ -d $ROOT_DIR ]; then
     echo "SamuraiSight is already installed"
-    echo "Aborting installation"
-    exit 1 # 1 denotes that samuraisight is already installed
+    echo "Aborting installation."
+    exit 4 # 4 denotes that samuraisight is already installed
 fi
+
+# Prompt the user to allow the installer to make changes to the network configuration
+echo "SamuraiSight will make changes to the configuration of network interface eth0."
+read -p "Do you want to continue? [y/N]" userAllowedNetwork
+case $userAllowedNetwork in
+    y|Y )
+        ;;
+    n|N )
+        echo "Aborting installation."
+        exit 1 # 1 indicates that the user aborted installation
+        ;;
+    * )
+        echo "WARNING: Unrecognized response \"$userAllowedNetwork\""
+        echo "Aborting installation."
+        exit 1
+
+function promptNetMgmt {
+    local userAllowedNetMgmt
+    read -p "Allow SamuraiSight to perform network management itself? [y/N]: " userAllowedNetMgmt
+    case $userAllowedNetMgmt in
+    y|Y )
+        return 0
+        ;;
+    n|N )
+        echo "Aborting installation."
+        exit 1 # 1 indicates that the user aborted installation
+        ;;
+    * )
+        echo "WARNING: Unrecognized response \"$userAllowedNetMgmt\""
+        echo "Aborting installation."
+        exit 1
+}
+# Detect primary network manager
+if systemctl --quiet is-active systemd-networkd; then
+    # systemd-networkd is the preferred network manager for SamuraiSight
+    NETMNGR=NETWORK_D
+    NETWORKFILE=/etc/
+elif systemctl --quiet is-active NetworkManager; then
+    #NETMNGR=NETWORK_MANAGER # Uncomment this when NetworkManager is supported
+    echo "WARNING: NetworkManager is currently unsupported by SamuraiSight. We strongly recommend switching to systemd-networkd"
+    promptNetMgmt
+    NETMNGR=UNKNOWN
+elif systemctl --quiet is-active dhcpcd; then
+    #NETMNGR=DHCPCD # Uncomment this when dhcpcd is supported
+    echo "WARNING: dhcpcd is currently unsupported by SamuraiSight. We strongly recommend switching to systemd-networkd"
+    promptNetMgmt
+    NETMNGR=UNKNOWN
+elif systemctl --quiet is-active networking; then
+    #NETMNGR=IFUPDOWN # Uncomment this when Ifupdown support is added
+    echo "WARNING: Ifupdown is currently unsupported by SamuraiSight. We strongly recommend switching to systemd-networkd"
+    promptNetMgmt
+    NETMNGR=UNKNOWN
+else
+    # Prompt user to allow SamuraiSight to directly configure the network
+    echo "WARNING: Unknown network manager. We strongly recommend switching to systemd-networkd"
+    promptNetMgmt
+    NETMNGR=UNKNOWN
+fi
+
+
+# Prompt the user to allow the installer to install SamuraiSight dependencies.
+
+echo "This script will install the following dependencies: python3.13, python3.13-venv, software-properties-common."
+echo "Additionally, this script will add the deadsnakes PPA"
+read -p "Do you want to continue? [y/N]" userAllowedDeps
+case "$userAllowedDeps" in
+    y|Y )
+        apt-get update
+        apt-get -y install software-properties-common
+        add-apt-repository ppa:deadsnakes/ppa
+        apt-get update
+        apt-get -y install python3.13 python3.13-venv
+        ;;
+    n|N )
+        echo "Aborting installation."
+        exit 1
+        ;;
+    * )
+        echo "WARNING: Unrecognized response \"$userAllowedDeps\""
+        echo "Aborting installation."
+        exit 1
+        ;;
+esac
 
 # Setting up the deployment directory
 mkdir $ROOT_DIR
@@ -63,45 +164,61 @@ fi
 GATEWAY="10.$TE_AM.1"
 echo "GATEWAY=$GATEWAY" >> $ENV_FILE
 ROBORIO_IP="10.$TE_AM.2"
-echo "ROBORIO_IP=$ROBORIO_IP" >> $ENV_FILE
+echo "ROBORIO=$ROBORIO_IP" >> $ENV_FILE
+
+echo "NETMNGR=$NETMNGR" >> $ENV_FILE
+
+
 
 # Make samuraisight (the launch script) an executable
-chmod +x /opt/SamuraiSight/bin/smsight
+chmod +x /opt/SamuraiSight/bin/launch
 
-read -p "Do you want SamuraiSight to launch on startup? [Y/N]: " launchOnStartup
-if [ "$launchOnStartup" == "Y" ]; then
-    systemctl enable "smsight.service"
-    echo "SamuraiSight will launch automatically on startup. This can be disabled with sudo systemctl disable smsight.service"
-elif [ "$launchOnStartup" == "N" ]; then
-    echo "SamuraiSight will not launch on startup. To enable launch on startup, run sudo systemctl enable smsight.service"
-else
-    echo "ERROR: Unrecognized response \"$launchOnStartup\""
-    echo "Defaulting to launch on startup. This can be disabled by running sudo systemctl disable smsight.service"
-    systemctl enable "smsight.service"
-fi
+read -p "Do you want SamuraiSight to launch on startup? [y/N]: " launchOnStartup
+case "$launchOnStartup" in
+    y|Y )
+        systemctl enable smsight
+        echo "SamuraiSight will launch automatically on startup. This can be disabled with sudo systemctl disable smsight"
+        ;;
+    n|N )
+        echo "SamuraiSight will not launch on startup. To enable launch on startup, run sudo systemctl enable smsight"
+        ;;
+    * )
+        echo "WARNING: Unrecognized response \"$launchOnStartup\""
+        echo "Defaulting to launch on startup. This can be disabled by running sudo systemctl disable smsight"
+        systemctl enable smsight
+        ;;
+esac
 
-read -p "Do you want to set a static IP Address? [Y/N]: " SetStatic
-if [ "$SetStatic" == "Y" ]; then
-    echo "USE_STATIC_IP=true" >> $ENV_FILE
-    read -p "Enter IP address: " StaticIP
-    echo "STATIC_IP=$StaticIP" >> $ENV_FILE
-elif [ "$SetStatic" == "N" ]; then
-    echo "USE_STATIC_IP=false" >> $ENV_FILE
-    echo "Using DHCP. WARNING: It is HIGHLY recommended to set a static IP for competitions"
-    echo "To enable Static IP, set USE_STATIC_IP to true in the .env file, and add an entry called STATIC_IP assigned to the ip address"
-else
-    echo "ERROR: Unrecognized response \"$SetStatic\""
-    echo "Defaulting to DHCP"
-    echo "To enable Static IP, set USE_STATIC_IP to true in the .env file, and add an entry called STATIC_IP assigned to the ip address"
-    echo "USE_STATIC_IP=false" >> $ENV_FILE
-fi
+read -p "Do you want to set a static IP Address? [y/N]: " SetStatic
+case "$SetStatic" in 
+    y|Y )
+        echo "USE_STATIC_IP=true" >> $ENV_FILE
+        echo "Using static IP."
+        read -p "Enter IP address: " StaticIP
+        echo "STATIC_IP=$StaticIP" >> $ENV_FILE
+        ;;
+    n|N )
+        echo "USE_STATIC_IP=false" >> $ENV_FILE
+        echo "STATIC_IP=" >> $ENV_FILE
+        echo "Using DHCP. WARNING: It is HIGHLY recommended to set a static IP for competitions"
+        echo "To enable Static IP, set USE_STATIC_IP to true in the .env file, and add an entry called STATIC_IP assigned to the ip address"
+        ;;
+    * )
+        echo "USE_STATIC_IP=false" >> $ENV_FILE
+        echo "STATIC_IP=" >> $ENV_FILE
+        echo "WARNING: Unrecognized response \"$SetStatic\""
+        echo "Defaulting to DHCP. WARNING: It is HIGHLY recommended to set a static IP for competitions"
+        echo "To enable Static IP, set USE_STATIC_IP to true in the .env file, and set the STATIC_IP entry to the address you want to use"
+        ;;
+esac
+
 
 VENV=".venv"
-python3 -m venv $VENV
+python3.13 -m venv $VENV
 source ".venv/bin/activate"
 pip install -r requirements.txt
 echo "Successfully created python virtual environment"
-# Creates logs/ directory, models/ directory, and recordings/ directory
+# Creates logs/ directory, and models/ directory
 mkdir logs
 mkdir models
 exit 0 #0 means successful installation

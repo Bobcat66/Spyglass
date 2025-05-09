@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+# SamuraiSight network setting configuration utility
+
+# Usage: ./bin/netconfig <opts>
+# Opts: -d sets IP to DHCP, -s sets static IP (requires 1 argument), -q suppresses 
+
+cd /opt/SamuraiSight/
+
+$DETECTED_NETMNGR = 
+set -a
+source .env
+set +a
+
+# command line opts parsing
+while getopts "ds:q" opt; do
+    case $opt in
+        d )
+            sed -i "s/^USE_STATIC_IP=.*/USE_STATIC_IP=false/" ".env" 
+            sed -i "s/^STATIC_IP=.*/STATIC_IP=/" ".env" 
+            case $NETMNGR in
+                NETWORK_D )
+                    # Code goes here
+                    ;;
+                NETWORK_MANAGER )
+                    # Network manager support is WIP, and when network manager is detected SamuraiSight defaults to its built-in network management system. Ditto for dhcpcd
+                    exit 0
+                    ;;
+                DHCPCD )
+                    exit 0
+                    ;;
+                
+                
+            esac
+            ;; 

@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+# SamuraiSight launch script.
+
+set -a
+source .env
+set +a
+
+if [ "$NETMNGR" == "UNKNOWN" ]; then
+    if [ "$USE_STATIC_IP" == "true" ]; then
+        if [ -z "$STATIC_IP" ]; then
+            echo "ERROR: Static IP is not configured."
+            exit 1
+        fi
+        ip addr flush dev $IFACE
+        ip addr add $STATIC_IP/24 dev $IFACE
+        ip route add default via $GATEWAY dev $IFACE
+    fi
+fi
+
+source .venv/bin/activate # Activates python venv
+cd src
+python3.13 main.py # Launches python program
+
+

@@ -3,7 +3,7 @@ Description=Robot Vision System
 After=network.target
 
 [Service]
-ExecStart=/opt/SamuraiSight/bin/smsight
+ExecStart=/opt/SamuraiSight/bin/launch
 Restart=on-failure
 WorkingDirectory=/opt/SamuraiSight
 User=smsight-srv

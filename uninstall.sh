@@ -4,7 +4,7 @@ SERVICE_NAME="smsight.service"
 SERVICE_FILE="/etc/systemd/system/smsight.service"
 ROOT_DIR="/opt/SamuraiSight"
 
-if [ ! -d $ROOT_DIR ]; then
+if ! [ -d $ROOT_DIR ]; then
     echo "SamuraiSight is not installed"
     exit 0
 fi
