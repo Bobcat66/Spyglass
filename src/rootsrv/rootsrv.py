@@ -25,7 +25,7 @@ context = zmq.Context()
 socket = context.socket(zmq.REP)
 socket_name = os.getenv("ROOTSRV_SOCK")
 socket.bind(socket_name)
-logger.info("smsight-rootsrv running on socket %s",socket_name)
+logger.info("smsight-rootsrv running on address %s",socket_name)
 
 development = os.getenv("APP_ENV") == "development"
 
@@ -34,6 +34,7 @@ development = os.getenv("APP_ENV") == "development"
 #Reserved error codes: 42=development mode, 71=unrecognized commands
 while True:
     #JSON Schema: {"command":"<command>",args: list of positional arguments,kwargs: dict of keyword arguments}
+    logger.info("heartbeat")
     message = socket.recv_json()
     command = message.get("command")
     logger.info("Received %s command",command)
