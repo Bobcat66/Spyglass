@@ -1,7 +1,8 @@
 import zmq
 import logging
-from dataclasses import dataclass
+from dataclasses import dataclass, asdict
 from typing import List, Dict
+
 @dataclass
 class request:
     command: str
@@ -21,4 +22,4 @@ def initialize(socket_name: str) -> None:
 
 #TODO: Make this better and more verbose
 def dynamicIP() -> None:
-    _socket.send_json(request("dynamicip",[],{}))
+    _socket.send_json(asdict(request("dynamicip",[],{})))

@@ -2,7 +2,11 @@ import zmq
 import subprocess
 import logging
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, asdict
+from dotenv import load_dotenv
+
+load_dotenv(".env")
+
 @dataclass
 class response:
     command: str
@@ -59,8 +63,7 @@ while True:
             msg = f"unrecognized command '{command}'"
             exit = 71
     logger.info(msg)
-    socket.send_json(response(command,exit,msg))
+    socket.send_json(asdict(response(command,exit,msg)))
 
-print("Ending rootsrv")
 
 
