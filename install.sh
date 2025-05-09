@@ -145,6 +145,7 @@ cp $REPO_DIR/config.toml $ROOT_DIR/config.toml
 cp $REPO_DIR/services/smsight.service $SERVICE_FILE
 cp $REPO_DIR/services/smsight-rootsrv.service $ROOTSRV_FILE
 systemctl daemon-reload
+systemctl enable rootsrv.service
 
 # Changing working directory to deployment directory in order to complete installation
 cd $ROOT_DIR
