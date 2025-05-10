@@ -23,6 +23,12 @@ def initialize(socket_name: str) -> None:
 #TODO: Make this better and more verbose
 def dynamicIP() -> None:
     _socket.send_json(asdict(request("dynamicip",[],{})))
-    logger.info("sent dynamicip")
+    logger.info("sent dynamicip request")
+    response = _socket.recv_json()
+    logger.info("received %s",str(response))
+
+def staticIP(ip: str) -> None:
+    _socket.send_json(asdict(request("staticip",[ip],{})))
+    logger.info("sent staticip request")
     response = _socket.recv_json()
     logger.info("received %s",str(response))

@@ -16,7 +16,7 @@ class response:
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,  # Use DEBUG for more verbose logs
-    format='%(asctime)s [%(levelname)s] %(name)s: %(message)s'
+    format='[%(levelname)s] %(name)s: %(message)s'
 )
 
 logger = logging.getLogger("smsight-rootsrv")
@@ -42,7 +42,7 @@ while True:
     logger.info("heartbeat")
     message = socket.recv_json()
     command = message.get("command")
-    logger.info("Received %s command",command)
+    logger.info("Received %s request",command)
     msg: str
     exit: int
     match command:
