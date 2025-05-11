@@ -6,11 +6,10 @@ import robotpy_apriltag as apriltag
 import numpy as np
 import cv2
 from wpimath.geometry import *
-from typing import List, Union, Tuple
+from typing import List, Union
 from utils.vtypes import Fiducial, NTagPoseResult, SingleTagPoseResult
 from pipeline.coords import wpilibTranslationToOpenCv, openCvPoseToWpilib
 from configuration.config_types import *
-from time import perf_counter_ns
 from configuration import Field
 
 #TODO: Figure out the apriltag axes
