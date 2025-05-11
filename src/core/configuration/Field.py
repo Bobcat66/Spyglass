@@ -11,6 +11,7 @@ def setTagSize(size: float) -> None:
     _tag_size = size
 
 def getTagSize() -> float:
+    global _tag_size
     return _tag_size
 
 
@@ -19,6 +20,7 @@ def setFamily(family: str) -> None:
     _family = family
 
 def getFamily() -> str:
+    global _family
     return _family
 
 
@@ -32,6 +34,7 @@ def setLayout(layout: apriltag.AprilTagFieldLayout) -> None:
     _layout = layout
 
 def getLayout() -> apriltag.AprilTagFieldLayout:
+    global _layout
     return _layout
 
 

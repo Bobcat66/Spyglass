@@ -3,7 +3,7 @@ import cv2
 from utils.vtypes import Fiducial, SingleTagPoseResult, ObjDetectResult
 from typing import List, Union
 from configuration.config_types import *
-from core.configuration import Field
+from configuration import Field
 import numpy as np
 
 class Annotator:

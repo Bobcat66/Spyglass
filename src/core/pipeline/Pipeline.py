@@ -191,4 +191,4 @@ def buildPipeline(pipConf: PipelineConfig, intrinsics: CameraIntrinsics) -> Pipe
         case "objdetect":
             detector = ObjectDetector(pipConf.objdetectConfig.model,intrinsics)
             annotator = Annotator.Annotator(intrinsics)
-            return ObjDetectPipeline(pipConf.name,detector,pipConf.stream,pipConf.grayscale,annotator)
+            return ObjDetectPipeline(detector,pipConf.stream,pipConf.grayscale,annotator)

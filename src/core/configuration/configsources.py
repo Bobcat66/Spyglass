@@ -30,6 +30,7 @@ class ConfigParser:
         cdict = self.config.get("cameras")
         if cdict is None:
             logger.warning("no cameras configured")
+        return cdict
     
     def _getPipelineDicts(self) -> dict:
         pdict = self.config.get("pipelines")
@@ -45,8 +46,8 @@ class ConfigParser:
                 configDict.get("dev_id"),
                 configDict.get("calibration"),
                 CameraIntrinsics(
-                    np.ndarray(configDict.get("matrix"), dtype=np.float64),
-                    np.ndarray(configDict.get("distortion"), dtype=np.float64)
+                    np.array(configDict.get("matrix"), dtype=np.float64),
+                    np.array(configDict.get("distortion"), dtype=np.float64)
                 ) if configDict.get("calibration") else None,
                 self.pixelFormatDict.get(configDict.get("pixel_format"), cscore.VideoMode.PixelFormat.kUnknown),
                 configDict.get("xres"),
@@ -82,14 +83,14 @@ class ConfigParser:
             stream_yres: int = pipedict.get("stream_yres",240)
             stream_fps: int = pipedict.get("stream_fps",30)
             rawport: int = pipedict.get("rawport",None)
-            processedport: int
+            processedport: int = pipedict.get("processedport",None)
             if stream and (rawport is None):
                 logger.warning("Streaming enabled on pipeline %s, but no raw video port detected. Raw stream will be disabled",pipeline_name)
             if stream and (processedport is None):
                 logger.warning("Streaming enabled on pipeline %s, but no processed video port detected. Processed stream will be disabled",pipeline_name)    
             match type:
                 case "apriltag":
-                    #Apriltag
+                    #Apriltag pipelines are always grayscale
                     atconf = apriltag.AprilTagDetector.Config()
                     atconf.debug = pipedict.get("debug",False)
                     atconf.decodeSharpening = pipedict.get("decodeSharpening",0.25)
@@ -108,13 +109,14 @@ class ConfigParser:
                         pipeline_name,
                         "apriltag",
                         camera,
-                        pipedict.get("grayscale",True),
+                        True,
                         stream,
                         stream_xres,
                         stream_yres,
                         stream_fps,
                         rawport,
                         processedport,
+                        None,
                         ApriltagConfig(
                             pipedict.get("excludeTags",[]),
                             pipedict.get("excludeTagsPNP",[]),
@@ -124,7 +126,23 @@ class ConfigParser:
                     )
                     config_list.append(config)
                 case "objdetect":
-                    #TODO: Object detection
+                    config = PipelineConfig(
+                        pipeline_name,
+                        "apriltag",
+                        camera,
+                        True,
+                        stream,
+                        stream_xres,
+                        stream_yres,
+                        stream_fps,
+                        rawport,
+                        processedport,
+                        ObjDetectConfig(
+                            pipedict.get("model"),
+                            pipedict.get("confidenceThreshold") #Doesn't do anything at the moment
+                        ),
+                        None
+                    )
                     continue
                 case None:
                     logger.error("No pipeline type detected for pipeline %s",pipeline_name)

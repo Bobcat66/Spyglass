@@ -10,7 +10,7 @@ class CameraHandler:
     def __init__(self,config: CameraConfig):
         self.name = config.name
         self._camera = cscore.UsbCamera(config.name,config.device_number)
-        self._videoMode = cscore.VideoMode(config.pixel_format,config.xres,config.yres)
+        self._videoMode = cscore.VideoMode(config.pixel_format,config.xres,config.yres,config.fps)
         setVideoMode = self._camera.setVideoMode(self._videoMode)
         if not setVideoMode:
             logger.warning(f"Unable to configure camera {self.name}")
