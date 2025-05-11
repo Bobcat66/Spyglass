@@ -4,6 +4,7 @@
 
 import cscore
 import threading
+from video.CameraHandler import CameraHandler
 from pipeline import Pipeline
 from network.ntmanager import NTManager
 from configuration.config_types import *
@@ -13,6 +14,7 @@ from time import perf_counter_ns
 import logging
 from typing import List,Tuple
 from pipeline import annotations
+from utils.misc import releaseGIL
 import traceback
 import sys
 
@@ -20,18 +22,56 @@ logger = logging.getLogger(__name__)
 #This class handles everything related to the camera, from capturing video to processing to output
 #TODO Later: Add option to turn on and off stream while the program is running
 #TODO: Refactor pixel format handling, cut out redundant opencv calls
-class VisionWorker:
+class PipelineWorker:
 
+    def __init__(self,config: PipelineConfig, camera: CameraHandler):
+        self.name = config.name
+        self._videoInput = camera.getSink()
+        self._intrinsics = camera.getIntrinsics()
+        self._pipeline = Pipeline.buildPipeline(config,self._intrinsics)
+        self._ntman = NTManager(self.name)
+        self._rawserver: Union[cscore.MjpegServer,None] = None
+        self._processedserver: Union[cscore.MjpegServer,None] = None
+        self._videoOutput: Union[cscore.CvSink,None] = None
+        if config.stream:
+            source_xres,source_yres = camera.getResolution()
+            source_fps = camera.getFPS()
+            self._videoOutput = cscore.CvSource(
+                f"opencv_{self.name}",
+                cscore.VideoMode(
+                    cscore.VideoMode.PixelFormat.kBGR,
+                    source_xres,
+                    source_yres,
+                    source_fps
+                )
+            )
+            stream_xres = config.stream_xres if config.stream_xres is not None else source_xres
+            stream_yres = config.stream_yres if config.stream_yres is not None else source_yres
+            stream_fps = config.stream_fps if config.stream_fps is not None else source_fps
+            if config.rawport is not None:
+                self._rawserver = cscore.MjpegServer(f"{self.name}_raw",config.processedport)
+                self._rawserver.setResolution(stream_xres,stream_yres)
+                self._rawserver.setFPS(stream_fps)
+                self._rawserver.setSource(camera.getRawSource())
+            if config.processedport is not None:
+                self._processedserver = cscore.MjpegServer(f"{self.name}_processed",config.processedport)
+                self._processedserver.setResolution(stream_xres,stream_yres)
+                self._processedserver.setFPS(stream_fps)
+                self._processedserver.setSource(self._videoOutput)
+    '''
     def __init__(self, fieldConf: FieldConfig, camConf: CameraConfig, pipConf: PipelineConfig):
         self._camera = CameraServer.startAutomaticCapture(camConf.device_number)
         logger.info(f"Acquired camera {camConf.device_number} ({camConf.name})")
+
         self._fldConf = fieldConf
         self._camConf = camConf
         self._pipConf = pipConf
         self._grayscale = pipConf.grayscale
         self._stream = pipConf.stream
+
         videoMode = cscore.VideoMode(pixelFormat_=camConf.pixel_format,width_=camConf.xres,height_=camConf.yres,fps_=camConf.fps)
         setVideoMode = self._camera.setVideoMode(videoMode)
+        
         if not setVideoMode:
             logger.warning(f"Unable to configure camera {camConf.name}")
         outputVideoMode = cscore.VideoMode(pixelFormat_=cscore.VideoMode.PixelFormat.kBGR,width_=camConf.xres,height_=camConf.yres,fps_=camConf.fps)
@@ -48,7 +88,7 @@ class VisionWorker:
         #Thread
         self._running: bool = False # Simple variable assignments are atomic by default in python
         self._thread = threading.Thread(target=self.run,name=f"{pipConf.name}_worker",daemon=True)
-    
+'''
     def run(self) -> None:
         """
         Run the pipeline.
@@ -57,12 +97,14 @@ class VisionWorker:
         nanosSinceLastFPS = perf_counter_ns()
         frameCounter = 0
         while self._running:
+
             time, frame = self._input.grabFrame(frame)
             if time == 0: 
-                logger.warning(self._input.getError())
+                logger.warning("Error grabbing frame: %s",self._input.getError())
             else:
                 if self._grayscale: frame = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
 
+            releaseGIL()
             res = None
             try:
                 res = self._pipeline.process(frame)
@@ -70,7 +112,7 @@ class VisionWorker:
                 logger.warning(f"{self._pipConf.name} unable to process frame due to an unhandled exception.")
                 traceback.print_exc()
                 continue
-
+            releaseGIL()
             self._ntman.publishResult(time,res)
             annotations.drawCameraInfo(res.frame,self._camConf)
             if res.frame is not None: self._output.putFrame(res.frame)

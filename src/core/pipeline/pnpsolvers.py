@@ -11,6 +11,7 @@ from utils.vtypes import Fiducial, NTagPoseResult, SingleTagPoseResult
 from pipeline.coords import wpilibTranslationToOpenCv, openCvPoseToWpilib
 from configuration.config_types import *
 from time import perf_counter_ns
+from configuration import Field
 
 #TODO: Figure out the apriltag axes
 class GeneralPnPSolver():
@@ -20,14 +21,11 @@ class GeneralPnPSolver():
     '''
     def __init__(
         self, 
-        camConf: CameraConfig,
-        fieldConf: FieldConfig,
+        intrinsics: CameraIntrinsics,
+        ignorelist: List[int]
     ):
-        self._field: apriltag.AprilTagFieldLayout = fieldConf.layout
-        self._tag_size: float = fieldConf.tag_size
-        self._camera_matrix: np.typing.NDArray[np.float64] = camConf.camera_matrix
-        self._dist_coeffs: np.typing.NDArray[np.float64] = camConf.dist_coeffs
-        self._ignorelist: List[int] = [] #list of tag ids to ignore
+        self._intrinsics = intrinsics
+        self._ignorelist = ignorelist #list of tag ids to ignore
     
     def solve(self,fiducials: List[Fiducial]) -> Union[NTagPoseResult,None]:
         """
@@ -41,13 +39,13 @@ class GeneralPnPSolver():
         
         for fiducial in fiducials:
             fid_pose: Pose3d = None
-            if fiducial.id in [tag.ID for tag in self._field.getTags()]:
-                fid_pose = self._field.getTagPose(fiducial.id)
+            if fiducial.id in [tag.ID for tag in Field.getLayout().getTags()]:
+                fid_pose = Field.getLayout().getTagPose(fiducial.id)
             if fid_pose != None:
-                corner_0 = fid_pose + Transform3d(Translation3d(0, self._tag_size / 2.0, -self._tag_size / 2.0), Rotation3d())
-                corner_1 = fid_pose + Transform3d(Translation3d(0, -self._tag_size / 2.0, -self._tag_size / 2.0), Rotation3d())
-                corner_2 = fid_pose + Transform3d(Translation3d(0, -self._tag_size / 2.0, self._tag_size / 2.0), Rotation3d())
-                corner_3 = fid_pose + Transform3d(Translation3d(0, self._tag_size / 2.0, self._tag_size / 2.0), Rotation3d())
+                corner_0 = fid_pose + Transform3d(Translation3d(0, Field.getTagSize() / 2.0, -Field.getTagSize() / 2.0), Rotation3d())
+                corner_1 = fid_pose + Transform3d(Translation3d(0, -Field.getTagSize() / 2.0, -Field.getTagSize() / 2.0), Rotation3d())
+                corner_2 = fid_pose + Transform3d(Translation3d(0, -Field.getTagSize() / 2.0, Field.getTagSize() / 2.0), Rotation3d())
+                corner_3 = fid_pose + Transform3d(Translation3d(0, Field.getTagSize() / 2.0, Field.getTagSize() / 2.0), Rotation3d())
                 object_points += [
                     wpilibTranslationToOpenCv(corner_0.translation()),
                     wpilibTranslationToOpenCv(corner_1.translation()),
@@ -67,18 +65,18 @@ class GeneralPnPSolver():
         elif len(tag_ids) == 1:
             object_points = np.array(
                 [
-                    [-self._tag_size / 2.0, self._tag_size / 2.0, 0],
-                    [self._tag_size / 2.0, self._tag_size / 2.0, 0],
-                    [self._tag_size / 2.0, -self._tag_size / 2.0, 0],
-                    [-self._tag_size / 2.0, -self._tag_size / 2.0, 0],
+                    [-Field.getTagSize() / 2.0, Field.getTagSize() / 2.0, 0],
+                    [Field.getTagSize() / 2.0, Field.getTagSize() / 2.0, 0],
+                    [Field.getTagSize() / 2.0, -Field.getTagSize() / 2.0, 0],
+                    [-Field.getTagSize() / 2.0, -Field.getTagSize() / 2.0, 0],
                 ]
             )
             try:
                 _, rvecs, tvecs, errors = cv2.solvePnPGeneric(
                     object_points,
                     np.array(image_points),
-                    self._camera_matrix,
-                    self._dist_coeffs,
+                    self._intrinsics.matrix,
+                    self._intrinsics.dist_coeffs,
                     flags=cv2.SOLVEPNP_IPPE_SQUARE
                 )
             except:
@@ -102,8 +100,8 @@ class GeneralPnPSolver():
                 _, rvecs, tvecs, errors = cv2.solvePnPGeneric(
                     np.array(object_points),
                     np.array(image_points),
-                    self._camera_matrix,
-                    self._dist_coeffs,
+                    self._intrinsics.matrix,
+                    self._intrinsics.dist_coeffs,
                     flags=cv2.SOLVEPNP_SQPNP
                 )
             except:
@@ -123,36 +121,32 @@ class FiducialPnPSolver():
     '''
     def __init__(
         self,
-        camConf: CameraConfig,
-        fieldConf: FieldConfig
+        intrinsics: CameraIntrinsics
     ):
-        self._fieldConfig = fieldConf
-        self._tag_size: float = fieldConf.tag_size
-        self._camera_matrix: np.typing.NDArray[np.float64] = camConf.camera_matrix
-        self._dist_coeffs: np.typing.NDArray[np.float64] = camConf.dist_coeffs
+        self._intrinsics = intrinsics
     
     def solve(self,fiducial: Fiducial) -> Union[SingleTagPoseResult,None]:
         object_points = np.array(
             [
-                [-self._tag_size / 2.0, self._tag_size / 2.0, 0],
-                [self._tag_size / 2.0, self._tag_size / 2.0, 0],
-                [self._tag_size / 2.0, -self._tag_size / 2.0, 0],
-                [-self._tag_size / 2.0, -self._tag_size / 2.0, 0],
+                [-Field.getTagSize() / 2.0, Field.getTagSize() / 2.0, 0],
+                [Field.getTagSize() / 2.0, Field.getTagSize() / 2.0, 0],
+                [Field.getTagSize() / 2.0, -Field.getTagSize() / 2.0, 0],
+                [-Field.getTagSize() / 2.0, -Field.getTagSize() / 2.0, 0],
             ]
         )
         try:
             _, rvecs, tvecs, errors = cv2.solvePnPGeneric(
                 object_points,
                 fiducial.corners,
-                self._camera_matrix,
-                self._dist_coeffs,
+                self._intrinsics.matrix,
+                self._intrinsics.dist_coeffs,
                 flags=cv2.SOLVEPNP_IPPE_SQUARE
             )
         except:
             return None
           
         # Calculate WPILib camera poses
-        field_to_tag_pose = self._fieldConfig.layout.getTagPose(fiducial.id)
+        field_to_tag_pose = Field.getLayout().getTagPose(fiducial.id)
         camera_to_tag_pose_0 = openCvPoseToWpilib(tvecs[0], rvecs[0])
         camera_to_tag_pose_1 = openCvPoseToWpilib(tvecs[1], rvecs[1])
         camera_to_tag_0 = Transform3d(camera_to_tag_pose_0.translation(), camera_to_tag_pose_0.rotation())

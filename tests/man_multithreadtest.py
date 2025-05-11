@@ -1,22 +1,23 @@
 import os
 import sys
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),'../src')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),'../src/core')))
 
 from processes.VisionWorker import VisionWorker
 from configuration.config_types import *
+from network import ntmanager
+
 import cscore
 import robotpy_apriltag as apriltag
 import ntcore
 import time
-from network import ntmanager
 import logging
 import numpy as np
 
 if __name__ == "__main__":
     # Configure logging
     logging.basicConfig(
-        level=logging.INFO,  # Use DEBUG for more verbose logs
-        format='%(asctime)s [%(levelname)s] %(name)s: %(message)s'
+        level=logging.DEBUG,  # Use DEBUG for more verbose logs
+        format='%(asctime)s [%(levelname)s] %(threadName)s(%(name)s): %(message)s'
     )
     # Initialize NetworkTables
     inst: ntcore.NetworkTableInstance = ntcore.NetworkTableInstance.getDefault()
@@ -61,23 +62,38 @@ if __name__ == "__main__":
         layout=apriltag.AprilTagFieldLayout("resources/fields/2025-reefscape-welded.json"),
         family="tag36h11"
     )
-    pipConfig = PipelineConfig(
-        "test_pipe",
+    pipConfig0 = PipelineConfig(
+        "test_pipe_0",
         "apriltag",
         "webcam",
         True,
         True,
+        320,
+        240,
         8000,
         8001,
         None,
-        None,
+        None
+    )
+    pipConfig1 = PipelineConfig(
+        "test_pipe_1",
+        "apriltag",
+        "webcam",
+        True,
+        True,
+        320,
+        240,
+        8002,
+        8003,
         None,
         None
     )
-    worker = VisionWorker(fieldConfig,camConfig,pipConfig)
+    worker0 = VisionWorker(fieldConfig,camConfig,pipConfig0)
+    worker1 = VisionWorker(fieldConfig,camConfig,pipConfig1)
     #print(cscore.UsbCamera.enumerateUsbCameras())
     
-    worker.start()
+    worker0.start()
+    worker1.start()
     while True:
         #Yield to the worker thread
         time.sleep(60)

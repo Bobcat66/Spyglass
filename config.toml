@@ -41,6 +41,8 @@
         rawport = 8000
         processedport = 8001
 
+        excludeTags = [11,21]
+        excludeTagsPNP = [14]
         debug = false
         decodeSharpening = 0.25
         numThreads = 1

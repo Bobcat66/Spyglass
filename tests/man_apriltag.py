@@ -5,18 +5,16 @@ import os
 import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),'../src/core')))
 
-import cv2
 from pipeline import annotations, pnpsolvers
 from pipeline.ApriltagDetector import ApriltagDetector
 from utils.vtypes import *
 from configuration.config_types import CameraConfig, FieldConfig
+
+import cv2
 import numpy as np
 from time import perf_counter_ns
 import robotpy_apriltag as apriltag
 
-import sys
-import os
-sys.path.append(os.path.abspath('..'))
 
 if __name__ == "__main__":
     cam = cv2.VideoCapture(0)

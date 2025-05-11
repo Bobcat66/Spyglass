@@ -2,7 +2,9 @@ import zmq
 import logging
 from dataclasses import dataclass, asdict
 from typing import List, Dict
+import queue
 
+#TODO: Make this run on its own thread
 @dataclass
 class request:
     command: str

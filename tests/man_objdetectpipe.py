@@ -2,7 +2,7 @@ import os
 import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),'../src')))
 
-from processes.VisionWorker import VisionWorker
+from processes.PipelineWorker import PipelineWorker
 from configuration.config_types import *
 import cscore
 import robotpy_apriltag as apriltag
@@ -75,7 +75,7 @@ if __name__ == "__main__":
         None,
         None
     )
-    worker = VisionWorker(fieldConfig,camConfig,pipConfig)
+    worker = PipelineWorker(fieldConfig,camConfig,pipConfig)
     #print(cscore.UsbCamera.enumerateUsbCameras())
     
     worker.start()
