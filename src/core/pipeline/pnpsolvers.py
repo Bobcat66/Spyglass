@@ -145,16 +145,9 @@ class FiducialPnPSolver():
         except:
             return None
           
-        # Calculate WPILib camera poses
-        field_to_tag_pose = Field.getLayout().getTagPose(fiducial.id)
+        # Convert to WPILib coordinate system (Does NOT transform to the field frame)
         camera_to_tag_pose_0 = openCvPoseToWpilib(tvecs[0], rvecs[0])
         camera_to_tag_pose_1 = openCvPoseToWpilib(tvecs[1], rvecs[1])
-        camera_to_tag_0 = Transform3d(camera_to_tag_pose_0.translation(), camera_to_tag_pose_0.rotation())
-        camera_to_tag_1 = Transform3d(camera_to_tag_pose_1.translation(), camera_to_tag_pose_1.rotation())
-        field_to_camera_0 = field_to_tag_pose.transformBy(camera_to_tag_0.inverse())
-        field_to_camera_1 = field_to_tag_pose.transformBy(camera_to_tag_1.inverse())
-        field_to_camera_pose_0 = Pose3d(field_to_camera_0.translation(), field_to_camera_0.rotation())
-        field_to_camera_pose_1 = Pose3d(field_to_camera_1.translation(), field_to_camera_1.rotation())
         # Return result
         return SingleTagPoseResult(
             fiducial.id,
@@ -164,11 +157,11 @@ class FiducialPnPSolver():
             np.linalg.norm(tvecs[0] if errors[0][0] <= errors[1][0] else tvecs[1]),
             rvecs[0],
             tvecs[0],
-            field_to_camera_pose_0,
+            camera_to_tag_pose_0,
             errors[0][0],
             rvecs[1],
             tvecs[1],
-            field_to_camera_pose_1,
+            camera_to_tag_pose_1,
             errors[1][0]
         )
 

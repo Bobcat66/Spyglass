@@ -176,7 +176,7 @@ class ObjDetectPipeline(Pipeline):
 def buildPipeline(pipConf: PipelineConfig, intrinsics: CameraIntrinsics) -> Pipeline:
     match pipConf.type:
         case "apriltag":
-            solver = pnpsolvers.GeneralPnPSolver(intrinsics,pipConf.apriltagConfig.excludeTagsPNP)
+            solver = pnpsolvers.GeneralPnPSolver(intrinsics,pipConf.apriltagConfig.excludeTagsPNP if pipConf.apriltagConfig is not None else [])
             fidSolver = pnpsolvers.FiducialPnPSolver(intrinsics)
             detector = ApriltagDetector()
             detector.addFamily(Field.getFamily())
@@ -185,8 +185,8 @@ def buildPipeline(pipConf: PipelineConfig, intrinsics: CameraIntrinsics) -> Pipe
                     detector.setConfig(pipConf.apriltagConfig.detConfigs)
                 if pipConf.apriltagConfig.detQtps is not None:
                     detector.setQuadThresholdParameters(pipConf.apriltagConfig.detQtps)
-            detector.setRejectlist(pipConf.apriltagConfig.excludeTags)
-            annotator = Annotator.Annotator(intrinsics,pipConf.apriltagConfig.excludeTagsPNP)
+            detector.setRejectlist(pipConf.apriltagConfig.excludeTags if pipConf.apriltagConfig is not None else [])
+            annotator = Annotator.Annotator(intrinsics,pipConf.apriltagConfig.excludeTagsPNP if pipConf.apriltagConfig is not None else [])
             return ApriltagPipeline(detector,solver,fidSolver,annotator,pipConf.stream)
         case "objdetect":
             detector = ObjectDetector(pipConf.objdetectConfig.model,intrinsics)

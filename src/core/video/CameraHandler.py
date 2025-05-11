@@ -1,3 +1,7 @@
+# Copyright (c) FRC 1076 PiHi Samurai
+# You may use, distribute, and modify this software under the terms of
+# the license found in the root directory of this project
+
 import cscore
 import numpy as np
 from configuration.config_types import CameraConfig, CameraIntrinsics

@@ -1,3 +1,7 @@
+# Copyright (c) FRC 1076 PiHi Samurai
+# You may use, distribute, and modify this software under the terms of
+# the license found in the root directory of this project
+
 from configuration import configsources
 from network import ntmanager
 import ntcore
@@ -21,23 +25,26 @@ logging.basicConfig(
 
 logger = logging.getLogger(__name__)
 
+
 if __name__ == "__main__":
-    rootsrv.initialize(os.getenv("ROOTSRV_SOCK"))
 
     logger.info("Launching SamuraiSight")
+
+    
+    inst: ntcore.NetworkTableInstance = ntcore.NetworkTableInstance.getDefault()
+    inst.startServer(os.getenv("ROBORIO"))
+    inst.startClient4(os.getenv("DEV_NAME"))
+    ntmanager.initialize(os.getenv("DEV_NAME"),inst)
+    rootsrv.initialize(os.getenv("ROOTSRV_SOCK"))
 
     configurator = configsources.ConfigParser("config.toml")
 
     configurator.loadFieldConfig()
 
-    inst: ntcore.NetworkTableInstance = ntcore.NetworkTableInstance.getDefault()
-    inst.startServer(os.getenv("ROBORIO"))
-    inst.startClient4(os.getenv("DEV_NAME"))
-    ntmanager.initialize(os.getenv("DEV_NAME"),inst)
-
     CameraManager.loadCameras(configurator.getCameraConfigs())
     PipelineManager.loadPipelines(configurator.getPipelineConfigs())
     PipelineManager.startAll()
+
     while True:
         #TODO: Manage webclient/NT client here
         releaseGIL()

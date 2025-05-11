@@ -1,7 +1,3 @@
-[device]
-    name = "SamuraiSight"
-    dev_ip = "10.10.76.18"
-    server_ip = "10.10.76.2"
 [field]
     tag_size = 0.1651 # meters
     layout = "2025-reefscape-welded"

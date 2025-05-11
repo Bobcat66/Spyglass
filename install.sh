@@ -1,3 +1,7 @@
+# Copyright (c) FRC 1076 PiHi Samurai
+# You may use, distribute, and modify this software under the terms of
+# the license found in the root directory of this project
+
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="/opt/SamuraiSight"
 SERVICE_NAME=smsight

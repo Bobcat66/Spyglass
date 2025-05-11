@@ -1,8 +1,11 @@
+# Copyright (c) FRC 1076 PiHi Samurai
+# You may use, distribute, and modify this software under the terms of
+# the license found in the root directory of this project
+
 import zmq
 import logging
 from dataclasses import dataclass, asdict
 from typing import List, Dict
-import queue
 
 #TODO: Make this run on its own thread
 @dataclass

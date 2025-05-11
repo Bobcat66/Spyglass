@@ -36,22 +36,22 @@ class NTManager():
         result_data: List[float] = [0,0] #1st element indicates the number of results, 2nd element indicates number of apriltag detections
         if result.poseResult != None:
             result_data[0] = 1
-            result_data.append(result.poseResult.pose_0.translation().X())
-            result_data.append(result.poseResult.pose_0.translation().Y())
-            result_data.append(result.poseResult.pose_0.translation().Z())
-            result_data.append(result.poseResult.pose_0.rotation().getQuaternion().W())
-            result_data.append(result.poseResult.pose_0.rotation().getQuaternion().X())
-            result_data.append(result.poseResult.pose_0.rotation().getQuaternion().Y())
-            result_data.append(result.poseResult.pose_0.rotation().getQuaternion().Z())
-            if (result.poseResult.pose_1 != None):
+            result_data.append(result.poseResult.field_pose_0.translation().X())
+            result_data.append(result.poseResult.field_pose_0.translation().Y())
+            result_data.append(result.poseResult.field_pose_0.translation().Z())
+            result_data.append(result.poseResult.field_pose_0.rotation().getQuaternion().W())
+            result_data.append(result.poseResult.field_pose_0.rotation().getQuaternion().X())
+            result_data.append(result.poseResult.field_pose_0.rotation().getQuaternion().Y())
+            result_data.append(result.poseResult.field_pose_0.rotation().getQuaternion().Z())
+            if (result.poseResult.field_pose_1 != None):
                 result_data[0] = 2
-                result_data.append(result.poseResult.pose_1.translation().X())
-                result_data.append(result.poseResult.pose_1.translation().Y())
-                result_data.append(result.poseResult.pose_1.translation().Z())
-                result_data.append(result.poseResult.pose_1.rotation().getQuaternion().W())
-                result_data.append(result.poseResult.pose_1.rotation().getQuaternion().X())
-                result_data.append(result.poseResult.pose_1.rotation().getQuaternion().Y())
-                result_data.append(result.poseResult.pose_1.rotation().getQuaternion().Z())
+                result_data.append(result.poseResult.field_pose_1.translation().X())
+                result_data.append(result.poseResult.field_pose_1.translation().Y())
+                result_data.append(result.poseResult.field_pose_1.translation().Z())
+                result_data.append(result.poseResult.field_pose_1.rotation().getQuaternion().W())
+                result_data.append(result.poseResult.field_pose_1.rotation().getQuaternion().X())
+                result_data.append(result.poseResult.field_pose_1.rotation().getQuaternion().Y())
+                result_data.append(result.poseResult.field_pose_1.rotation().getQuaternion().Z())
         for fiducial in result.fiducials:
             result_data[1] = result_data[1] + 1
             result_data.append(fiducial.id)
@@ -60,6 +60,20 @@ class NTManager():
             result_data.append(fiducial.decisionMargin)
             result_data.append(fiducial.hammingDist)
             result_data.append(fiducial.distance)
+            result_data.append(fiducial.tag_pose_0.translation().X())
+            result_data.append(fiducial.tag_pose_0.translation().Y())
+            result_data.append(fiducial.tag_pose_0.translation().Z())
+            result_data.append(fiducial.tag_pose_0.rotation().getQuaternion().W())
+            result_data.append(fiducial.tag_pose_0.rotation().getQuaternion().X())
+            result_data.append(fiducial.tag_pose_0.rotation().getQuaternion().Y())
+            result_data.append(fiducial.tag_pose_0.rotation().getQuaternion().Z())
+            result_data.append(fiducial.tag_pose_1.translation().X())
+            result_data.append(fiducial.tag_pose_1.translation().Y())
+            result_data.append(fiducial.tag_pose_1.translation().Z())
+            result_data.append(fiducial.tag_pose_1.rotation().getQuaternion().W())
+            result_data.append(fiducial.tag_pose_1.rotation().getQuaternion().X())
+            result_data.append(fiducial.tag_pose_1.rotation().getQuaternion().Y())
+            result_data.append(fiducial.tag_pose_1.rotation().getQuaternion().Z())
         self._apriltag_results_pub.set(result_data,timestamp)
     
     def publishObjDetectResults(

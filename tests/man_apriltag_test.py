@@ -69,6 +69,6 @@ pipeConfig = PipelineConfig(
 
 camera = CameraHandler(camConfig)
 visworker = PipelineWorker(pipeConfig,camera)
-visworker.benchmark(30)
+visworker.start()
 while True:
     releaseGIL()

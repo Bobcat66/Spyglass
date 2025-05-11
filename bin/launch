@@ -1,11 +1,16 @@
 #!/usr/bin/env bash
 
+# Copyright (c) FRC 1076 PiHi Samurai
+# You may use, distribute, and modify this software under the terms of
+# the license found in the root directory of this project
+
 # SamuraiSight launch script. Working directory must be /opt/SamuraiSight
 
 set -a
 source .env
 set +a
 
+# TODO: Move this to rootsrv, disable networking permissions on smsight service user
 if [ "$NETMNGR" == "UNKNOWN" ]; then
     if [ "$USE_STATIC_IP" == "true" ]; then
         if [ -z "$STATIC_IP" ]; then
