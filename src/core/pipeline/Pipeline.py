@@ -187,7 +187,7 @@ def buildPipeline(pipConf: PipelineConfig, intrinsics: CameraIntrinsics) -> Pipe
                     detector.setQuadThresholdParameters(pipConf.apriltagConfig.detQtps)
             detector.setRejectlist(pipConf.apriltagConfig.excludeTags)
             annotator = Annotator.Annotator(intrinsics,pipConf.apriltagConfig.excludeTagsPNP)
-            return ApriltagPipeline(pipConf.name,detector,solver,fidSolver,annotator,pipConf.stream)
+            return ApriltagPipeline(detector,solver,fidSolver,annotator,pipConf.stream)
         case "objdetect":
             detector = ObjectDetector(pipConf.objdetectConfig.model,intrinsics)
             annotator = Annotator.Annotator(intrinsics)

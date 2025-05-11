@@ -37,7 +37,7 @@
     [pipelines.pipeline1]
         camera = "cam1"
         type = "apriltag"
-        stream = false
+        stream = true
         rawport = 8000
         processedport = 8001
 

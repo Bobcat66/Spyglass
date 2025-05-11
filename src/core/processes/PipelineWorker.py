@@ -49,15 +49,17 @@ class PipelineWorker:
             stream_yres = config.stream_yres if config.stream_yres is not None else source_yres
             stream_fps = config.stream_fps if config.stream_fps is not None else source_fps
             if config.rawport is not None:
-                self._rawserver = cscore.MjpegServer(f"{self.name}_raw",config.processedport)
+                self._rawserver = cscore.MjpegServer(f"{self.name}_raw",config.rawport)
                 self._rawserver.setResolution(stream_xres,stream_yres)
                 self._rawserver.setFPS(stream_fps)
                 self._rawserver.setSource(camera.getRawSource())
+                logger.debug("Started raw mjpeg server on port %d",config.rawport)
             if config.processedport is not None:
                 self._processedserver = cscore.MjpegServer(f"{self.name}_processed",config.processedport)
                 self._processedserver.setResolution(stream_xres,stream_yres)
                 self._processedserver.setFPS(stream_fps)
                 self._processedserver.setSource(self._videoOutput)
+                logger.debug("Started processed mjpeg server on port %d",config.processedport)
         
         self._running: bool = False # Simple variable assignments are atomic by default in python
         self._thread = threading.Thread(target=self.run,name=f"{self.name}_worker",daemon=True)
@@ -234,7 +236,7 @@ PRD |    AVG    |    MAX    |    MIN    |"""
             benchreport += f"\n{i: 3} | {dbench_period_averages[i]: 9.3f} | {dbench_period_maxima[i]: 9.3f} | {dbench_period_minima[i]: 9.3f} |"
         logger.info(benchreport)
 
-        
+
 
 def buildPipelineWorker(config: PipelineConfig) -> PipelineWorker:
     camera = CameraManager.getCamera(config.camera)

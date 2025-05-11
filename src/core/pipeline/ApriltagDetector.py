@@ -51,7 +51,7 @@ class ApriltagDetector:
         :return: True if the detection passes the filter, False otherwise.
         """
         #TODO: Implement filtering logic
-        return not (detection.getId() in self._rejectlist)
+        return not (detection.getId() in self._ignorelist)
     
     def addFamily(self, family: str) -> None:
         """
