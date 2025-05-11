@@ -27,6 +27,3 @@ def getCamera(name: str) -> Union[CameraHandler,None]:
     if cam is None:
         logger.warning("Camera '%s' not found",name)
     return cam
-
-
-            
