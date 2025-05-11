@@ -8,12 +8,11 @@ from video.CameraHandler import CameraHandler
 from pipeline import Pipeline
 from network.ntmanager import NTManager
 from configuration.config_types import *
-from cscore import CameraServer
 import cv2
 from time import perf_counter_ns
 import logging
 from typing import List,Tuple
-from pipeline import annotations
+from pipeline.Annotator import Annotator
 from utils.misc import releaseGIL
 import traceback
 import sys
@@ -37,7 +36,7 @@ class PipelineWorker:
             source_xres,source_yres = camera.getResolution()
             source_fps = camera.getFPS()
             self._videoOutput = cscore.CvSource(
-                f"opencv_{self.name}",
+                f"opencv_{self.name}_output",
                 cscore.VideoMode(
                     cscore.VideoMode.PixelFormat.kBGR,
                     source_xres,
@@ -58,69 +57,41 @@ class PipelineWorker:
                 self._processedserver.setResolution(stream_xres,stream_yres)
                 self._processedserver.setFPS(stream_fps)
                 self._processedserver.setSource(self._videoOutput)
-    '''
-    def __init__(self, fieldConf: FieldConfig, camConf: CameraConfig, pipConf: PipelineConfig):
-        self._camera = CameraServer.startAutomaticCapture(camConf.device_number)
-        logger.info(f"Acquired camera {camConf.device_number} ({camConf.name})")
-
-        self._fldConf = fieldConf
-        self._camConf = camConf
-        self._pipConf = pipConf
-        self._grayscale = pipConf.grayscale
-        self._stream = pipConf.stream
-
-        videoMode = cscore.VideoMode(pixelFormat_=camConf.pixel_format,width_=camConf.xres,height_=camConf.yres,fps_=camConf.fps)
-        setVideoMode = self._camera.setVideoMode(videoMode)
         
-        if not setVideoMode:
-            logger.warning(f"Unable to configure camera {camConf.name}")
-        outputVideoMode = cscore.VideoMode(pixelFormat_=cscore.VideoMode.PixelFormat.kBGR,width_=camConf.xres,height_=camConf.yres,fps_=camConf.fps)
-        self._pipeline = Pipeline.buildPipeline(pipConf,camConf,fieldConf)
-        self._input = CameraServer.getVideo(self._camera)
-        self._output = cscore.CvSource(self._pipeline.name + "_output",outputVideoMode)
-        self._ntman = NTManager(pipConf.name)
-        if self._stream:
-            self._rawserver = cscore.MjpegServer(f"{self._pipeline.name}_raw", pipConf.rawport)
-            self._processedserver = cscore.MjpegServer(f"{self._pipeline.name}_processed", pipConf.processedport)
-            self._rawserver.setSource(self._camera)
-            self._processedserver.setSource(self._output)
-
-        #Thread
         self._running: bool = False # Simple variable assignments are atomic by default in python
-        self._thread = threading.Thread(target=self.run,name=f"{pipConf.name}_worker",daemon=True)
-'''
+        self._thread = threading.Thread(target=self.run,name=f"{self.name}_worker",daemon=True)
+
     def run(self) -> None:
         """
         Run the pipeline.
         """
-        frame: cv2.Mat = np.zeros(shape=(self._camConf.xres,self._camConf.yres,1),dtype=np.uint8)
+        frame: cv2.Mat = np.zeros(shape=(1,1,1),dtype=np.uint8)
         nanosSinceLastFPS = perf_counter_ns()
         frameCounter = 0
         while self._running:
 
-            time, frame = self._input.grabFrame(frame)
+            time, frame = self._videoInput.grabFrame(frame)
             if time == 0: 
-                logger.warning("Error grabbing frame: %s",self._input.getError())
-            else:
-                if self._grayscale: frame = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
+                logger.warning("Error grabbing frame: %s",self._videoInput.getError())
+                continue
 
             releaseGIL()
             res = None
             try:
                 res = self._pipeline.process(frame)
             except Exception as e:
-                logger.warning(f"{self._pipConf.name} unable to process frame due to an unhandled exception.")
+                logger.warning(f"Unable to process frame due to an unhandled exception.")
                 traceback.print_exc()
                 continue
             releaseGIL()
             self._ntman.publishResult(time,res)
-            annotations.drawCameraInfo(res.frame,self._camConf)
-            if res.frame is not None: self._output.putFrame(res.frame)
+            Annotator.drawPipelineName(res.frame,self.name)
+            if res.frame is not None: self._videoOutput.putFrame(res.frame)
 
             #Measure FPS
             frameCounter += 1
             if perf_counter_ns() - nanosSinceLastFPS >= 1e9:
-                logger.debug(f"{self._pipConf.name} running at {frameCounter} fps")
+                logger.debug(f"Running at {frameCounter} fps")
                 self._ntman.publishFPS(frameCounter,time)
                 frameCounter = 0
                 nanosSinceLastFPS = perf_counter_ns()
@@ -128,12 +99,12 @@ class PipelineWorker:
     def start(self) -> None:
         self._running = True
         self._thread.start()
-        logger.info(f"Started {self._pipConf.name} worker")
+        logger.info(f"Started {self.name} worker")
 
     def stop(self) -> None:
         self._running = False
         self._thread.join()
-        logger.info(f"Stopped {self._pipConf.name} worker")
+        logger.info(f"Stopped {self.name} worker")
     
     def startOnMainThread(self) -> None:
         #Starts the worker on the main thread, for testing. DO NOT USE, WILL BLOCK MAIN THREAD INDEFINITELY
@@ -141,8 +112,8 @@ class PipelineWorker:
         self.run()
 
     def benchmark(self,benchtime: float) -> None:
-        logger.info(f"Benchmarking {self._pipConf.name} for {benchtime} seconds")
-        frame: cv2.Mat = np.zeros(shape=(self._camConf.xres,self._camConf.yres,1),dtype=np.uint8)
+        logger.info(f"Benchmarking {self.name} for {benchtime} seconds")
+        frame: cv2.Mat = np.zeros(shape=(1,1,1),dtype=np.uint8)
         benchdata: List[Tuple[int,int,int,int,List[int]]] = [] #total cycle time,capture time,process time,publish time,deep benchmark data
         
         t0 = perf_counter_ns()
@@ -150,11 +121,10 @@ class PipelineWorker:
 
             cyc_t0 = perf_counter_ns()
             cap_t0 = perf_counter_ns()
-            time, frame = self._input.grabFrame(frame)
+            time, frame = self._videoInput.grabFrame(frame)
             if time == 0: 
-                logger.warning(self._input.getError())
-            else:
-                if self._grayscale: frame = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
+                logger.warning(self._videoInput.getError())
+                continue
             cap_t1 = perf_counter_ns()
 
 
@@ -163,14 +133,14 @@ class PipelineWorker:
             try:
                 dbench,res = self._pipeline.deepBenchmark(frame)
             except:
-                logger.warning(f"{self._pipConf.name} unable to process frame due to an unhandled exception.")
+                logger.warning(f"{self.name} unable to process frame due to an unhandled exception.")
                 traceback.print_exc()
                 continue
             prc_t1 = perf_counter_ns()
 
             pub_t0 = perf_counter_ns()
             self._ntman.publishResult(time,res)
-            if res.frame is not None: self._output.putFrame(res.frame)
+            if res.frame is not None: self._videoOutput.putFrame(res.frame)
             pub_t1 = perf_counter_ns()
             cyc_t1 = perf_counter_ns()
             benchdata.append((cyc_t1-cyc_t0,cap_t1-cap_t0,prc_t1-prc_t0,pub_t1-pub_t0,dbench))
@@ -238,7 +208,7 @@ class PipelineWorker:
                     dbench_period_minima[i-1] = period_ms
             
         benchreport = f"""
-{self._pipConf.name} BENCHMARK REPORT
+{self.name} BENCHMARK REPORT
 -----------------------------------------
 Time: {benchtime} s
 Cycles Measured: {cycles_measured}
