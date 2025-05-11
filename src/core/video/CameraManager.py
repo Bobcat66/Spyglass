@@ -1,9 +1,8 @@
 import cscore
 from typing import List,Union
 from configuration.config_types import CameraConfig, CameraIntrinsics
-from CameraHandler import CameraHandler
+from video.CameraHandler import CameraHandler
 import logging
-import numpy as np
 
 logger = logging.getLogger(__name__)
 

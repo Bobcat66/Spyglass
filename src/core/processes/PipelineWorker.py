@@ -16,6 +16,7 @@ from pipeline.Annotator import Annotator
 from utils.misc import releaseGIL
 import traceback
 import sys
+from video import CameraManager
 
 logger = logging.getLogger(__name__)
 #This class handles everything related to the camera, from capturing video to processing to output
@@ -233,9 +234,10 @@ PRD |    AVG    |    MAX    |    MIN    |"""
             benchreport += f"\n{i: 3} | {dbench_period_averages[i]: 9.3f} | {dbench_period_maxima[i]: 9.3f} | {dbench_period_minima[i]: 9.3f} |"
         logger.info(benchreport)
 
+        
 
-
-
-
+def buildPipelineWorker(config: PipelineConfig) -> PipelineWorker:
+    camera = CameraManager.getCamera(config.camera)
+    return PipelineWorker(config,camera)
 
 

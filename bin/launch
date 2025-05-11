@@ -19,6 +19,6 @@ if [ "$NETMNGR" == "UNKNOWN" ]; then
 fi
 
 source .venv/bin/activate # Activates python venv
-exec python3.13 src/core/main.py # Launches python program
+exec python3.13 src/core/__init__.py # Launches python program
 
 
