@@ -134,6 +134,35 @@ case "$userAllowedDeps" in
         ;;
 esac
 
+case ${#TEAM_NUMBER} in
+    0 )
+        echo "No team number entered."
+        echo "Aborting installation."
+        exit 1
+        ;;
+    1|2 )
+        TE_AM="0.$TEAM_NUMBER"
+        ;;
+    3 )
+        TE_AM="${TEAM_NUMBER:0:1}.${TEAM_NUMBER:1:2}"
+        ;;
+    4 )
+        TE_AM="${TEAM_NUMBER:0:2}.${TEAM_NUMBER:2:2}"
+        ;;
+    5 )
+        TE_AM="${TEAM_NUMBER:0:3}.${TEAM_NUMBER:3:2}"
+        ;;
+    * )
+        echo "Team numbers must be between 1 and 5 digits long"
+        echo "Aborting installation"
+        exit 1
+        ;;
+esac
+
+read -p "Enter device name: " DEV_NAME
+
+# --- After this point, the installation will not abort automatically unless there is an exception ---
+
 # Setting up the deployment directory
 mkdir $ROOT_DIR
 
@@ -160,7 +189,7 @@ usermod -aG video smsight-srv
 usermod -aG rootsrv-client smsight-srv
 
 read -p "Enter team number: " TEAM_NUMBER
-read -p "Enter device name: " DEV_NAME
+
 
 # Create .env file
 ENV_FILE=".env"
@@ -171,36 +200,12 @@ DEBUG=false
 TEAM=$TEAM_NUMBER
 DEV_NAME=$DEV_NAME
 USE_STATIC_IP=false
+GATEWAY=10.$TE_AM.1
+ROBORIO=10.$TE_AM.2
+NETMNGR=$NETMNGR
 EOF
 
 echo ".env file created at $(realpath "$ENV_FILE")"
-
-case ${#TEAM_NUMBER} in
-    1|2 )
-        TE_AM="0.$TEAM_NUMBER"
-        ;;
-    3 )
-        TE_AM="${TEAM_NUMBER:0:1}.${TEAM_NUMBER:1:2}"
-        ;;
-    4 )
-        TE_AM="${TEAM_NUMBER:0:2}.${TEAM_NUMBER:2:2}"
-        ;;
-    5 )
-        TE_AM="${TEAM_NUMBER:0:3}.${TEAM_NUMBER:3:2}"
-        ;;
-    * )
-        echo "${#TEAM_NUMBER} digit team number? This isn't FTC vro 🥀🥀🥀"
-        echo "Aborting installation"
-        exit 1
-        ;;
-esac
-
-GATEWAY="10.$TE_AM.1"
-echo "GATEWAY=$GATEWAY" >> $ENV_FILE
-ROBORIO_IP="10.$TE_AM.2"
-echo "ROBORIO=$ROBORIO_IP" >> $ENV_FILE
-
-echo "NETMNGR=$NETMNGR" >> $ENV_FILE
 
 # Make binary scripts executable
 chmod +x /opt/SamuraiSight/bin/launch
