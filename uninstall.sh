@@ -15,7 +15,7 @@ if ! [ -d $ROOT_DIR ]; then
 fi
 
 USER="smsight-srv"
-GROUP="rootsrv-client"
+GROUP="smsight"
 systemctl stop smsight
 systemctl disable smsight
 systemctl stop sms-rootsrv

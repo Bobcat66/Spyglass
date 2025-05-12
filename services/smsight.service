@@ -1,5 +1,5 @@
 [Unit]
-Description=Robot Vision System
+Description=A service that runs the SamuraiSight FRC Vision System
 Requires=sms-rootsrv.service
 After=sms-rootsrv.service
 

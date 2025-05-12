@@ -112,12 +112,13 @@ fi
 
 # Prompt the user to allow the installer to install SamuraiSight dependencies.
 
-echo "This script will install the following dependencies: python3.13, python3.13-venv, software-properties-common."
+echo "This script will install the following dependencies: python3.13, python3.13-venv, software-properties-common, mrcal."
 echo "Additionally, this script will add the deadsnakes PPA"
 read -p "Do you want to continue? [y/N]: " userAllowedDeps
 case "$userAllowedDeps" in
     y|Y )
         apt-get -y update
+        apt-get -y mrcal
         apt-get -y install software-properties-common
         add-apt-repository -y ppa:deadsnakes/ppa
         apt-get -y update
@@ -184,10 +185,10 @@ systemctl enable sms-rootsrv.service
 # Changing working directory to deployment directory in order to complete installation
 cd $ROOT_DIR
 
-groupadd rootsrv-client
+groupadd smsight
 useradd --system --no-create-home --shell /usr/sbin/nologin smsight-srv
 usermod -aG video smsight-srv
-usermod -aG rootsrv-client smsight-srv
+usermod -aG smsight smsight-srv
 
 # Create .env file
 ENV_FILE=".env"
@@ -205,11 +206,8 @@ EOF
 
 echo ".env file created at $(realpath "$ENV_FILE")"
 
-# Make binary scripts executable
-chmod +x /opt/SamuraiSight/bin/launch
-chmod +x /opt/SamuraiSight/bin/rootsrv/launch-rootsrv
-chmod +x /opt/SamuraiSight/bin/rootsrv/netconfig
-chmod +x /opt/SamuraiSight/bin/restart
+# Make all files in the /bin directory executable
+find /opt/SamuraiSight/bin -type f -exec chmod +x {} \;
 
 read -p "Do you want SamuraiSight to launch on startup? [y/N]: " launchOnStartup
 case "$launchOnStartup" in
@@ -257,4 +255,13 @@ echo "Successfully created python virtual environment"
 mkdir logs
 mkdir models
 echo "ROOTSRV_SOCK=ipc:///tmp/sms-rootsrv.sock" >> $ENV_FILE
+mkdir output # Output is a directory which can be written to by the smsight service
+cd output
+mkdir logs
+mkdir calib
+mkdir cap
+cd ..
+chown -R :smsight /opt/SamuraiSight/output
+chmod -R g+w /opt/SamuraiSight/output
+chmod g+s /opt/SamuraiSight/output
 exit 0

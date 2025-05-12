@@ -164,26 +164,3 @@ class FiducialPnPSolver():
             errors[1][0]
         )
 
-
-
-
-
-        
-
-
-
-        
-
-    
-
-    
-
-    
-
-
-
-
-
-
-
-
