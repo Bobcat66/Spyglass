@@ -188,9 +188,6 @@ useradd --system --no-create-home --shell /usr/sbin/nologin smsight-srv
 usermod -aG video smsight-srv
 usermod -aG rootsrv-client smsight-srv
 
-read -p "Enter team number: " TEAM_NUMBER
-
-
 # Create .env file
 ENV_FILE=".env"
 cat > $ENV_FILE <<EOF
