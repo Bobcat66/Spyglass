@@ -63,7 +63,7 @@ function promptNetMgmt {
         ;;
     n|N )
         echo "Aborting installation."
-        exit 1 # 1 indicates that the user aborted installation
+        exit 1 # 1 indicates that the installation was aborted due to user input
         ;;
     * )
         echo "WARNING: Unrecognized response \"$userAllowedNetMgmt\""
@@ -169,23 +169,31 @@ cat > $ENV_FILE <<EOF
 APP_ENV=production
 DEBUG=false
 TEAM=$TEAM_NUMBER
-SERVICE_FILE=$SERVICE_FILE
 DEV_NAME=$DEV_NAME
 USE_STATIC_IP=false
 EOF
 
 echo ".env file created at $(realpath "$ENV_FILE")"
 
-# I wrote this at 3am in the morning, ill figure out a better way soon
-if (( ${#TEAM_NUMBER} <= 2 )); then
-    TE_AM="0.$TEAM_NUMBER"
-elif (( ${#TEAM_NUMBER} == 3 )); then
-    TE_AM="${TEAM_NUMBER:0:1}.${TEAM_NUMBER:1:2}"
-elif (( ${#TEAM_NUMBER} == 4 )); then
-    TE_AM="${TEAM_NUMBER:0:2}.${TEAM_NUMBER:2:2}"
-elif (( ${#TEAM_NUMBER} == 5 )); then
-    TE_AM="${TEAM_NUMBER:0:3}.${TEAM_NUMBER:3:2}"
-fi
+case ${#TEAM_NUMBER} in
+    1|2 )
+        TE_AM="0.$TEAM_NUMBER"
+        ;;
+    3 )
+        TE_AM="${TEAM_NUMBER:0:1}.${TEAM_NUMBER:1:2}"
+        ;;
+    4 )
+        TE_AM="${TEAM_NUMBER:0:2}.${TEAM_NUMBER:2:2}"
+        ;;
+    5 )
+        TE_AM="${TEAM_NUMBER:0:3}.${TEAM_NUMBER:3:2}"
+        ;;
+    * )
+        echo "${#TEAM_NUMBER} digit team number? This isn't FTC vro 🥀🥀🥀"
+        echo "Aborting installation"
+        exit 1
+        ;;
+esac
 
 GATEWAY="10.$TE_AM.1"
 echo "GATEWAY=$GATEWAY" >> $ENV_FILE
