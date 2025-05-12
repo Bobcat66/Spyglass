@@ -134,6 +134,7 @@ case "$userAllowedDeps" in
         ;;
 esac
 
+read -p "Enter team number: " TEAM_NUMBER
 case ${#TEAM_NUMBER} in
     0 )
         echo "No team number entered."
