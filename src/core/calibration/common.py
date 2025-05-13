@@ -14,14 +14,34 @@ class BoardObservation:
     weights: np.typing.NDArray[np.float64]
 
 @dataclass
+class Seed:
+    fx: float
+    fy: float
+    cx: float
+    cy: float
+    k1: float
+    k2: float
+    p1: float
+    p2: float
+    k3: float
+
+    def getSeedMat(self) -> np.typing.NDArray[np.float64]:
+        return np.array([
+            [self.fx,0.00000,self.cx],
+            [0.00000,self.fy,self.cy],
+            [0.00000,0.00000,1.00000]
+        ])
+    
+    def getSeedDist(self) -> np.typing.NDArray[np.float64]:
+        return np.array([self.k1,self.k2,self.p1,self.p2,self.k3])
+
+
+@dataclass
 class CalibrationInput:
     observations: List[BoardObservation]
     size: Tuple[int,int]
-    fx_seed: float
-    fy_seed: float
-    cx_seed: float
-    cy_seed: float
-    dist_coeffs_seed: np.typing.NDArray[np.float64]
+    seed: Seed
+    useSeed: bool
 
 @dataclass
 class CalibrationData:
@@ -36,8 +56,8 @@ class CalibrationData:
     def getNumpyDistCoeffs(self) -> np.typing.NDArray[np.float64]:
         return np.array(self.dist_coeffs,dtype=np.float64)
 
-class CalibrationModule(ABC):
 
+class CalibrationModule(ABC):
     @abstractmethod
     def calibrate(self, input: CalibrationInput) -> CalibrationData:
         raise NotImplementedError()
