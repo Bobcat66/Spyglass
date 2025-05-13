@@ -1,7 +1,7 @@
 from calibration.common import *
 import cv2
 
-class OpenCVImpl(CalibrationModule):
+class _Impl(CalibrationModule):
     def calibrate(self, input: CalibrationInput) -> CalibrationData:
         objectPoints = []
         imgPoints = []
@@ -30,3 +30,5 @@ class OpenCVImpl(CalibrationModule):
             dist_coefs.tolist(),
             rms
         )
+    
+export = _Impl()

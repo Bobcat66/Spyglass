@@ -202,6 +202,7 @@ USE_STATIC_IP=false
 GATEWAY=10.$TE_AM.1
 ROBORIO=10.$TE_AM.2
 NETMNGR=$NETMNGR
+MRCAL=true
 EOF
 
 echo ".env file created at $(realpath "$ENV_FILE")"
