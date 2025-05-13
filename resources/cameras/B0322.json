@@ -1,0 +1,13 @@
+{
+    "name" : "Arducam OV2311 (B0322)",
+    "vendor" : "Arducam",
+    "VID" : 3141,
+    "PID" : 25446,
+    "pixel_dims_um" : [3,3],
+    "focal_len_mm" : 2.8,
+    "FOV_deg" : 70,
+    "monochrome" : true,
+    "global_shutter" : true,
+    "manual_trigger" : true,
+    "resolution" : [1600,1200]
+}

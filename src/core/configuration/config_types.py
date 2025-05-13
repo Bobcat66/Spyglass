@@ -13,6 +13,7 @@ class CameraIntrinsics:
     matrix: np.typing.NDArray[np.float64]
     dist_coeffs: np.typing.NDArray[np.float64]
 
+#TODO: Move camera intrinsics to json files stored in output/calib
 @dataclass
 class CameraConfig:
     """Camera configuration class."""
