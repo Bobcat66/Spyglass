@@ -36,7 +36,9 @@ class CalibrationData:
         return np.array(self.dist_coeffs,dtype=np.float64)
 
 class CharucoDetector():
-    def __init__(self,)
+    def __init__(self,dict: aruco.Dictionary,params: aruco.DetectorParameters,board: aruco.CharucoBoard):
+        pass
+        
 
 
 
