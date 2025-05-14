@@ -52,8 +52,8 @@ class CalibrationSession():
             for index,obs in enumerate(self._observations):
                 aruco.drawDetectedCornersCharuco(framecopy,obs.img_points,self._ids[index])
             if capture:
-                allcorners = self._board.getChessboardCorners()
-                self._observations.append(BoardObservation())
+                objpts,imgpts= self._board.matchImagePoints(charuco_corners,charuco_ids)
+                self._observations.append(BoardObservation(objpts,imgpts,None)) #TODO: ADD WEIGHTS!!!!!
 
         except Exception as e:
             logger.warning(f"Unable to process frame due to an unhandled exception.")
