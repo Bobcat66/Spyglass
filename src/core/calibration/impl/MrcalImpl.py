@@ -3,6 +3,6 @@ import mrcal
 
 class _Impl(CalibrationModule):
     def calibrate(self, input: CalibrationInput) -> CalibrationData:
-        raise NotImplementedError("Mrcal is still WIP")
+        raise NotImplementedError("Mrcal integration is still WIP")
     
 export = _Impl()
