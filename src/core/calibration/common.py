@@ -1,7 +1,8 @@
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
+from dataclasses import dataclass,asdict
 import numpy as np
-from typing import Tuple, List
+from typing import Tuple, List, Self
+import json
 
 # This module contains the portions of the calibration toolkit that are platform-agnostic. 
 
@@ -55,6 +56,22 @@ class CalibrationData:
     
     def getNumpyDistCoeffs(self) -> np.typing.NDArray[np.float64]:
         return np.array(self.dist_coeffs,dtype=np.float64)
+    
+    @classmethod
+    def dumpJson(cls,cdat: Self) -> str:
+        return json.dumps(asdict(cdat))
+    
+    @classmethod
+    def loadJson(cls,jdat: str) -> Self:
+        jdict: dict = json.loads(jdat)
+        return cls(
+            jdict.get("size"),
+            jdict.get("matrix"),
+            jdict.get("dist_coeffs"),
+            jdict.get("avg_reproject_err")
+        )
+
+
 
 
 class CalibrationModule(ABC):
