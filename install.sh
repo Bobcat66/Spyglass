@@ -3,42 +3,42 @@
 # the license found in the root directory of this project
 
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ROOT_DIR="/opt/SamuraiSight"
-SERVICE_NAME=smsight
-SERVICE_FILE="/etc/systemd/system/smsight.service"
-ROOTSRV_FILE="/etc/systemd/system/sms-rootsrv.service"
-echo -e "------------- SamuraiSight Installer -------------\n"
+ROOT_DIR="/opt/Spyglass"
+SERVICE_NAME=spyglass
+SERVICE_FILE="/etc/systemd/system/spyglass.service"
+ROOTSRV_FILE="/etc/systemd/system/spg-rootsrv.service"
+echo -e "------------- Spyglass Installer -------------\n"
 
-echo "Installing SamuraiSight in $ROOT_DIR"
+echo "Installing Spyglass in $ROOT_DIR"
 
 # Checks to ensure the script is being run with root permissions
 if [[ $EUID -ne 0 ]]; then
-  echo "The SamuraiSight installer must be run with root privileges."
+  echo "The Spyglass installer must be run with root privileges."
   echo "Aborting installation."
   exit 2 # exit code 2 denotes that the script was running with improper permissions
 fi
 
 if [ ! -f "/etc/debian_version" ]; then
-   echo "The SamuraiSight installer is only designed to run on debian-based distros. /etc/debian_version was not detected on this system."
+   echo "The Spyglass installer is only designed to run on debian-based distros. /etc/debian_version was not detected on this system."
    echo "Aborting installation."
    exit 3 # 3 denotes the installer was run on an improperly configured system
 fi
 
 if ! dpkg -l | grep -q "systemd"; then
-    echo "SamuraiSight runs as a systemd service. Systemd was not detected on this system"
+    echo "Spyglass runs as a systemd service. Systemd was not detected on this system"
     echo "Aborting installation."
     exit 3
 fi
 
 # Check if samuraisight is already installed
 if [ -d $ROOT_DIR ]; then
-    echo "SamuraiSight is already installed"
+    echo "Spyglass is already installed"
     echo "Aborting installation."
     exit 4 # 4 denotes that samuraisight is already installed
 fi
 
 # Prompt the user to allow the installer to make changes to the network configuration
-echo "SamuraiSight will make changes to the configuration of network interface eth0."
+echo "Spyglass will make changes to the configuration of network interface eth0."
 read -p "Do you want to continue? [y/N]: " userAllowedNetwork
 case $userAllowedNetwork in
     y|Y )
@@ -56,7 +56,7 @@ esac
 
 function promptNetMgmt {
     local userAllowedNetMgmt
-    read -p "Allow SamuraiSight to perform network management itself? [y/N]: " userAllowedNetMgmt
+    read -p "Allow Spyglass to perform network management itself? [y/N]: " userAllowedNetMgmt
     case $userAllowedNetMgmt in
     y|Y )
         return 0
@@ -74,11 +74,11 @@ function promptNetMgmt {
 }
 # Detect primary network manager
 if systemctl --quiet is-active systemd-networkd; then
-    # systemd-networkd is the preferred network manager for SamuraiSight
+    # systemd-networkd is the preferred network manager for Spyglass
     NETMNGR=NETWORK_D
-    NETWORK_FILE="/etc/systemd/network/10-smsight-eth0.network"
+    NETWORK_FILE="/etc/systemd/network/10-spyglass-eth0.network"
     cat > $NETWORK_FILE <<EOF
-;SamuraiSight Network Configuration File. DO NOT MODIFY THIS MANUALLY
+;Spyglass Network Configuration File. DO NOT MODIFY THIS MANUALLY
 [Match]
 Name=eth0
 
@@ -89,28 +89,28 @@ Gateway=_dhcp4
 EOF
 elif systemctl --quiet is-active NetworkManager; then
     #NETMNGR=NETWORK_MANAGER # Uncomment this when NetworkManager is supported
-    echo "WARNING: NetworkManager is currently unsupported by SamuraiSight. We strongly recommend switching to systemd-networkd"
+    echo "WARNING: NetworkManager is currently unsupported by Spyglass. We strongly recommend switching to systemd-networkd"
     promptNetMgmt
     NETMNGR=UNKNOWN
 elif systemctl --quiet is-active dhcpcd; then
     #NETMNGR=DHCPCD # Uncomment this when dhcpcd is supported
-    echo "WARNING: dhcpcd is currently unsupported by SamuraiSight. We strongly recommend switching to systemd-networkd"
+    echo "WARNING: dhcpcd is currently unsupported by Spyglass. We strongly recommend switching to systemd-networkd"
     promptNetMgmt
     NETMNGR=UNKNOWN
 elif systemctl --quiet is-active networking; then
     #NETMNGR=IFUPDOWN # Uncomment this when Ifupdown support is added
-    echo "WARNING: Ifupdown is currently unsupported by SamuraiSight. We strongly recommend switching to systemd-networkd"
+    echo "WARNING: Ifupdown is currently unsupported by Spyglass. We strongly recommend switching to systemd-networkd"
     promptNetMgmt
     NETMNGR=UNKNOWN
 else
-    # Prompt user to allow SamuraiSight to directly configure the network
+    # Prompt user to allow Spyglass to directly configure the network
     echo "WARNING: Unknown network manager. We strongly recommend switching to systemd-networkd"
     promptNetMgmt
     NETMNGR=UNKNOWN
 fi
 
 
-# Prompt the user to allow the installer to install SamuraiSight dependencies.
+# Prompt the user to allow the installer to install Spyglass dependencies.
 
 echo "This script will install the following dependencies: python3.13, python3.13-venv, software-properties-common, mrcal."
 echo "Additionally, this script will add the deadsnakes PPA"
@@ -177,18 +177,18 @@ cp $REPO_DIR/requirements.txt $ROOT_DIR/requirements.txt
 cp $REPO_DIR/config.toml $ROOT_DIR/config.toml
 
 # Loading service file
-cp $REPO_DIR/services/smsight.service $SERVICE_FILE
-cp $REPO_DIR/services/sms-rootsrv.service $ROOTSRV_FILE
+cp $REPO_DIR/services/spyglass.service $SERVICE_FILE
+cp $REPO_DIR/services/spg-rootsrv.service $ROOTSRV_FILE
 systemctl daemon-reload
-systemctl enable sms-rootsrv.service
+systemctl enable spg-rootsrv.service
 
 # Changing working directory to deployment directory in order to complete installation
 cd $ROOT_DIR
 
-groupadd smsight
-useradd --system --no-create-home --shell /usr/sbin/nologin smsight-srv
-usermod -aG video smsight-srv
-usermod -aG smsight smsight-srv
+groupadd spyglass
+useradd --system --no-create-home --shell /usr/sbin/nologin spyglass-srv
+usermod -aG video spyglass-srv
+usermod -aG spyglass spyglass-srv
 
 # Create .env file
 ENV_FILE=".env"
@@ -208,21 +208,21 @@ EOF
 echo ".env file created at $(realpath "$ENV_FILE")"
 
 # Make all files in the /bin directory executable
-find /opt/SamuraiSight/bin -type f -exec chmod +x {} \;
+find /opt/Spyglass/bin -type f -exec chmod +x {} \;
 
-read -p "Do you want SamuraiSight to launch on startup? [y/N]: " launchOnStartup
+read -p "Do you want Spyglass to launch on startup? [y/N]: " launchOnStartup
 case "$launchOnStartup" in
     y|Y )
-        systemctl enable smsight
-        echo "SamuraiSight will launch automatically on startup. This can be disabled with sudo systemctl disable smsight"
+        systemctl enable spyglass
+        echo "Spyglass will launch automatically on startup. This can be disabled with sudo systemctl disable spyglass"
         ;;
     n|N )
-        echo "SamuraiSight will not launch on startup. To enable launch on startup, run sudo systemctl enable smsight"
+        echo "Spyglass will not launch on startup. To enable launch on startup, run sudo systemctl enable spyglass"
         ;;
     * )
         echo "WARNING: Unrecognized response \"$launchOnStartup\""
-        echo "Defaulting to launch on startup. This can be disabled by running sudo systemctl disable smsight"
-        systemctl enable smsight
+        echo "Defaulting to launch on startup. This can be disabled by running sudo systemctl disable spyglass"
+        systemctl enable spyglass
         ;;
 esac
 
@@ -255,14 +255,14 @@ echo "Successfully created python virtual environment"
 # Creates logs/ directory, and models/ directory
 mkdir logs
 mkdir models
-echo "ROOTSRV_SOCK=ipc:///tmp/sms-rootsrv.sock" >> $ENV_FILE
-mkdir output # Output is a directory which can be written to by the smsight service
+echo "ROOTSRV_SOCK=ipc:///tmp/spg-rootsrv.sock" >> $ENV_FILE
+mkdir output # Output is a directory which can be written to by the spyglass service
 cd output
 mkdir logs
 mkdir calib
 mkdir cap
 cd ..
-chown -R :smsight /opt/SamuraiSight/output
-chmod -R g+w /opt/SamuraiSight/output
-chmod g+s /opt/SamuraiSight/output
+chown -R :spyglass /opt/Spyglass/output
+chmod -R g+w /opt/Spyglass/output
+chmod g+s /opt/Spyglass/output
 exit 0

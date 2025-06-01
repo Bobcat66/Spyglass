@@ -1,0 +1,13 @@
+[Unit]
+Description=Privileged helper daemon for Spyglass
+After=network.target
+
+[Service]
+ExecStart=/opt/Spyglass/bin/rootsrv/launch-rootsrv
+Restart=on-failure
+WorkingDirectory=/opt/Spyglass
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

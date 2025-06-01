@@ -1,12 +1,12 @@
 [Unit]
-Description=A service that runs the SamuraiSight FRC Vision System
+Description=A service that runs the Spyglass Robot Vision System
 Requires=sms-rootsrv.service
 After=sms-rootsrv.service
 
 [Service]
-ExecStart=/opt/SamuraiSight/bin/launch
+ExecStart=/opt/Spyglass/bin/launch
 Restart=on-failure
-WorkingDirectory=/opt/SamuraiSight
+WorkingDirectory=/opt/Spyglass
 User=smsight-srv
 AmbientCapabilities=CAP_NET_ADMIN
 CapabilityBoundingSet=CAP_NET_ADMIN

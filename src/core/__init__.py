@@ -28,7 +28,7 @@ logger = logging.getLogger(__name__)
 
 if __name__ == "__main__":
 
-    logger.info("Launching SamuraiSight")
+    logger.info("Launching Spyglass")
 
     
     inst: ntcore.NetworkTableInstance = ntcore.NetworkTableInstance.getDefault()

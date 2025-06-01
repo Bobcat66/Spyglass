@@ -2,32 +2,36 @@
 # You may use, distribute, and modify this software under the terms of
 # the license found in the root directory of this project
 
-echo "Uninstalling SamuraiSight"
+echo "Uninstalling Spyglass..."
 
-SERVICE_NAME="smsight.service"
-SERVICE_FILE="/etc/systemd/system/smsight.service"
-ROOTSRV_FILE="/etc/systemd/system/sms-rootsrv.service"
-ROOT_DIR="/opt/SamuraiSight"
+SERVICE_NAME="spyglass.service"
+SERVICE_FILE="/etc/systemd/system/spyglass.service"
+ROOTSRV_FILE="/etc/systemd/system/spg-rootsrv.service"
+ROOT_DIR="/opt/Spyglass"
 
 if ! [ -d $ROOT_DIR ]; then
-    echo "SamuraiSight is not installed"
+    echo "Spyglass is not installed"
     exit 0
 fi
 
-USER="smsight-srv"
-GROUP="smsight"
-systemctl stop smsight
-systemctl disable smsight
-systemctl stop sms-rootsrv
-systemctl disable sms-rootsrv
+USER="spyglass-srv"
+GROUP="spyglass"
+systemctl stop spyglass
+systemctl disable spyglass
+echo "Disabled Spyglass service"
+systemctl stop spg-rootsrv
+systemctl disable spg-rootsrv
+echo "Disabled Spyglass Root Service"
 userdel $USER
 groupdel $GROUP
 rm $SERVICE_FILE
 rm $ROOTSRV_FILE
 rm -r $ROOT_DIR
-NETWORK_FILE="/etc/systemd/network/10-smsight-eth0.network"
+echo "Deleted program files"
+NETWORK_FILE="/etc/systemd/network/10-spyglass-eth0.network"
 if [ -f $NETWORK_FILE ]; then
     rm $NETWORK_FILE
+    echo "Deleted network files"
 fi
 
 

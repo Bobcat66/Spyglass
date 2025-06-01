@@ -23,11 +23,16 @@ logging.basicConfig(
     format='[%(levelname)s] %(name)s: %(message)s'
 )
 
-logger = logging.getLogger("smsight-rootsrv")
+logger = logging.getLogger("spyglass-rootsrv")
 
 context = zmq.Context()
 socket = context.socket(zmq.REP)
-socket_name = os.getenv("ROOTSRV_SOCK")
+rawname = os.getenv("ROOTSRV_SOCK")
+socket_name: str
+if rawname is not None:
+    socket_name = rawname
+else:
+    raise RuntimeError("ROOTSRV SOCKET NOT FOUND")
 socket.bind(socket_name)
 
 if (socket_name[:6] == "ipc://"):
@@ -55,7 +60,7 @@ while True:
                 msg = "rootsrv services are disabled in development mode"
                 exit = 42
                 break
-            subprocess.run(["/opt/SamuraiSight/bin/rootsrv/netconfig","-d"])
+            subprocess.run(["/opt/Spyglass/bin/rootsrv/netconfig","-d"])
             msg = "success"
             exit = 0
         case "staticip":
@@ -68,7 +73,7 @@ while True:
                 msg = "rootsrv services are disabled in development mode"
                 exit = 42
                 break
-            subprocess.run(["/opt/SamuraiSight/bin/rootsrv/netconfig","-s",addr])
+            subprocess.run(["/opt/Spyglass/bin/rootsrv/netconfig","-s",addr])
             msg = "success"
             exit = 0
         case _:
