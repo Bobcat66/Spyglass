@@ -7,7 +7,6 @@ ROOT_DIR="/opt/Spyglass"
 SERVICE_NAME=spyglass
 SERVICE_FILE="/etc/systemd/system/spyglass.service"
 ROOTSRV_FILE="/etc/systemd/system/spg-rootsrv.service"
-GTSAM_FILE="/etc/systemd/system/spg-gtsam.service"
 echo -e "------------- Spyglass Installer -------------\n"
 
 echo "Installing Spyglass in $ROOT_DIR"
@@ -113,17 +112,16 @@ fi
 
 # Prompt the user to allow the installer to install Spyglass dependencies.
 
-echo "This script will install the following dependencies: python3.13, python3.13-venv, software-properties-common, mrcal, gtsam."
-echo "Additionally, this script will add the deadsnakes PPA and the borglab/gtsam-release-4.0 PPA to your system."
+echo "This script will install the following dependencies: python3.13, python3.13-venv, software-properties-common, mrcal."
+echo "Additionally, this script will add the deadsnakes PPA to your system."
 read -p "Do you want to continue? [y/N]: " userAllowedDeps
 case "$userAllowedDeps" in
     y|Y )
         apt-get -y update
         apt-get -y install software-properties-common mrcal
         add-apt-repository -y ppa:deadsnakes/ppa
-        add-apt-repository -y ppa:borglab/gtsam-release-4.0
         apt-get -y update
-        apt-get -y install python3.13 python3.13-venv libgtsam-dev
+        apt-get -y install python3.13 python3.13-venv
         ;;
     n|N )
         echo "Aborting installation."
@@ -171,7 +169,6 @@ mkdir $ROOT_DIR
 
 # Copying essential code from the repo to the deployment directory
 cp -r $REPO_DIR/src/core $ROOT_DIR
-cp -r $REPO_DIR/src/gtsam $ROOT_DIR
 cp -r $REPO_DIR/src/rootsrv $ROOT_DIR
 cp -r $REPO_DIR/resources $ROOT_DIR
 cp -r $REPO_DIR/bin $ROOT_DIR
