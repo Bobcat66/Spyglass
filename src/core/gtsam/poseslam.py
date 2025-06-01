@@ -17,5 +17,7 @@ class PoseSLAMOptimizer:
         self.isam = gtsam.ISAM2(self.isamParams)
         self.graph = gtsam.NonlinearFactorGraph()
         self.initial_estimate = gtsam.Values()
+
+    
     
         
