@@ -1,13 +1,13 @@
 [Unit]
 Description=A service that runs the Spyglass Robot Vision System
-Requires=sms-rootsrv.service
-After=sms-rootsrv.service
+Requires=spg-rootsrv.service
+After=spg-rootsrv.service
 
 [Service]
 ExecStart=/opt/Spyglass/bin/launch
 Restart=on-failure
 WorkingDirectory=/opt/Spyglass
-User=smsight-srv
+User=spyglass-srv
 AmbientCapabilities=CAP_NET_ADMIN
 CapabilityBoundingSet=CAP_NET_ADMIN
 NoNewPrivileges=true

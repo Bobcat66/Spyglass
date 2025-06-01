@@ -6,8 +6,8 @@
 
 # Must be run with root permissions
 
-systemctl stop smsight
-systemctl stop sms-rootsrv
+systemctl stop spyglass
+systemctl stop spg-rootsrv
 
-systemctl start sms-rootsrv
-systemctl start smsight
+systemctl start spg-rootsrv
+systemctl start spyglass

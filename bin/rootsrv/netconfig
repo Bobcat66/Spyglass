@@ -4,17 +4,17 @@
 # You may use, distribute, and modify this software under the terms of
 # the license found in the root directory of this project
 
-# SamuraiSight network setting configuration utility. NOTE: CHANGES WILL NOT TAKE EFFECT UNTIL SAMURAISIGHT IS RESTARTED
+# Spyglass network setting configuration utility. NOTE: CHANGES WILL NOT TAKE EFFECT UNTIL SPYGLASS IS RESTARTED
 
 # Usage: ./bin/netconfig <opts>
 # Opts: -d sets IP to DHCP, -s sets static IP (requires 1 argument),
 
-cd /opt/SamuraiSight/
+cd /opt/Spyglass/
 
 DETECTED_NETMNGR=UNKNOWN
 # Detect primary network manager
 if systemctl --quiet is-active systemd-networkd; then
-    # systemd-networkd is the preferred network manager for SamuraiSight
+    # systemd-networkd is the preferred network manager for Spyglass, and is used by default
     DETECTED_NETMNGR=NETWORK_D
 elif systemctl --quiet is-active NetworkManager; then
     #NETMNGR=NETWORK_MANAGER # Uncomment this when NetworkManager is supported
@@ -42,10 +42,10 @@ while getopts "ds:" opt; do
             case $NETMNGR in
                 NETWORK_D )
                     # Code goes here
-                    NETWORK_FILE="/etc/systemd/network/10-smsight-eth0.network"
+                    NETWORK_FILE="/etc/systemd/network/10-spyglass-eth0.network"
                     if ! [ -f $NETWORK_FILE ]; then
                         cat > $NETWORK_FILE <<EOF
-;SamuraiSight Network Configuration File. DO NOT MODIFY THIS MANUALLY
+;Spyglass Network Configuration File. DO NOT MODIFY THIS MANUALLY
 [Match]
 Name=eth0
 
@@ -74,10 +74,10 @@ EOF
             sed -i "s/^STATIC_IP=.*/STATIC_IP=$OPTARG/" ".env"
             case $NETMNGR in
                 NETWORK_D )
-                    NETWORK_FILE="/etc/systemd/network/10-smsight-eth0.network"
+                    NETWORK_FILE="/etc/systemd/network/10-spyglass-eth0.network"
                     if ! [ -f $NETWORK_FILE ]; then
                         cat > $NETWORK_FILE <<EOF
-;SamuraiSight Network Configuration File. DO NOT MODIFY THIS MANUALLY
+;Spyglass Network Configuration File. DO NOT MODIFY THIS MANUALLY
 [Match]
 Name=eth0
 

@@ -1,6 +1,6 @@
 BSD 3-Clause License
 
-Copyright (c) 2025 FRC 1076 PiHi Samurai
+Copyright (c) 2025 Jesse Kane
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
 

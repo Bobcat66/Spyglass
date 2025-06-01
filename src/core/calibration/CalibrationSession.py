@@ -1,3 +1,7 @@
+# Copyright (c) Jesse Kane
+# You may use, distribute, and modify this software under the terms of
+# the license found in the root directory of this project
+
 from video.CameraHandler import CameraHandler
 from typing import Callable, Tuple, List, Union
 from calibration.common import CalibrationModule, Seed, BoardObservation, CalibrationInput

@@ -4,13 +4,13 @@
 # You may use, distribute, and modify this software under the terms of
 # the license found in the root directory of this project
 
-# SamuraiSight launch script. Working directory must be /opt/SamuraiSight
+# Spyglass launch script. Working directory must be /opt/Spyglass
 
 set -a
 source .env
 set +a
 
-# TODO: Move this to rootsrv, disable networking permissions on smsight service user
+# TODO: Move this to rootsrv, disable networking permissions on spyglass service user
 if [ "$NETMNGR" == "UNKNOWN" ]; then
     if [ "$USE_STATIC_IP" == "true" ]; then
         if [ -z "$STATIC_IP" ]; then
@@ -24,6 +24,6 @@ if [ "$NETMNGR" == "UNKNOWN" ]; then
 fi
 
 source .venv/bin/activate # Activates python venv
-exec python3.13 src/core/__init__.py # Launches python program
+exec python3.13 core/__init__.py # Launches python program
 
 

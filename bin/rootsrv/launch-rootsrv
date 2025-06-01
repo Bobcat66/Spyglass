@@ -1,12 +1,7 @@
 #!/usr/bin/env bash
 
-# Copyright (c) FRC 1076 PiHi Samurai
-# You may use, distribute, and modify this software under the terms of
-# the license found in the root directory of this project
-
 # A daemon that exposes certain privileged operation to SamuraiSight, communicates over ZeroMQ
 
-
 source .venv/bin/activate # Activates python venv
-exec python3.13 src/rootsrv/rootsrv.py # Launches python program
+exec python3.13 python/rootsrv/__init__.py # Launches python program
 

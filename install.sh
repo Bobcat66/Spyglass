@@ -7,6 +7,7 @@ ROOT_DIR="/opt/Spyglass"
 SERVICE_NAME=spyglass
 SERVICE_FILE="/etc/systemd/system/spyglass.service"
 ROOTSRV_FILE="/etc/systemd/system/spg-rootsrv.service"
+GTSAM_FILE="/etc/systemd/system/spg-gtsam.service"
 echo -e "------------- Spyglass Installer -------------\n"
 
 echo "Installing Spyglass in $ROOT_DIR"
@@ -30,11 +31,11 @@ if ! dpkg -l | grep -q "systemd"; then
     exit 3
 fi
 
-# Check if samuraisight is already installed
+# Check if spyglass is already installed
 if [ -d $ROOT_DIR ]; then
     echo "Spyglass is already installed"
     echo "Aborting installation."
-    exit 4 # 4 denotes that samuraisight is already installed
+    exit 4 # 4 denotes that spyglass is already installed
 fi
 
 # Prompt the user to allow the installer to make changes to the network configuration
@@ -112,17 +113,17 @@ fi
 
 # Prompt the user to allow the installer to install Spyglass dependencies.
 
-echo "This script will install the following dependencies: python3.13, python3.13-venv, software-properties-common, mrcal."
-echo "Additionally, this script will add the deadsnakes PPA"
+echo "This script will install the following dependencies: python3.13, python3.13-venv, software-properties-common, mrcal, gtsam."
+echo "Additionally, this script will add the deadsnakes PPA and the borglab/gtsam-release-4.0 PPA to your system."
 read -p "Do you want to continue? [y/N]: " userAllowedDeps
 case "$userAllowedDeps" in
     y|Y )
         apt-get -y update
-        apt-get -y mrcal
-        apt-get -y install software-properties-common
+        apt-get -y install software-properties-common mrcal
         add-apt-repository -y ppa:deadsnakes/ppa
+        add-apt-repository -y ppa:borglab/gtsam-release-4.0
         apt-get -y update
-        apt-get -y install python3.13 python3.13-venv
+        apt-get -y install python3.13 python3.13-venv libgtsam-dev
         ;;
     n|N )
         echo "Aborting installation."
@@ -169,7 +170,9 @@ read -p "Enter device name: " DEV_NAME
 mkdir $ROOT_DIR
 
 # Copying essential code from the repo to the deployment directory
-cp -r $REPO_DIR/src $ROOT_DIR
+cp -r $REPO_DIR/src/core $ROOT_DIR
+cp -r $REPO_DIR/src/gtsam $ROOT_DIR
+cp -r $REPO_DIR/src/rootsrv $ROOT_DIR
 cp -r $REPO_DIR/resources $ROOT_DIR
 cp -r $REPO_DIR/bin $ROOT_DIR
 cp $REPO_DIR/uninstall.sh $ROOT_DIR/uninstall.sh
