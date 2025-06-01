@@ -7,3 +7,4 @@ ultralytics==8.3.122
 python-dotenv==1.1.0
 pyzmq==26.4.0
 importlib==1.0.4
+sleipnirgroup-jormungandr
